@@ -33,7 +33,7 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
             } else {
                 preparedStatement.setLong(3, customerOrder.getProcessorEmployeeId());
             }
-            preparedStatement.setString(4, customerOrder.getPaymentMethod());
+            preparedStatement.setString(4, customerOrder.getPaymentMethod().name());
 
             int rowsAffected = preparedStatement.executeUpdate();
 
@@ -91,7 +91,7 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
             return CustomerOrder.builder()
                     .orderId(rs.getLong("order_id"))
                     .dateOfOrder(rs.getDate("date_of_order"))
-                    .paymentMethod(rs.getString("payment_method"))
+                    .paymentMethod(CustomerOrder.PaymentMethod.valueOf(rs.getString("payment_method")))
                     .processorEmployeeId(rs.getLong("processed_by_employee_id"))
                     .customerId(rs.getString("customer_email"))
                     .build();

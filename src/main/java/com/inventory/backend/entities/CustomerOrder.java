@@ -22,7 +22,7 @@ public class CustomerOrder {
 
     private Date dateOfOrder;
 
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
 
     private Long processorEmployeeId;
 
@@ -37,6 +37,13 @@ public class CustomerOrder {
             this.first = first;
             this.second = second;
         }
+    }
+
+    public enum PaymentMethod {
+        CASH,
+        CARD,
+        NET_BANKING,
+        UPI
     }
     
 

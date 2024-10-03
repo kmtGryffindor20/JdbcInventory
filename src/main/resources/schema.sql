@@ -97,7 +97,7 @@ CREATE TABLE customer_orders (
     date_of_order DATE NOT NULL,
     customer_email VARCHAR(255),
     processed_by_employee_id BIGINT,
-    payment_method VARCHAR(255) NOT NULL,
+    payment_method ENUM('CASH', 'CARD', 'NET_BANKING', 'UPI') NOT NULL,
     FOREIGN KEY (customer_email) REFERENCES customers(email) ON DELETE SET NULL,
     FOREIGN KEY (processed_by_employee_id) REFERENCES employees(employee_id) ON DELETE SET NULL
 );
