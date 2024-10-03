@@ -125,7 +125,7 @@ CREATE TABLE customer_order_shipping_info (
     order_id BIGINT NOT NULL,
     shipping_date DATE NOT NULL,
     expected_delivery_date DATE NOT NULL,
-    status VARCHAR(255) NOT NULL,
+    status ENUM ('SHIPPED', 'DELIVERED', 'PENDING', 'CANCELLED') NOT NULL,
     FOREIGN KEY (order_id) REFERENCES customer_orders(order_id) ON DELETE CASCADE
 );
 
@@ -162,7 +162,7 @@ CREATE TABLE manufacturer_order_shipping_info (
     manufacturer_order_id BIGINT NOT NULL,
     shipping_date DATE NOT NULL,
     expected_delivery_date DATE NOT NULL,
-    status VARCHAR(255) NOT NULL,
+    status ENUM ('SHIPPED', 'DELIVERED', 'PENDING', 'CANCELLED') NOT NULL,
     FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(manufacturer_order_id) ON DELETE CASCADE
 );
 

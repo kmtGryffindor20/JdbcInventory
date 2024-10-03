@@ -23,7 +23,7 @@ public class ShippingInfoCustomerOrderDao implements IDao<ShippingInfoCustomerOr
     @Override
     public void create(ShippingInfoCustomerOrder a) {
         String sql = "INSERT INTO shipping_info_customer_order (shipping_date, expected_delivery_date, status, order_id) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, a.getShippingDate(), a.getExpectedDeliveryDate(), a.getStatus(), a.getOrderId());
+        jdbcTemplate.update(sql, a.getShippingDate(), a.getExpectedDeliveryDate(), a.getStatus().name(), a.getOrderId());
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ShippingInfoCustomerOrderDao implements IDao<ShippingInfoCustomerOr
                     .orderId(rs.getLong("order_id"))
                     .shippingDate(rs.getDate("shipping_date"))
                     .expectedDeliveryDate(rs.getDate("expected_delivery_date"))
-                    .status(rs.getString("status"))
+                    .status(ShippingInfoCustomerOrder.Status.valueOf(rs.getString("status")))
                     .build();
         }
     }

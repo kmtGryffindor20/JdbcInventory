@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.inventory.backend.dao.IDao;
+import com.inventory.backend.entities.ShippingInfoCustomerOrder;
 import com.inventory.backend.entities.ShippingInfoManufacturerOrder;
 
 @Repository
@@ -23,7 +24,7 @@ public class ShippingInfoManufacturerOrderDao implements IDao<ShippingInfoManufa
     @Override
     public void create(ShippingInfoManufacturerOrder a) {
         String sql = "INSERT INTO shipping_info_manufacturer_orders (shipping_date, expected_delivery_date, status, manufacturer_order_id) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, a.getShippingDate(), a.getExpectedDeliveryDate(), a.getStatus(), a.getManufacturerOrderId());
+        jdbcTemplate.update(sql, a.getShippingDate(), a.getExpectedDeliveryDate(), a.getStatus().name(), a.getManufacturerOrderId());
     }
 
     @Override
@@ -58,7 +59,7 @@ public class ShippingInfoManufacturerOrderDao implements IDao<ShippingInfoManufa
                     .manufacturerOrderId(rs.getLong("manufacturer_order_id"))
                     .shippingDate(rs.getDate("shipping_date"))
                     .expectedDeliveryDate(rs.getDate("expected_delivery_date"))
-                    .status(rs.getString("status"))
+                    .status(ShippingInfoCustomerOrder.Status.valueOf(rs.getString("status")))
                     .build();
         }
     }

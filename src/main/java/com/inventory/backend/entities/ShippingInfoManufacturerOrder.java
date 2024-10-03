@@ -20,7 +20,7 @@ public class ShippingInfoManufacturerOrder {
 
     private Date expectedDeliveryDate;
 
-    private String status;
+    private ShippingInfoCustomerOrder.Status status;
 
     private Long manufacturerOrderId;
 }

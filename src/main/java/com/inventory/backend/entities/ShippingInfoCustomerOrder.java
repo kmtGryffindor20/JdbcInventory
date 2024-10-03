@@ -20,7 +20,14 @@ public class ShippingInfoCustomerOrder {
 
     private Date expectedDeliveryDate;
 
-    private String status;
+    private Status status;
 
     private Long orderId;
+
+    public enum Status {
+        SHIPPED,
+        DELIVERED,
+        PENDING,
+        CANCELLED
+    }
 }
