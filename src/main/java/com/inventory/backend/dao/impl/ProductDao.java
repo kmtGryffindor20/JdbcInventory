@@ -41,12 +41,18 @@ public class ProductDao implements IDao<Product, Long> {
             if (rowsAffected > 0) {
                 
                 ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-                insertId = generatedKeys.getInt(1);
 
-                String sql2 = "INSERT INTO product_manufacturers (product_id, manufacturer_id) VALUES (?, ?)";
-                for (Long manufacturerId : a.getManufacturerIds()) {
-                    jdbcTemplate.update(sql2, insertId, manufacturerId);
+                if (generatedKeys.next())
+                {
+
+                    insertId = generatedKeys.getInt(1);
+    
+                    String sql2 = "INSERT INTO product_manufacturers (product_id, manufacturer_id) VALUES (?, ?)";
+                    for (Long manufacturerId : a.getManufacturerIds()) {
+                        jdbcTemplate.update(sql2, insertId, manufacturerId);
+                    }
                 }
+
 
             }
         }catch (Exception e) {

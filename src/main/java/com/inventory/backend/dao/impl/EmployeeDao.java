@@ -7,10 +7,13 @@ import org.springframework.stereotype.Repository;
 import com.inventory.backend.dao.IDao;
 import com.inventory.backend.entities.Employee;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 
 @Repository
 public class EmployeeDao implements IDao<Employee, Long> {
@@ -23,7 +26,7 @@ public class EmployeeDao implements IDao<Employee, Long> {
 
     @Override
     public void create(Employee employee) {
-        String sql = "INSERT INTO employees (first_name, last_name, phone_number, hire_date, designation, manager_employee_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO employees (first_name, last_name, phone_number, hire_date, designation, manager_employee_id) VALUES (?, ?, ?, ?, ?, ?)";
         
         int insertId = -1;
 
@@ -34,17 +37,24 @@ public class EmployeeDao implements IDao<Employee, Long> {
             preparedStatement.setString(3, employee.getPhoneNumber());
             preparedStatement.setDate(4, employee.getHireDate());
             preparedStatement.setString(5, employee.getDesignation());
-            preparedStatement.setLong(6, employee.getManagerId());
+            if (employee.getManagerId() == null) {
+                preparedStatement.setNull(6, java.sql.Types.BIGINT);
+            } else {
+                preparedStatement.setLong(6, employee.getManagerId());
+            }
 
             int rowsAffected = preparedStatement.executeUpdate();
 
-            if (rowsAffected > 0) {
+            if (rowsAffected > 0 && employee.getEmailAddresses() != null){
                 ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-                insertId = generatedKeys.getInt(1);
-
-                String sql2 = "INSERT INTO employee_email_addresses (employee_id, email_address) VALUES (?, ?)";
-                for (String email : employee.getEmailAddresses()) {
-                    jdbcTemplate.update(sql2, insertId, email);
+                if (generatedKeys.next())
+                {
+                    insertId = generatedKeys.getInt(1);
+    
+                    String sql2 = "INSERT INTO employee_email_addresses (employee_id, email_address) VALUES (?, ?)";
+                    for (String email : employee.getEmailAddresses()) {
+                        jdbcTemplate.update(sql2, insertId, email);
+                    }
                 }
 
             }
@@ -58,13 +68,30 @@ public class EmployeeDao implements IDao<Employee, Long> {
     public Optional<Employee> findById(Long id) {
         String sql = "SELECT * FROM employees WHERE employee_id = ?";
         List<Employee> results = jdbcTemplate.query(sql, new EmployeeRowMapper(), id);
-        return results.stream().findFirst();
+        Set<String> emailAddresses = new HashSet<>();
+        String sql2 = "SELECT email_address FROM employee_email_addresses WHERE employee_id = ?";
+        List<String> emailResults = jdbcTemplate.query(sql2, (rs, rowNum) -> rs.getString("email_address"), id);
+        emailAddresses.addAll(emailResults);
+        if (results.size() > 0) {
+            Employee employee = results.get(0);
+            employee.setEmailAddresses(emailAddresses);
+            return Optional.of(employee);
+        }
+        return Optional.empty();
     }
 
     @Override
     public List<Employee> findAll() {
         String sql = "SELECT * FROM employees";
-        return jdbcTemplate.query(sql, new EmployeeRowMapper());
+        List<Employee> results = jdbcTemplate.query(sql, new EmployeeRowMapper());
+        for (Employee employee : results) {
+            Set<String> emailAddresses = new HashSet<>();
+            String sql2 = "SELECT email_address FROM employee_email_addresses WHERE employee_id = ?";
+            List<String> emailResults = jdbcTemplate.query(sql2, (rs, rowNum) -> rs.getString("email_address"), employee.getEmployeeId());
+            emailAddresses.addAll(emailResults);
+            employee.setEmailAddresses(emailAddresses);
+        }
+        return results;
     }
 
     @Override

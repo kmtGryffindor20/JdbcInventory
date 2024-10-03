@@ -1,5 +1,7 @@
 package com.inventory.backend.dao.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +11,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.inventory.backend.dao.IDao;
+import com.inventory.backend.entities.CustomerOrder;
 import com.inventory.backend.entities.ManufacturerOrder;
 
 @Repository
@@ -23,7 +26,34 @@ public class ManufacturerOrderDao implements IDao<ManufacturerOrder, Long> {
     @Override
     public void create(ManufacturerOrder a) {
         String sql = "INSERT INTO manufacturer_orders (manufacturer_order_id, processed_by_employee_id, date_of_order) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, a.getManufacturerOrderId(), a.getProcessedByEmployeeId(), a.getDateOfOrder());
+        
+        int insertId = -1;
+
+        try{
+            PreparedStatement preparedStatement = jdbcTemplate.getDataSource().getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            preparedStatement.setLong(1, a.getManufacturerOrderId());
+            preparedStatement.setLong(2, a.getProcessedByEmployeeId());
+            preparedStatement.setDate(3, a.getDateOfOrder());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0)
+            {
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                
+                if (generatedKeys.next())
+                {
+                    insertId = generatedKeys.getInt(1);
+                    String sql2 = "INSERT INTO manufacturer_order_products (manufacturer_order_id, product_id, quantity) VALUES (?, ?, ?)";
+                    for (CustomerOrder.Pair<Long, Integer> product : a.getProducts()) {
+                        jdbcTemplate.update(sql2, insertId, product.first, product.second);
+                    }
+                }
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

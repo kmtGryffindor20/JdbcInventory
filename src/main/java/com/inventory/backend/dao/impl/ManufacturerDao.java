@@ -36,16 +36,22 @@ public class ManufacturerDao implements IDao<Manufacturer, Long> {
             if (rowsAffected > 0)
             {
                 ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-                insertId = generatedKeys.getInt(1);
-                String sql2 = "INSERT INTO manufacturer_email_addresses (manufacturer_id, email_address) VALUES (?, ?)";
-                for (String email : manufacturer.getEmailIds()) {
-                    jdbcTemplate.update(sql2, insertId, email);
+
+                if (generatedKeys.next())
+                {
+
+                    insertId = generatedKeys.getInt(1);
+                    String sql2 = "INSERT INTO manufacturer_email_addresses (manufacturer_id, email_address) VALUES (?, ?)";
+                    for (String email : manufacturer.getEmailIds()) {
+                        jdbcTemplate.update(sql2, insertId, email);
+                    }
+        
+                    String sql3 = "INSERT INTO manufacturer_phone_numbers (manufacturer_id, phone_number) VALUES (?, ?)";
+                    for (String phone : manufacturer.getContactNumbers()) {
+                        jdbcTemplate.update(sql3, insertId, phone);
+                    }
                 }
-    
-                String sql3 = "INSERT INTO manufacturer_phone_numbers (manufacturer_id, phone_number) VALUES (?, ?)";
-                for (String phone : manufacturer.getContactNumbers()) {
-                    jdbcTemplate.update(sql3, insertId, phone);
-                }
+
             }
 
         }

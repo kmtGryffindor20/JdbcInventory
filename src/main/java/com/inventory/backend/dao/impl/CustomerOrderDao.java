@@ -22,13 +22,17 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
 
     @Override
     public void create(CustomerOrder customerOrder) {
-        String sql = "INSERT INTO customer_orders (date_of_order, customer_email, processor_employee_id, payment_method) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO customer_orders (date_of_order, customer_email, processed_by_employee_id, payment_method) VALUES (?, ?, ?, ?)";
         int insertId = -1;
         try{
             PreparedStatement preparedStatement = jdbcTemplate.getDataSource().getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setDate(1, customerOrder.getDateOfOrder());
-            preparedStatement.setString(2, customerOrder.getCustomer().getEmailId());
-            preparedStatement.setLong(3, customerOrder.getProcessorEmployeeId());
+            preparedStatement.setString(2, customerOrder.getCustomerId());
+            if (customerOrder.getProcessorEmployeeId() == null) {
+                preparedStatement.setNull(3, java.sql.Types.BIGINT);
+            } else {
+                preparedStatement.setLong(3, customerOrder.getProcessorEmployeeId());
+            }
             preparedStatement.setString(4, customerOrder.getPaymentMethod());
 
             int rowsAffected = preparedStatement.executeUpdate();
@@ -36,12 +40,17 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
             if (rowsAffected > 0)
             {
                 ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-                insertId = generatedKeys.getInt(1);
 
-                String sql2 = "INSERT INTO customer_order_products (order_id, product_id, quantity) VALUES (?, ?, ?)";
-                for (CustomerOrder.Pair<Long, Integer> product : customerOrder.getProducts()) {
-                    jdbcTemplate.update(sql2, insertId, product.first, product.second);
+                if (generatedKeys.next() && customerOrder.getProducts() != null)
+                {
+                    insertId = generatedKeys.getInt(1);
+    
+                    String sql2 = "INSERT INTO customer_order_products (order_id, product_id, quantity) VALUES (?, ?, ?)";
+                    for (CustomerOrder.Pair<Long, Integer> product : customerOrder.getProducts()) {
+                        jdbcTemplate.update(sql2, insertId, product.first, product.second);
+                    }
                 }
+
 
             }
         }
@@ -66,8 +75,8 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
 
     @Override
     public void update(CustomerOrder customerOrder, Long id) {
-        String sql = "UPDATE customer_orders SET date_of_order = ?, customer_email = ?, processor_employee_id = ?, payment_method = ? WHERE order_id = ?";
-        jdbcTemplate.update(sql, customerOrder.getDateOfOrder(), customerOrder.getCustomer().getEmailId(), customerOrder.getProcessorEmployeeId(), customerOrder.getPaymentMethod(), id);
+        String sql = "UPDATE customer_orders SET date_of_order = ?, customer_email = ?, processed_by_employee_id = ?, payment_method = ? WHERE order_id = ?";
+        jdbcTemplate.update(sql, customerOrder.getDateOfOrder(), customerOrder.getCustomerId(), customerOrder.getProcessorEmployeeId(), customerOrder.getPaymentMethod(), id);
     }
 
     @Override
@@ -83,7 +92,8 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
                     .orderId(rs.getLong("order_id"))
                     .dateOfOrder(rs.getDate("date_of_order"))
                     .paymentMethod(rs.getString("payment_method"))
-                    .processorEmployeeId(rs.getLong("processor_employee_id"))
+                    .processorEmployeeId(rs.getLong("processed_by_employee_id"))
+                    .customerId(rs.getString("customer_email"))
                     .build();
         }
     }

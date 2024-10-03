@@ -82,6 +82,7 @@ public class EmployeeController implements
     @PostMapping("/employees")
     @Override
     public ResponseEntity<Employee> save(@RequestBody Employee a) {
+        System.out.println(a);
         Optional<Employee> employee = employeeService.save(a);
         if (employee.isPresent()) {
             return ResponseEntity.ok(employee.get());

@@ -18,7 +18,7 @@ public class CustomerOrder {
 
     private Long orderId;
 
-    private Customer customer;
+    private String customerId;
 
     private Date dateOfOrder;
 
@@ -38,6 +38,7 @@ public class CustomerOrder {
             this.second = second;
         }
     }
+    
 
 
 }

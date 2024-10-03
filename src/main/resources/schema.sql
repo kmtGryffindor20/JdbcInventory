@@ -40,8 +40,8 @@ CREATE TABLE products (
     stock_quantity INT NOT NULL,
     cost_price DECIMAL(10, 2) NOT NULL,
     maximim_retail_price DECIMAL(10, 2) NOT NULL,
-    category_id BIGINT NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+    category_id BIGINT,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL
 );
 
 
@@ -55,22 +55,22 @@ CREATE TABLE manufacturers (
 CREATE TABLE manufacturer_email_addresses (
     manufacturer_id BIGINT NOT NULL,
     email_address VARCHAR(255) NOT NULL,
-    FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id)
+    FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE CASCADE
 );
 
 
 CREATE TABLE manufacturer_phone_numbers (
     manufacturer_id BIGINT NOT NULL,
     phone_number VARCHAR(255) NOT NULL,
-    FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id)
+    FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE CASCADE
 );
 
 
 CREATE TABLE product_manufacturers (
     product_id BIGINT NOT NULL,
     manufacturer_id BIGINT NOT NULL,
-    FOREIGN KEY (product_id) REFERENCES products(product_id),
-    FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id)
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE CASCADE
 );
 
 
@@ -81,34 +81,34 @@ CREATE TABLE employees (
     phone_number VARCHAR(10) NOT NULL,
     hire_date DATE NOT NULL,
     designation VARCHAR(255) NOT NULL,
-    mangager_employee_id BIGINT,
-    FOREIGN KEY (mangager_employee_id) REFERENCES employees(employee_id)
+    manager_employee_id BIGINT,
+    FOREIGN KEY (manager_employee_id) REFERENCES employees(employee_id) ON DELETE SET NULL
 );
 
 CREATE TABLE employee_email_addresses (
     employee_id BIGINT NOT NULL,
     email_address VARCHAR(255) NOT NULL,
-    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE
 );
 
 
 CREATE TABLE customer_orders (
     order_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     date_of_order DATE NOT NULL,
-    customer_email VARCHAR(255) NOT NULL,
-    processed_by_employee_id BIGINT NOT NULL,
+    customer_email VARCHAR(255),
+    processed_by_employee_id BIGINT,
     payment_method VARCHAR(255) NOT NULL,
-    FOREIGN KEY (customer_email) REFERENCES customers(email),
-    FOREIGN KEY (processed_by_employee_id) REFERENCES employees(employee_id)
+    FOREIGN KEY (customer_email) REFERENCES customers(email) ON DELETE SET NULL,
+    FOREIGN KEY (processed_by_employee_id) REFERENCES employees(employee_id) ON DELETE SET NULL
 );
 
 
 CREATE TABLE customer_orders_products (
     order_id BIGINT NOT NULL,
-    product_id BIGINT NOT NULL,
+    product_id BIGINT,
     quantity INT NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES customer_orders(order_id),
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
+    FOREIGN KEY (order_id) REFERENCES customer_orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE SET NULL
 );  
 
 
@@ -116,7 +116,7 @@ CREATE TABLE orders_returned (
     order_id BIGINT NOT NULL,
     return_date DATE NOT NULL,
     return_reason VARCHAR(255) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES customer_orders(order_id)
+    FOREIGN KEY (order_id) REFERENCES customer_orders(order_id) ON DELETE CASCADE
 );
 
 
@@ -126,33 +126,34 @@ CREATE TABLE customer_order_shipping_info (
     shipping_date DATE NOT NULL,
     expected_delivery_date DATE NOT NULL,
     status VARCHAR(255) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES customer_orders(order_id)
+    FOREIGN KEY (order_id) REFERENCES customer_orders(order_id) ON DELETE CASCADE
 );
 
 
 CREATE TABLE manufacturer_orders (
-    manufacturer_order_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    manufacturer_order_id BIGINT,
     date_of_order DATE NOT NULL,
-    processed_by_employee_id BIGINT NOT NULL,
-    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturers(manufacturer_id),
-    FOREIGN KEY (processed_by_employee_id) REFERENCES employees(employee_id)
+    processed_by_employee_id BIGINT,
+    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturers(manufacturer_id) ON DELETE SET NULL,
+    FOREIGN KEY (processed_by_employee_id) REFERENCES employees(employee_id) ON DELETE SET NULL
 );
 
 
 CREATE TABLE manufacturer_orders_products (
     manufacturer_order_id BIGINT NOT NULL,
-    product_id BIGINT NOT NULL,
+    product_id BIGINT,
     quantity INT NOT NULL,
-    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(manufacturer_order_id),
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
+    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(manufacturer_order_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE SET NULL
 );
 
 
 CREATE TABLE manufacturer_orders_suppliers (
     manufacturer_order_id BIGINT NOT NULL,
-    supplier_manufacturer_id BIGINT NOT NULL,
-    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(manufacturer_order_id),
-    FOREIGN KEY (supplier_manufacturer_id) REFERENCES manufacturers(manufacturer_id)
+    supplier_manufacturer_id BIGINT,
+    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(manufacturer_order_id) ON DELETE CASCADE,
+    FOREIGN KEY (supplier_manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE SET NULL
 );
 
 
@@ -162,7 +163,7 @@ CREATE TABLE manufacturer_order_shipping_info (
     shipping_date DATE NOT NULL,
     expected_delivery_date DATE NOT NULL,
     status VARCHAR(255) NOT NULL,
-    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(manufacturer_order_id)
+    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(manufacturer_order_id) ON DELETE CASCADE
 );
 
 CREATE TABLE sales_report (
@@ -171,8 +172,8 @@ CREATE TABLE sales_report (
     year INT NOT NULL,
     total_sales DECIMAL(10, 2) NOT NULL,
     total_orders INT NOT NULL,
-    top_selling_product_id BIGINT NOT NULL,
-    FOREIGN KEY (top_selling_product_id) REFERENCES products(product_id),
+    top_selling_product_id BIGINT,
+    FOREIGN KEY (top_selling_product_id) REFERENCES products(product_id) ON DELETE SET NULL,
     PRIMARY KEY (day, month, year)
 )
 
