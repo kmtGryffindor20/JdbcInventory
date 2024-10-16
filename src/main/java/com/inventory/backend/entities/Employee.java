@@ -27,7 +27,7 @@ public class Employee {
 
     private String designation;
 
-    private Long managerId;
+    private Employee manager;
 
     private Set<String> emailAddresses;
 
