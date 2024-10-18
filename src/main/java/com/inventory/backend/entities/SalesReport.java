@@ -19,6 +19,6 @@ public class SalesReport {
 
     private Integer totalOrders;
 
-    private Long topSellingProductId;
+    private Product topSellingProduct;
 
 }
