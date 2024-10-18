@@ -22,7 +22,7 @@ public class ShippingInfoCustomerOrder {
 
     private Status status;
 
-    private Long orderId;
+    private CustomerOrder order;
 
     public enum Status {
         SHIPPED,
