@@ -16,14 +16,12 @@ public class ManufacturerOrder{
 
     private Long orderId;
 
-    private Long manufacturerOrderId;
+    private Manufacturer manufacturer;
 
-    private Long processedByEmployeeId;
+    private Employee processedByEmployee;
 
     private Date dateOfOrder;
 
-    private Long processorEmployeeId;
-
-    private Set<CustomerOrder.Pair<Long, Integer>> products;
+    private Set<CustomerOrder.Pair<Product, Integer>> products;
 
 }

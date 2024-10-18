@@ -132,10 +132,10 @@ CREATE TABLE customer_order_shipping_info (
 
 CREATE TABLE manufacturer_orders (
     order_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    manufacturer_order_id BIGINT,
+    ordered_from BIGINT,
     date_of_order DATE NOT NULL,
     processed_by_employee_id BIGINT,
-    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturers(manufacturer_id) ON DELETE SET NULL,
+    FOREIGN KEY (ordered_from) REFERENCES manufacturers(manufacturer_id) ON DELETE SET NULL,
     FOREIGN KEY (processed_by_employee_id) REFERENCES employees(employee_id) ON DELETE SET NULL
 );
 
@@ -144,17 +144,10 @@ CREATE TABLE manufacturer_orders_products (
     manufacturer_order_id BIGINT NOT NULL,
     product_id BIGINT,
     quantity INT NOT NULL,
-    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(manufacturer_order_id) ON DELETE CASCADE,
+    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(order_id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE SET NULL
 );
 
-
-CREATE TABLE manufacturer_orders_suppliers (
-    manufacturer_order_id BIGINT NOT NULL,
-    supplier_manufacturer_id BIGINT,
-    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(manufacturer_order_id) ON DELETE CASCADE,
-    FOREIGN KEY (supplier_manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE SET NULL
-);
 
 
 CREATE TABLE manufacturer_order_shipping_info (
@@ -163,7 +156,7 @@ CREATE TABLE manufacturer_order_shipping_info (
     shipping_date DATE NOT NULL,
     expected_delivery_date DATE NOT NULL,
     status ENUM ('SHIPPED', 'DELIVERED', 'PENDING', 'CANCELLED') NOT NULL,
-    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(manufacturer_order_id) ON DELETE CASCADE
+    FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(order_id) ON DELETE CASCADE
 );
 
 CREATE TABLE sales_report (
