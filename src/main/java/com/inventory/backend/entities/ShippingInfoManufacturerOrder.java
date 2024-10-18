@@ -22,5 +22,5 @@ public class ShippingInfoManufacturerOrder {
 
     private ShippingInfoCustomerOrder.Status status;
 
-    private Long manufacturerOrderId;
+    private ManufacturerOrder manufacturerOrder;
 }

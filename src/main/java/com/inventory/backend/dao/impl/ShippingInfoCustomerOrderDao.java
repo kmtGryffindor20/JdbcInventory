@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import com.inventory.backend.dao.IDao;
 import com.inventory.backend.entities.Customer;
 import com.inventory.backend.entities.CustomerOrder;
-import com.inventory.backend.entities.Employee;
 import com.inventory.backend.entities.ShippingInfoCustomerOrder;
 
 @Repository

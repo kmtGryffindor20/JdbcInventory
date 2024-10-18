@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.inventory.backend.dao.IDao;
+import com.inventory.backend.entities.ManufacturerOrder;
 import com.inventory.backend.entities.ShippingInfoCustomerOrder;
 import com.inventory.backend.entities.ShippingInfoManufacturerOrder;
 
@@ -24,19 +25,18 @@ public class ShippingInfoManufacturerOrderDao implements IDao<ShippingInfoManufa
     @Override
     public void create(ShippingInfoManufacturerOrder a) {
         String sql = "INSERT INTO shipping_info_manufacturer_orders (shipping_date, expected_delivery_date, status, manufacturer_order_id) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, a.getShippingDate(), a.getExpectedDeliveryDate(), a.getStatus().name(), a.getManufacturerOrderId());
+        jdbcTemplate.update(sql, a.getShippingDate(), a.getExpectedDeliveryDate(), a.getStatus().name(), a.getManufacturerOrder().getOrderId());
     }
 
     @Override
     public Optional<ShippingInfoManufacturerOrder> findById(Long id) {
-        String sql = "SELECT * FROM shipping_info_manufacturer_orders WHERE manufacturer_order_id = ?";
-        List<ShippingInfoManufacturerOrder> results = jdbcTemplate.query(sql, new ShippingInfoManufacturerOrderRowMapper(), id);
-        return results.stream().findFirst();
+        String sql = "SELECT simo.*, mo.* FROM shipping_info_manufacturer_orders simo JOIN manufacturer orders mo ON simo.manufacturer_order_id = mo.manufacturer_order_id WHERE simo.manufacturer_order_id = ?";
+        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new ShippingInfoManufacturerOrderRowMapper(), id));
     }
 
     @Override
     public List<ShippingInfoManufacturerOrder> findAll() {
-        String sql = "SELECT * FROM shipping_info_manufacturer_orders";
+        String sql = "SELECT simo.*, mo.* FROM shipping_info_manufacturer_orders simo JOIN manufacturer orders mo ON simo.manufacturer_order_id = mo.manufacturer_order_id";
         return jdbcTemplate.query(sql, new ShippingInfoManufacturerOrderRowMapper());
     }
 
@@ -56,7 +56,10 @@ public class ShippingInfoManufacturerOrderDao implements IDao<ShippingInfoManufa
         @Override
         public ShippingInfoManufacturerOrder mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
             return ShippingInfoManufacturerOrder.builder()
-                    .manufacturerOrderId(rs.getLong("manufacturer_order_id"))
+                    .manufacturerOrder(ManufacturerOrder.builder()
+                            .orderId(rs.getLong("manufacturer_order_id"))
+                            .dateOfOrder(rs.getDate("date_of_order"))
+                            .build())
                     .shippingDate(rs.getDate("shipping_date"))
                     .expectedDeliveryDate(rs.getDate("expected_delivery_date"))
                     .status(ShippingInfoCustomerOrder.Status.valueOf(rs.getString("status")))
