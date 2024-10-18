@@ -1,7 +1,6 @@
 package com.inventory.backend.services.impl;
 
 import com.inventory.backend.dao.IDao;
-import com.inventory.backend.dao.impl.CatNew;
 import com.inventory.backend.entities.Category;
 import com.inventory.backend.services.IModelService;
 

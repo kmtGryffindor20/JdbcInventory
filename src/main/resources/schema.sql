@@ -39,7 +39,7 @@ CREATE TABLE products (
     expiry_date DATE NOT NULL,
     stock_quantity INT NOT NULL,
     cost_price DECIMAL(10, 2) NOT NULL,
-    maximim_retail_price DECIMAL(10, 2) NOT NULL,
+    maximum_retail_price DECIMAL(10, 2) NOT NULL,
     category_id BIGINT,
     FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL
 );

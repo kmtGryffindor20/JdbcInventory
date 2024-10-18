@@ -18,18 +18,18 @@ public class CustomerOrder {
 
     private Long orderId;
 
-    private String customerId;
+    private Customer customer;
 
     private Date dateOfOrder;
 
     private PaymentMethod paymentMethod;
 
-    private Long processorEmployeeId;
+    private Employee processorEmployee;
 
-    private Set<Pair<Long, Integer>> products;
+    private Set<Pair<Product, Integer>> products;
 
 
-    public class Pair<T, U> {
+    public static class Pair<T, U> {
         public final T first;
         public final U second;
 
