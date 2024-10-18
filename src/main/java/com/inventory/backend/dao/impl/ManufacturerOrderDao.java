@@ -12,10 +12,10 @@ import java.util.Optional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.inventory.backend.dao.IDao;
+import com.inventory.backend.entities.Category;
 import com.inventory.backend.entities.CustomerOrder;
 import com.inventory.backend.entities.Employee;
 import com.inventory.backend.entities.Manufacturer;
@@ -113,6 +113,12 @@ public class ManufacturerOrderDao implements IDao<ManufacturerOrder, Long> {
                         .products(new HashSet<>())
                         .build();
                 manufacturerOrderMap.putIfAbsent(manufacturerOrder.getOrderId(), manufacturerOrder);
+
+                Category category = Category.builder()
+                        .categoryId(rs.getLong("category_id"))
+                        .categoryName(rs.getString("category_name"))
+                        .build();
+
                 manufacturerOrderMap.get(manufacturerOrder.getOrderId()).getProducts().add(new CustomerOrder.Pair<>(Product.builder()
                         .productId(rs.getLong("product_id"))
                         .productName(rs.getString("product_name"))
@@ -120,7 +126,7 @@ public class ManufacturerOrderDao implements IDao<ManufacturerOrder, Long> {
                         .stockQuantity(rs.getLong("stock_quantity"))
                         .costPrice(rs.getDouble("cost_price"))
                         .maximumRetailPrice(rs.getDouble("maximum_retail_price"))
-                        .categoryId(rs.getLong("category_id"))
+                        .category(category)
                         .build(), rs.getInt("quantity")));
             }
             return manufacturerOrderMap;

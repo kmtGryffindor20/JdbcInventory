@@ -26,9 +26,9 @@ public class Product {
 
     private Double maximumRetailPrice;
 
-    private Long categoryId;
+    private Category category;
 
-    private Set<Long> manufacturerIds;
+    private Set<Manufacturer> manufacturers;
 
 
 }
