@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderReturns {
 
-    private Long orderId;
+    private CustomerOrder order;
 
     private Date returnDate;
 
