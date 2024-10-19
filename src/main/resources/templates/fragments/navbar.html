@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">    
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:fragment="navbar">
+        <header class="py-4 px-5 mb-3 border-bottom bg-primary">
+            <div class="container-fluid d-flex align-items-center gap-5 justify-content-evenly px-5">
+              
+                <a href="#" class="d-block text-decoration-none text-light">
+                    <h3>
+                        W
+                    </h3>
+                </a>
+        
+              
+                <form class="w-100" role="search">
+                  <input type="search" class="form-control rounded-4" placeholder="Search..." aria-label="Search">
+                </form>
+        
+                <div class="flex-shrink-0 dropdown">
+                  <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="" alt="mdo" width="32" height="32" class="rounded-circle">
+                  </a>
+                  <ul class="dropdown-menu text-small shadow">
+                    <li><a class="dropdown-item" href="#">Orders & Returns</a></li>
+                    <li><a class="dropdown-item" href="#">Sign In</a></li>
+                  </ul>
+                </div>
+              </div>
+          </header>
+    </div>
+</body>
+</html>

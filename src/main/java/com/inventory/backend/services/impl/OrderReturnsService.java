@@ -1,6 +1,7 @@
 package com.inventory.backend.services.impl;
 
 import com.inventory.backend.dao.IDao;
+import com.inventory.backend.entities.CustomerOrder;
 import com.inventory.backend.entities.OrderReturns;
 import com.inventory.backend.services.IModelService;
 
@@ -10,11 +11,11 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OrderReturnsService implements IModelService<OrderReturns, Long> {
+public class OrderReturnsService implements IModelService<OrderReturns, CustomerOrder> {
 
-    private IDao<OrderReturns, Long> orderReturnsDao;
+    private IDao<OrderReturns, CustomerOrder> orderReturnsDao;
 
-    public OrderReturnsService(IDao<OrderReturns, Long> orderReturnsDao) {
+    public OrderReturnsService(IDao<OrderReturns, CustomerOrder> orderReturnsDao) {
         this.orderReturnsDao = orderReturnsDao;
     }
 
@@ -25,7 +26,7 @@ public class OrderReturnsService implements IModelService<OrderReturns, Long> {
     }
 
     @Override
-    public Optional<OrderReturns> findById(Long id) {
+    public Optional<OrderReturns> findById(CustomerOrder id) {
         return orderReturnsDao.findById(id);
     }
 
@@ -35,13 +36,13 @@ public class OrderReturnsService implements IModelService<OrderReturns, Long> {
     }
 
     @Override
-    public Optional<OrderReturns> update(OrderReturns orderReturns, Long id) {
+    public Optional<OrderReturns> update(OrderReturns orderReturns, CustomerOrder id) {
         orderReturnsDao.update(orderReturns, id);
         return Optional.of(orderReturns);
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(CustomerOrder id) {
         orderReturnsDao.delete(id);
     }
     

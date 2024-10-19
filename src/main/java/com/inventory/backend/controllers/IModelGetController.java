@@ -1,14 +1,13 @@
 package com.inventory.backend.controllers;
 
-import java.util.List;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 
 public interface IModelGetController<A, B> {
     
-    public ResponseEntity<A> findById(@PathVariable B id);
+    public String findById(@PathVariable B id, Model model);
 
-    public List<A> findAll();
+    public String findAll(Model model);
     
 }

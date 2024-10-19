@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Shipping</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Thymeleaf syntax to iterate over the products list -->
+            <tr th:each="customer : ${customers}">
+                <td th:text="${customer.emailId}"></td>
+                <td th:text="${customer.firstName} ${customer.lastName}"></td>
+                <td th:text="${customer.phoneNumber}"></td>
+                <td>
+                    <span th:text="${customer.shippingAddress}"></span>,
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

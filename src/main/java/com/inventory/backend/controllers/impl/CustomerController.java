@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.inventory.backend.controllers.IModelCreateController;
 import com.inventory.backend.controllers.IModelDeleteController;
@@ -21,7 +22,7 @@ import com.inventory.backend.entities.Customer;
 import com.inventory.backend.services.IModelService;
 
 
-@RestController
+@Controller
 public class CustomerController implements
                                          IModelCreateController<Customer, String>,
                                             IModelUpdateController<Customer, String>,
@@ -35,31 +36,39 @@ public class CustomerController implements
         this.customerService = customerService;
     }
 
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
 
-    @GetMapping("/customers/{id}")
+
+    @GetMapping("/customer/{id}")
     @Override
-    public ResponseEntity<Customer> findById(@PathVariable String id) {
+    public String findById(@PathVariable String id, Model model) {
         Optional<Customer> customer = customerService.findById(id);
         if (customer.isPresent()) {
-            return ResponseEntity.ok(customer.get());
+            model.addAttribute("customer", customer.get());
+            return "customer";
         }
-        return ResponseEntity.notFound().build();
+        return "notfound";
     }
 
     @GetMapping("/customers")
     @Override
-    public List<Customer> findAll() {
-        return customerService.findAll();
+    public String findAll(Model model) {
+        List<Customer> customers = customerService.findAll();
+        model.addAttribute("customers", customers);
+        return "customers";
     }
 
-    @DeleteMapping("/customers/{id}")
+    @DeleteMapping("/customer/{id}")
     @Override
     public ResponseEntity<Customer> delete(@PathVariable String id) {
         customerService.delete(id);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/customers/{id}")
+    @PutMapping("/customer/{id}")
     @Override
     public ResponseEntity<Customer> update(@RequestBody Customer a, @PathVariable String id) {
         Optional <Customer> customer = customerService.update(a, id);
@@ -69,7 +78,7 @@ public class CustomerController implements
         return ResponseEntity.badRequest().build();
     }
 
-    @PatchMapping("/customers/{id}")
+    @PatchMapping("/customer/{id}")
     @Override
     public ResponseEntity<Customer> partialUpdate(@RequestBody Customer a, @PathVariable String id) {
         Optional <Customer> customer = customerService.update(a, id);
