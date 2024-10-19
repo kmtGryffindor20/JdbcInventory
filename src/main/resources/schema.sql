@@ -1,29 +1,29 @@
-DROP TABLE IF EXISTS manufacturer_order_shipping_info;
-DROP TABLE IF EXISTS manufacturer_orders_suppliers;
-DROP TABLE IF EXISTS manufacturer_orders_products;
-DROP TABLE IF EXISTS manufacturer_orders;
-DROP TABLE IF EXISTS manufacturer_phone_numbers;
-DROP TABLE IF EXISTS manufacturer_email_addresses;
-DROP TABLE IF EXISTS product_manufacturers;
-DROP TABLE IF EXISTS manufacturers;
-DROP TABLE IF EXISTS orders_returned;
-DROP TABLE IF EXISTS customer_orders_products;
-DROP TABLE IF EXISTS sales_report;
-DROP TABLE IF EXISTS products;
-DROP TABLE IF EXISTS categories;
-DROP TABLE IF EXISTS employee_email_addresses;
-DROP TABLE IF EXISTS customer_order_shipping_info;
-DROP TABLE IF EXISTS customer_orders;
-DROP TABLE IF EXISTS customers;
-DROP TABLE IF EXISTS employees;
+-- DROP TABLE IF EXISTS manufacturer_order_shipping_info;
+-- DROP TABLE IF EXISTS manufacturer_orders_suppliers;
+-- DROP TABLE IF EXISTS manufacturer_orders_products;
+-- DROP TABLE IF EXISTS manufacturer_orders;
+-- DROP TABLE IF EXISTS manufacturer_phone_numbers;
+-- DROP TABLE IF EXISTS manufacturer_email_addresses;
+-- DROP TABLE IF EXISTS product_manufacturers;
+-- DROP TABLE IF EXISTS manufacturers;
+-- DROP TABLE IF EXISTS orders_returned;
+-- DROP TABLE IF EXISTS customer_orders_products;
+-- DROP TABLE IF EXISTS sales_report;
+-- DROP TABLE IF EXISTS products;
+-- DROP TABLE IF EXISTS categories;
+-- DROP TABLE IF EXISTS employee_email_addresses;
+-- DROP TABLE IF EXISTS customer_order_shipping_info;
+-- DROP TABLE IF EXISTS customer_orders;
+-- DROP TABLE IF EXISTS customers;
+-- DROP TABLE IF EXISTS employees;
 
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     category_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(255) NOT NULL
 );
 
 
-CREATE TABLE customers (
+CREATE TABLE IF NOT EXISTS customers (
     email VARCHAR(255) NOT NULL UNIQUE PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE customers (
 );
 
 
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     product_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     product_name VARCHAR(255) NOT NULL,
     expiry_date DATE NOT NULL,
@@ -45,28 +45,28 @@ CREATE TABLE products (
 );
 
 
-CREATE TABLE manufacturers (
+CREATE TABLE IF NOT EXISTS manufacturers (
     manufacturer_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     manufacturer_name VARCHAR(255) NOT NULL,
     manufacturer_address VARCHAR(255) NOT NULL
 );
 
 
-CREATE TABLE manufacturer_email_addresses (
+CREATE TABLE IF NOT EXISTS manufacturer_email_addresses (
     manufacturer_id BIGINT NOT NULL,
     email_address VARCHAR(255) NOT NULL,
     FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE CASCADE
 );
 
 
-CREATE TABLE manufacturer_phone_numbers (
+CREATE TABLE IF NOT EXISTS manufacturer_phone_numbers (
     manufacturer_id BIGINT NOT NULL,
     phone_number VARCHAR(255) NOT NULL,
     FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE CASCADE
 );
 
 
-CREATE TABLE product_manufacturers (
+CREATE TABLE IF NOT EXISTS product_manufacturers (
     product_id BIGINT NOT NULL,
     manufacturer_id BIGINT NOT NULL,
     FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
@@ -74,7 +74,7 @@ CREATE TABLE product_manufacturers (
 );
 
 
-CREATE TABLE employees (
+CREATE TABLE IF NOT EXISTS employees (
     employee_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
@@ -85,14 +85,14 @@ CREATE TABLE employees (
     FOREIGN KEY (manager_employee_id) REFERENCES employees(employee_id) ON DELETE SET NULL
 );
 
-CREATE TABLE employee_email_addresses (
+CREATE TABLE IF NOT EXISTS employee_email_addresses (
     employee_id BIGINT NOT NULL,
     email_address VARCHAR(255) NOT NULL,
     FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE
 );
 
 
-CREATE TABLE customer_orders (
+CREATE TABLE IF NOT EXISTS customer_orders (
     order_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     date_of_order DATE NOT NULL,
     customer_email VARCHAR(255),
@@ -103,7 +103,7 @@ CREATE TABLE customer_orders (
 );
 
 
-CREATE TABLE customer_orders_products (
+CREATE TABLE IF NOT EXISTS customer_orders_products (
     order_id BIGINT NOT NULL,
     product_id BIGINT,
     quantity INT NOT NULL,
@@ -112,7 +112,7 @@ CREATE TABLE customer_orders_products (
 );  
 
 
-CREATE TABLE orders_returned (
+CREATE TABLE IF NOT EXISTS orders_returned (
     order_id BIGINT NOT NULL,
     return_date DATE NOT NULL,
     return_reason VARCHAR(255) NOT NULL,
@@ -120,7 +120,7 @@ CREATE TABLE orders_returned (
 );
 
 
-CREATE TABLE customer_order_shipping_info (
+CREATE TABLE IF NOT EXISTS customer_order_shipping_info (
     shipping_info_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     order_id BIGINT NOT NULL,
     shipping_date DATE NOT NULL,
@@ -130,7 +130,7 @@ CREATE TABLE customer_order_shipping_info (
 );
 
 
-CREATE TABLE manufacturer_orders (
+CREATE TABLE IF NOT EXISTS manufacturer_orders (
     order_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     ordered_from BIGINT,
     date_of_order DATE NOT NULL,
@@ -140,7 +140,7 @@ CREATE TABLE manufacturer_orders (
 );
 
 
-CREATE TABLE manufacturer_orders_products (
+CREATE TABLE IF NOT EXISTS manufacturer_orders_products (
     manufacturer_order_id BIGINT NOT NULL,
     product_id BIGINT,
     quantity INT NOT NULL,
@@ -150,7 +150,7 @@ CREATE TABLE manufacturer_orders_products (
 
 
 
-CREATE TABLE manufacturer_order_shipping_info (
+CREATE TABLE IF NOT EXISTS manufacturer_order_shipping_info (
     shipping_info_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     manufacturer_order_id BIGINT NOT NULL,
     shipping_date DATE NOT NULL,
@@ -159,7 +159,7 @@ CREATE TABLE manufacturer_order_shipping_info (
     FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(order_id) ON DELETE CASCADE
 );
 
-CREATE TABLE sales_report (
+CREATE TABLE IF NOT EXISTS sales_report (
     day INT NOT NULL,
     month INT NOT NULL,
     year INT NOT NULL,

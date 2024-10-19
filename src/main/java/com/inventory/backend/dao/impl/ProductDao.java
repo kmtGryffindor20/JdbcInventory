@@ -81,6 +81,27 @@ public class ProductDao implements IDao<Product, Long> {
         return List.copyOf(productMap.values());
     }
 
+    public List<Product> find15MostDiscountedProducts(){
+        String sql = "SELECT p.*, c.category_name FROM products p JOIN categories c ON p.category_id = c.category_id ORDER BY (p.maximum_retail_price - p.cost_price) DESC LIMIT 15";
+        List<Product> productMap = jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Product product = Product.builder()
+                    .productId(rs.getLong("product_id"))
+                    .productName(rs.getString("product_name"))
+                    .expiryDate(rs.getDate("expiry_date"))
+                    .stockQuantity(rs.getLong("stock_quantity"))
+                    .costPrice(rs.getDouble("cost_price"))
+                    .maximumRetailPrice(rs.getDouble("maximum_retail_price"))
+                    .category(Category.builder()
+                            .categoryId(rs.getLong("category_id"))
+                            .categoryName(rs.getString("category_name"))
+                            .build())
+                    .manufacturers(new HashSet<>())
+                    .build();
+            return product;
+        });
+        return productMap;
+    }
+
     @Override
     public void update(Product a, Long id) {
         String sql = "UPDATE products SET product_name = ?, expiry_date = ?, stock_quantity = ?, cost_price = ?, maximum_retail_price = ?, category_id = ? WHERE product_id = ?";

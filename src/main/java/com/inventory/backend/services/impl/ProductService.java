@@ -1,6 +1,7 @@
 package com.inventory.backend.services.impl;
 
 import com.inventory.backend.dao.IDao;
+import com.inventory.backend.dao.impl.ProductDao;
 import com.inventory.backend.entities.Product;
 import com.inventory.backend.services.IModelService;
 
@@ -12,9 +13,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductService implements IModelService<Product, Long> {
 
-    private IDao<Product, Long> productDao;
+    private ProductDao productDao;
 
-    public ProductService(IDao<Product, Long> productDao) {
+    public ProductService(ProductDao productDao) {
         this.productDao = productDao;
     }
 
@@ -43,6 +44,10 @@ public class ProductService implements IModelService<Product, Long> {
     @Override
     public void delete(Long id) {
         productDao.delete(id);
+    }
+
+    public List<Product> findDealsOfTheDay() {
+        return productDao.find15MostDiscountedProducts();
     }
     
 }

@@ -7,7 +7,7 @@
 <body>
     <!-- Create a carousel of 5 cards each of 15 products -->
         
-    <div th:fragment="deals" class="carousel carousel-dark slide carousel-fade m-4" id="dealsCarousel">
+    <div th:fragment="deals" class="carousel carousel-dark slide m-4" id="dealsCarousel">
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <div class="d-flex flex-row gap-2 justify-content-evenly">
@@ -15,9 +15,11 @@
                      <div th:each="i : ${#numbers.sequence(1, 5)}" class="card" style="width: 18rem;">
                         <img src="https://placehold.co/300x200" class="card-img-top" alt="...">
                         <div class="card-body">
-                            <h5 class="card-title">Product <span th:text="${i}"></span></h5>
-
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <h5 class="card-title" th:text="${deals[i-1].productName}"></h5>
+                            <div class="d-flex justify-content-between fs-5 fw-bold">
+                                <p class="card-text text-primary" th:text="${deals[i-1].costPrice}"></p>    
+                                <p class="text-decoration-line-through text-secondary" th:text="${deals[i-1].maximumRetailPrice}"></p>
+                            </div>
                             <a href="#" class="btn btn-primary">View Product</a>
                         </div>
                     </div>
@@ -29,9 +31,12 @@
                     <div th:each="i : ${#numbers.sequence(6, 10)}" class="card" style="width: 18rem;">
                         <img src="https://placehold.co/300x200" class="card-img-top" alt="...">
                         <div class="card-body">
-                            <h5 class="card-title">Product <span th:text="${i}"></span></h5>
+                            <h5 class="card-title" th:text="${deals[i-1].productName}"></h5>
 
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <div class="d-flex justify-content-between fs-5 fw-bold">
+                                <p class="card-text text-primary" th:text="${deals[i-1].costPrice}"></p>    
+                                <p class="text-decoration-line-through text-secondary" th:text="${deals[i-1].maximumRetailPrice}"></p>
+                            </div>
                             <a href="#" class="btn btn-primary">View Product</a>
                         </div>
                     </div>
@@ -43,9 +48,12 @@
                     <div th:each="i : ${#numbers.sequence(11, 15)}" class="card" style="width: 18rem;">
                         <img src="https://placehold.co/300x200" class="card-img-top" alt="...">
                         <div class="card-body">
-                            <h5 class="card-title">Product <span th:text="${i}"></span></h5>
+                            <h5 class="card-title" th:text="${deals[i-1].productName}"></h5>
 
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <div class="d-flex justify-content-between fs-5 fw-bold">
+                                <p class="card-text text-primary" th:text="${deals[i-1].costPrice}"></p>    
+                                <p class="text-decoration-line-through text-secondary" th:text="${deals[i-1].maximumRetailPrice}"></p>
+                            </div>
                             <a href="#" class="btn btn-primary">View Product</a>
                         </div>
                     </div>

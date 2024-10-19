@@ -36,10 +36,10 @@ public class CustomerController implements
         this.customerService = customerService;
     }
 
-    @GetMapping("/")
-    public String index() {
-        return "index";
-    }
+    // @GetMapping("/")
+    // public String index() {
+    //     return "index";
+    // }
 
 
     @GetMapping("/customer/{id}")
