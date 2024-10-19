@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <!-- Create a carousel of 5 cards each of 15 products -->
+        
+    <div th:fragment="deals" class="carousel carousel-dark slide carousel-fade m-4" id="dealsCarousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="d-flex flex-row gap-2 justify-content-evenly">
+                    <!-- Loop for 5 cards -->
+                     <div th:each="i : ${#numbers.sequence(1, 5)}" class="card" style="width: 18rem;">
+                        <img src="https://placehold.co/300x200" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Product <span th:text="${i}"></span></h5>
+
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <a href="#" class="btn btn-primary">View Product</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex flex-row gap-2 justify-content-evenly">
+                    <!-- Loop for 5 cards -->
+                    <div th:each="i : ${#numbers.sequence(6, 10)}" class="card" style="width: 18rem;">
+                        <img src="https://placehold.co/300x200" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Product <span th:text="${i}"></span></h5>
+
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <a href="#" class="btn btn-primary">View Product</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex flex-row gap-2 justify-content-evenly">
+                    <!-- Loop for 5 cards -->
+                    <div th:each="i : ${#numbers.sequence(11, 15)}" class="card" style="width: 18rem;">
+                        <img src="https://placehold.co/300x200" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Product <span th:text="${i}"></span></h5>
+
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <a href="#" class="btn btn-primary">View Product</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div data-bs-theme="dark">
+            <button class="carousel-control-prev" type="button" data-bs-target="#dealsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#dealsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+
+
+
+</body>
+</html>
