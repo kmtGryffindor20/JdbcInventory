@@ -1,21 +1,21 @@
--- DROP TABLE IF EXISTS manufacturer_order_shipping_info;
--- DROP TABLE IF EXISTS manufacturer_orders_suppliers;
--- DROP TABLE IF EXISTS manufacturer_orders_products;
--- DROP TABLE IF EXISTS manufacturer_orders;
--- DROP TABLE IF EXISTS manufacturer_phone_numbers;
--- DROP TABLE IF EXISTS manufacturer_email_addresses;
--- DROP TABLE IF EXISTS product_manufacturers;
--- DROP TABLE IF EXISTS manufacturers;
--- DROP TABLE IF EXISTS orders_returned;
--- DROP TABLE IF EXISTS customer_orders_products;
--- DROP TABLE IF EXISTS sales_report;
--- DROP TABLE IF EXISTS products;
--- DROP TABLE IF EXISTS categories;
--- DROP TABLE IF EXISTS employee_email_addresses;
--- DROP TABLE IF EXISTS customer_order_shipping_info;
--- DROP TABLE IF EXISTS customer_orders;
--- DROP TABLE IF EXISTS customers;
--- DROP TABLE IF EXISTS employees;
+DROP TABLE IF EXISTS manufacturer_order_shipping_info;
+DROP TABLE IF EXISTS manufacturer_orders_suppliers;
+DROP TABLE IF EXISTS manufacturer_orders_products;
+DROP TABLE IF EXISTS manufacturer_orders;
+DROP TABLE IF EXISTS manufacturer_phone_numbers;
+DROP TABLE IF EXISTS manufacturer_email_addresses;
+DROP TABLE IF EXISTS product_manufacturers;
+DROP TABLE IF EXISTS manufacturers;
+DROP TABLE IF EXISTS orders_returned;
+DROP TABLE IF EXISTS customer_orders_products;
+DROP TABLE IF EXISTS sales_report;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS employee_email_addresses;
+DROP TABLE IF EXISTS customer_order_shipping_info;
+DROP TABLE IF EXISTS customer_orders;
+DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS employees;
 
 CREATE TABLE IF NOT EXISTS categories (
     category_id BIGINT PRIMARY KEY AUTO_INCREMENT,

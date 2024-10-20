@@ -81,7 +81,7 @@ public class ProductDao implements IDao<Product, Long> {
         return List.copyOf(productMap.values());
     }
 
-    public List<Product> find15MostDiscountedProducts(){
+    public List<Product> findDealsOfTheDay(){
         String sql = "SELECT p.*, c.category_name FROM products p JOIN categories c ON p.category_id = c.category_id ORDER BY (p.maximum_retail_price - p.cost_price) DESC LIMIT 15";
         List<Product> productMap = jdbcTemplate.query(sql, (rs, rowNum) -> {
             Product product = Product.builder()
@@ -112,6 +112,12 @@ public class ProductDao implements IDao<Product, Long> {
     public void delete(Long id) {
         String sql = "DELETE FROM products WHERE product_id = ?";
         jdbcTemplate.update(sql, id);
+    }
+
+    public List<Product> getByCategory(Long categoryId) {
+        String sql = "SELECT p.*, c.category_name, m.* FROM products p LEFT JOIN categories c ON p.category_id = c.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id LEFT JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE c.category_id = ?";
+        Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper(), categoryId);
+        return List.copyOf(productMap.values());
     }
 
     public static class ProductRowMapper implements ResultSetExtractor<Map<Long, Product>> {

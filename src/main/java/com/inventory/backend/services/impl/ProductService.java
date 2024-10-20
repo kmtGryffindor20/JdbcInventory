@@ -1,6 +1,5 @@
 package com.inventory.backend.services.impl;
 
-import com.inventory.backend.dao.IDao;
 import com.inventory.backend.dao.impl.ProductDao;
 import com.inventory.backend.entities.Product;
 import com.inventory.backend.services.IModelService;
@@ -47,7 +46,11 @@ public class ProductService implements IModelService<Product, Long> {
     }
 
     public List<Product> findDealsOfTheDay() {
-        return productDao.find15MostDiscountedProducts();
+        return productDao.findDealsOfTheDay();
+    }
+
+    public List<Product> getByCategory(Long categoryId) {
+        return productDao.getByCategory(categoryId);
     }
     
 }

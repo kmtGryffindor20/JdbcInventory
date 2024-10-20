@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="light">
     <!-- Include the header fragment -->
-    <head th:replace="~{fragments/header :: header}"></head>
+    <head th:replace="~{fragments/header :: header(title='Home')}"></head>
 
     <body>
         <div th:replace="~{fragments/navbar :: navbar}"></div>
         <div th:replace="~{fragments/categories :: collage}" th:with="categories=${categories}, categoryCatchphrase=${categoryCatchphrase}"></div>
         <div th:replace="~{fragments/headings :: bulletHeading(heading='Deals of the Day')}"></div>
         <div th:replace="~{fragments/deals :: deals}" th:with="deals=${deals}"></div>
+        <div th:replace="~{fragments/navbar :: footer}"></div>
 
         <!-- Bootstrap JS and Popper.js CDN -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

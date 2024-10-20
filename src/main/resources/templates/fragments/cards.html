@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div th:fragment="product_card" class="card" style="width: 18rem;">
+            <img src="https://placehold.co/300x200" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${productName}"></h5>
+    
+                <div class="d-flex justify-content-between fs-5 fw-bold">
+                    <p class="card-text text-primary" th:text="${costPrice}"></p>    
+                    <p class="text-decoration-line-through text-secondary" th:text="${maximumRetailPrice}"></p>
+                </div>
+                <a href="#" class="btn btn-primary">View Product</a>
+            </div>
+    </div>
+
+    <div class="m-5" th:fragment="jumbotron">
+        <div class="p-5 text-center bg-body-tertiary">
+            <div class="container py-5">
+            <h1 class="text-body-emphasis" th:text="${title}"></h1>
+            <p class="col-lg-8 mx-auto lead" th:text="${desc}">
+            </p>
+            </div>
+        </div>
+        </div>
+
+
+</body>
+</html>

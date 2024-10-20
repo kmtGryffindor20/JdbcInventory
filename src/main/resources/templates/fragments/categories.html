@@ -15,7 +15,7 @@
                         <div class="card-img-overlay">
                             <h3 class="card-title" th:text="${categoryCatchphrase[categories[0].categoryName]}"></h3>
                             <h5  th:text="${categories[0].categoryName}"></h5>
-                            <a href="#" class="btn btn-primary">View Products</a>
+                            <a th:href="@{/category/{id}/products(id=${categories[0].categoryId})}" class="text-decoration-underline text-body">Shop Tech</a>
                         </div>
                     </div>
                 </section>
@@ -25,7 +25,7 @@
                         <div class="card-img-overlay">
                             <h3 class="card-title" th:text="${categoryCatchphrase[categories[1].categoryName]}"></h3>
                             <h5  th:text="${categories[1].categoryName}" ></h5>
-                            <a href="#" class="btn btn-primary">View Products</a>
+                            <a th:href="@{/category/{id}/products(id=${categories[1].categoryId})}" class="text-decoration-underline text-body">Get Furnitures</a>
                         </div>
                     </div>
                 </section>
@@ -35,7 +35,7 @@
                         <div class="card-img-overlay">
                             <h3 class="card-title" th:text="${categoryCatchphrase[categories[2].categoryName]}"></h3>
                             <h5  th:text="${categories[2].categoryName}" ></h5>
-                            <a href="#" class="btn btn-primary">View Products</a>
+                            <a th:href="@{/category/{id}/products(id=${categories[2].categoryId})}" class="text-decoration-underline text-body">Shop Fashion</a>
                         </div>
                     </div>
                 </section>
@@ -49,7 +49,7 @@
                         <div class="card-img-overlay">
                             <h3 class="card-title" th:text="${categoryCatchphrase[categories[3].categoryName]}"></h3>
                             <h5  th:text="${categories[3].categoryName}" ></h5>
-                            <a href="#" class="btn btn-primary">View Products</a>
+                            <a th:href="@{/category/{id}/products(id=${categories[3].categoryId})}" class="text-decoration-underline text-body">Get your next read</a>
                         </div>
                     </div>
                 </section>
@@ -59,7 +59,7 @@
                         <div class="card-img-overlay">
                             <h3 class="card-title" th:text="${categoryCatchphrase[categories[4].categoryName]}"></h3>
                             <h5  th:text="${categories[4].categoryName}" ></h5>
-                            <a href="#" class="btn btn-primary">View Products</a>
+                            <a th:href="@{/category/{id}/products(id=${categories[4].categoryId})}" class="text-decoration-underline text-body">Shop Groceries</a>
                         </div>
                     </div>
                    
@@ -68,7 +68,7 @@
                         <div class="card-img-overlay">
                             <h3 class="card-title" th:text="${categoryCatchphrase[categories[5].categoryName]}"></h3>
                             <h5  th:text="${categories[5].categoryName}" ></h5>
-                            <a href="#" class="btn btn-primary">View Products</a>
+                            <a th:href="@{/category/{id}/products(id=${categories[5].categoryId})}" class="text-decoration-underline text-body">Shop Now</a>
                         </div>
                     </div>
                 </section>
@@ -78,7 +78,7 @@
                         <div class="card-img-overlay">
                             <h3 class="card-title" th:text="${categoryCatchphrase[categories[6].categoryName]}"></h3>
                             <h5  th:text="${categories[6].categoryName}" ></h5>
-                            <a href="#" class="btn btn-primary">View Products</a>
+                            <a th:href="@{/category/{id}/products(id=${categories[6].categoryId})}" class="text-decoration-underline text-body">Shop Now</a>
                         </div>
                     </div>
                 </section>
@@ -92,7 +92,7 @@
                         <div class="card-img-overlay">
                             <h3 class="card-title" th:text="${categoryCatchphrase[categories[7].categoryName]}"></h3>
                             <h5  th:text="${categories[7].categoryName}" ></h5>
-                            <a href="#" class="btn btn-primary">View Products</a>
+                            <a th:href="@{/category/{id}/products(id=${categories[7].categoryId})}" class="text-decoration-underline text-body">Shop Now</a>
                         </div>
                     </div>
                 </section>
@@ -102,7 +102,7 @@
                         <div class="card-img-overlay">
                             <h3 class="card-title" th:text="${categoryCatchphrase[categories[8].categoryName]}"></h3>
                             <h5  th:text="${categories[8].categoryName}" ></h5>
-                            <a href="#" class="btn btn-primary">View Products</a>
+                            <a th:href="@{/category/{id}/products(id=${categories[8].categoryId})}" class="text-decoration-underline text-body">Shop Now</a>
                         </div>
                     </div>
                 </section>
@@ -112,7 +112,7 @@
                         <div class="card-img-overlay">
                             <h3 class="card-title" th:text="${categoryCatchphrase[categories[9].categoryName]}"></h3>
                             <h5  th:text="${categories[9].categoryName}" ></h5>
-                            <a href="#" class="btn btn-primary">View Products</a>
+                            <a th:href="@{/category/{id}/products(id=${categories[9].categoryId})}" class="text-decoration-underline text-body">Shop Now</a>
                         </div>
                     </div>
                 </section>
