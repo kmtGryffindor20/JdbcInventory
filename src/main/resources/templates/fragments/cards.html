@@ -15,7 +15,7 @@
                     <p class="card-text text-primary" th:text="${costPrice}"></p>    
                     <p class="text-decoration-line-through text-secondary" th:text="${maximumRetailPrice}"></p>
                 </div>
-                <a href="#" class="btn btn-primary">View Product</a>
+                <a th:href="@{/product/{id}(id=${productId})}" class="btn btn-primary">View Product</a>
             </div>
     </div>
 

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Product Details</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+    <head th:replace="~{fragments/header :: header(title='Product Details')}"></head>
+
 <body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
     <div class="product-container">
         <!-- Display product name -->
         <h1 th:text="${product.productName}">Product Name</h1>
