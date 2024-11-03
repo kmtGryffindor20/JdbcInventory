@@ -78,6 +78,24 @@ public class AdminController {
         categoryService.save(category);
         return "redirect:/admin/categories";
     }
+
+    @GetMapping("admin/categories/update")
+    public String updateCategory(@RequestParam Long id, Model model) {
+        model.addAttribute("category", categoryService.findById(id).get());
+        return "admin/update/categoryUpdateForm.html";
+    }
+
+    @PostMapping("admin/categories/update")
+    public String updateCategory(@ModelAttribute("category") Category category, @RequestParam Long id) {
+        categoryService.update(category, id);
+        return "redirect:/admin/categories";
+    }
+
+    @GetMapping("admin/categories/delete")
+    public String deleteCategory(@RequestParam Long id) {
+        categoryService.delete(id);
+        return "redirect:/admin/categories";
+    }
     
     @GetMapping("admin/sales/weekly")
     public ResponseEntity<Map<Date, Double>> weeklySales(@RequestParam String date) {
