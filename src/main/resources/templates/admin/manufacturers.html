@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<head th:replace="~{fragments/header :: header(title='Admin - Products')}"></head>
+<head th:replace="~{fragments/header :: header(title='Admin - Manufacturers')}"></head>
 <body data-bs-theme="dark">
 
-    <div class="modal fade" id="productDeletionModal" tabindex="-1" aria-labelledby="productDeletionModalLabel" aria-hidden="true">
+    <div class="modal fade" id="manufacturerDeletionModal" tabindex="-1" aria-labelledby="manufacturerDeletionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -11,7 +11,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-            Are you sure you want to delete the product : <strong id="productName" >Product Name</strong>?
+            Are you sure you want to delete the manufacturer : <strong id="manufacturerName" >Manufacturer Name</strong>?
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -29,47 +29,48 @@
     
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <div class="col">
-                            <h1>Products</h1>
+                            <h1>Manufacturers</h1>
                         </div>
                         <div class="col">
-                            <a href="/admin/products/create" class="btn btn-primary">Create Product</a>
+                            <a href="/admin/manufacturers/create" class="btn btn-primary">Create Manufacturer</a>
                         </div>
                     </div>
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Product ID</th>
-                                <th>Product Name</th>
-                                <th>MRP</th>
-                                <th>Cost Price</th>
-                                <th>Category</th>
-                                <th>Stock Quantity</th>
-                                <th>Manufacturers</th>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>Contacts</th>
+                                <th>Emails</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="product : ${products}">
-                                <td th:text="${product.productId}"></td>
-                                <td th:text="${product.productName}"></td>
-                                <td th:text="${product.maximumRetailPrice}"></td>
-                                <td th:text="${product.costPrice}"></td>
-                                <td th:text="${product.category.categoryName}"></td>
-                                <td th:text="${product.stockQuantity}"></td>
-                                <!-- multiple manufacturers -->
+                            <tr th:each="manufacturer : ${manufacturers}">
+                                <td th:text="${manufacturer.manufacturerId}"></td>
+                                <td th:text="${manufacturer.manufacturerName}"></td>
+                                <td th:text="${manufacturer.address}"></td>
                                 <td>
                                     <ul>
-                                        <li th:each="manufacturer : ${product.manufacturers}">
-                                            <span th:text="${manufacturer.manufacturerName}"></span>
+                                        <li th:each="contactNumber : ${manufacturer.contactNumbers}">
+                                            <span th:text="${contactNumber}"></span>
                                         </li>
                                     </ul>
                                 </td>
                                 <td>
-                                    <a th:href="@{'/admin/products/update?id=' + ${product.productId}}" class="btn btn-primary">
+                                    <ul>
+                                        <li th:each="emailId : ${manufacturer.emailIds}">
+                                            <span th:text="${emailId}"></span>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <a th:href="@{'/admin/manufacturers/update?id=' + ${manufacturer.manufacturerId}}" class="btn btn-primary">
                                         <i class="bi bi-pencil"></i>
                                         Edit
                                     </a>
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#productDeletionModal" th:data-bs-id="${product.productId}" th:data-bs-name="${product.productName}">
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#manufacturerDeletionModal" th:data-bs-id="${manufacturer.manufacturerId}" th:data-bs-name="${manufacturer.manufacturerName}">
                                         <i class="bi bi-trash"></i>    
                                         Delete
                                     </button>
@@ -83,18 +84,18 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
                     <script>
-                        const modal = document.getElementById('productDeletionModal');
+                        const modal = document.getElementById('manufacturerDeletionModal');
                         modal.addEventListener('show.bs.modal', function (event) {
                             console.log('Modal opened');
                             
                             var button = event.relatedTarget;
-                            var productName = button.getAttribute('data-bs-name');
-                            var productNameElement = document.getElementById('productName');
-                            productNameElement.innerHTML = productName;
+                            var manufacturerName = button.getAttribute('data-bs-name');
+                            var manufacturerNameElement = document.getElementById('manufacturerName');
+                            manufacturerNameElement.innerHTML = manufacturerName;
 
                             var del = document.getElementById('delete');
-                            var productId = button.getAttribute('data-bs-id');
-                            del.href = '/admin/products/delete?id=' + productId;
+                            var manufacturerId = button.getAttribute('data-bs-id');
+                            del.href = '/admin/manufacturers/delete?id=' + manufacturerId;
                         });
                     </script>
 </body>

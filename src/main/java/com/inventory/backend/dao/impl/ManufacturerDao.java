@@ -83,8 +83,16 @@ public class ManufacturerDao implements IDao<Manufacturer, Long> {
         jdbcTemplate.update(sql, manufacturer.getManufacturerName(), manufacturer.getAddress(), id);
         sql = "DELETE FROM manufacturer_email_addresses WHERE manufacturer_id = ?";
         jdbcTemplate.update(sql, id);
-        sql = "INSERT INTO manufacturer_email_addresses (manufacturer_id, email_address) VALUES (?, ?)";
-        jdbcTemplate.batchUpdate(sql, manufacturer.getEmailIds().stream().map(email -> new Object[]{id, email}).toList());
+        if (manufacturer.getEmailIds() != null) {
+            sql = "INSERT INTO manufacturer_email_addresses (manufacturer_id, email_address) VALUES (?, ?)";
+            jdbcTemplate.batchUpdate(sql, manufacturer.getEmailIds().stream().map(email -> new Object[]{id, email}).toList());
+        }
+        sql = "DELETE FROM manufacturer_phone_numbers WHERE manufacturer_id = ?";
+        jdbcTemplate.update(sql, id);
+        if (manufacturer.getContactNumbers() != null) {
+            sql = "INSERT INTO manufacturer_phone_numbers (manufacturer_id, phone_number) VALUES (?, ?)";
+            jdbcTemplate.batchUpdate(sql, manufacturer.getContactNumbers().stream().map(phone -> new Object[]{id, phone}).toList());
+        }
     }
 
     @Override

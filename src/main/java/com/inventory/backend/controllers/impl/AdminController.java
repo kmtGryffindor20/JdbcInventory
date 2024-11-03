@@ -167,7 +167,44 @@ public class AdminController {
         productService.delete(id);
         return "redirect:/admin/products";
     }
-    
+   
+    @GetMapping("admin/manufacturers")
+    public String showManufacturers(Model model) {
+        model.addAttribute("manufacturers", manufacturerService.findAll());
+        return "admin/manufacturers";
+    }
+
+    @GetMapping("admin/manufacturers/create")
+    public String createManufacturer(Model model) {
+        model.addAttribute("manufacturer", new Manufacturer());
+        return "admin/create/manufacturerCreateForm";
+    }
+
+    @PostMapping("admin/manufacturers/create")
+    public String createManufacturer(@ModelAttribute("manufacturer") Manufacturer manufacturer) {
+        manufacturerService.save(manufacturer);
+        return "redirect:/admin/manufacturers";
+    }
+
+    @GetMapping("admin/manufacturers/update")
+    public String updateManufacturer(@RequestParam Long id, Model model) {
+        model.addAttribute("manufacturer", manufacturerService.findById(id).get());
+        return "admin/update/manufacturerUpdateForm";
+    }
+
+    @PostMapping("admin/manufacturers/update")
+    public String updateManufacturer(@ModelAttribute("manufacturer") Manufacturer manufacturer, @RequestParam Long id) {
+        manufacturerService.update(manufacturer, id);
+        return "redirect:/admin/manufacturers";
+    }
+
+    @GetMapping("admin/manufacturers/delete")
+    public String deleteManufacturer(@RequestParam Long id) {
+        manufacturerService.delete(id);
+        return "redirect:/admin/manufacturers";
+    }
+
+
     @GetMapping("admin/sales/weekly")
     public ResponseEntity<Map<Date, Double>> weeklySales(@RequestParam String date) {
         System.out.println(date);

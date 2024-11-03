@@ -15,7 +15,7 @@
                         </div>
                         <form th:action="@{/admin/products/create}" method="post" th:object="${product}">
                             <div class="mb-3">
-                                <label for="categoryName" class="form-label">Product Name</label>
+                                <label for="productName" class="form-label">Product Name</label>
                                 <input type="text" class="form-control" id="productName" th:field="*{productName}" name="productName" required>
                             </div>
                             <div class="mb-3">
