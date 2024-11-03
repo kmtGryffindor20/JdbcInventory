@@ -21,42 +21,49 @@
         </div>
     </div>   
     <!-- A table of categories with edit and create buttons -->
-    <div class="container justify-content-center align-content-center ">
+    <div class="container-fluid justify-content-center align-content-center ">
         <div class="row">
-            <div class="col">
-                <h1>Categories</h1>
-            </div>
-            <div class="col">
-                <a href="/admin/categories/create" class="btn btn-primary">Create Category</a>
-            </div>
+
+            <div th:replace="~{fragments/header :: sidebar}"></div>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <div class="col">
+                            <h1>Categories</h1>
+                        </div>
+                        <div class="col">
+                            <a href="/admin/categories/create" class="btn btn-primary">Create Category</a>
+                        </div>
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Category ID</th>
+                                <th>Category Name</th>
+                                <th>Category Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="category : ${categories}">
+                                <td th:text="${category.categoryId}"></td>
+                                <td th:text="${category.categoryName}"></td>
+                                <td th:text="${category.categoryDescription}"></td>
+                                <td>
+                                    <a th:href="@{'/admin/categories/update?id=' + ${category.categoryId}}" class="btn btn-primary">
+                                        <i class="bi bi-pencil"></i>
+                                        Edit
+                                    </a>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#categoryDeletionModal" th:data-bs-id="${category.categoryId}" th:data-bs-name="${category.categoryName}">
+                                        <i class="bi bi-trash"></i>    
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table> 
+            </main>
         </div>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Category ID</th>
-                    <th>Category Name</th>
-                    <th>Category Description</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="category : ${categories}">
-                    <td th:text="${category.categoryId}"></td>
-                    <td th:text="${category.categoryName}"></td>
-                    <td th:text="${category.categoryDescription}"></td>
-                    <td>
-                        <a th:href="@{'/admin/categories/update?id=' + ${category.categoryId}}" class="btn btn-primary">
-                            <i class="bi bi-pencil"></i>
-                            Edit
-                        </a>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#categoryDeletionModal" th:data-bs-id="${category.categoryId}" th:data-bs-name="${category.categoryName}">
-                            <i class="bi bi-trash"></i>    
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table> 
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/header :: header(title='Admin - Update Product')}"></head>
+<body data-bs-theme="dark">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div th:replace="~{fragments/header :: sidebar}"></div>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                    <div class="container justify-content-center align-content-center ">
+                        <div class="row">
+                            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                <h1>Update Product</h1>
+                            </div>
+                        </div>
+                        <form th:action="@{/admin/products/update?id={id}(id=${product.productId})}" method="post" th:object="${product}">
+                            <div class="mb-3">
+                                <label for="categoryName" class="form-label">Product Name</label>
+                                <input type="text" class="form-control" id="productName" th:field="*{productName}" name="productName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expiryDate" class="form-label">Expiry Date</label>
+                                <input type="date" class="form-control" id="expiryDate" th:field="*{expiryDate}" name="expiryDate" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="costPrice" class="form-label">Cost Price</label>
+                                <input type="number" class="form-control" id="costPrice" th:field="*{costPrice}" name="costPrice" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="maximumRetailPrice" class="form-label">Maximum Retail Price</label>
+                                <input type="number" class="form-control" id="maximumRetailPrice" th:field="*{maximumRetailPrice}" name="maximumRetailPrice" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="stockQuantity" class="form-label">Stock Quantity</label>
+                                <input type="number" class="form-control" id="stockQuantity" th:field="*{stockQuantity}" name="stockQuantity" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-select" id="categoryId" name="categoryId" required>
+                                    <option th:each="category : ${categories}" th:value="${category.categoryId}" th:text="${category.categoryName}"
+                                            th:selected="${category.categoryId == product.category.categoryId}"
+                                    ></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="manufacturer" class="form-label">Manufacturer</label>
+                                <select class="form-select" id="manufacturerIds" name="manufacturerIds" multiple required>
+                                    <option th:each="manufacturer : ${manufacturers}" th:value="${manufacturer.manufacturerId}" th:text="${manufacturer.manufacturerName}"
+                                            th:selected="${manufacturerIds.contains(manufacturer.manufacturerId)}"
+                                    ></option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Product</button>
+                        </form>
+                    </div>
+            </main>
+
+</body>
+</html>

@@ -1,6 +1,5 @@
 package com.inventory.backend.services.impl;
 
-import com.inventory.backend.dao.IDao;
 import com.inventory.backend.dao.impl.SalesReportDao;
 import com.inventory.backend.embeddable.SalesReportCompositeKey;
 import com.inventory.backend.entities.CustomerOrder;
@@ -12,8 +11,6 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
 
 @Service

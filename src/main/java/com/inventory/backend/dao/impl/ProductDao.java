@@ -69,14 +69,14 @@ public class ProductDao implements IDao<Product, Long> {
 
     @Override
     public Optional<Product> findById(Long id) {
-        String sql = "SELECT p.*, c.category_name, m.* FROM products p JOIN categories c ON p.category_id = c.category_id JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE p.product_id = ?";
+        String sql = "SELECT p.*, c.*, m.* FROM products p JOIN categories c ON p.category_id = c.category_id JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE p.product_id = ?";
         Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper(), id);
         return Optional.ofNullable(productMap.get(id));
     }
 
     @Override
     public List<Product> findAll() {
-        String sql = "SELECT p.*, c.category_name, m.* FROM products p JOIN categories c ON p.category_id = c.category_id JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id";
+        String sql = "SELECT p.*, c.*, m.* FROM products p JOIN categories c ON p.category_id = c.category_id JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id";
         Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper());
         return List.copyOf(productMap.values());
     }
@@ -105,7 +105,11 @@ public class ProductDao implements IDao<Product, Long> {
     @Override
     public void update(Product a, Long id) {
         String sql = "UPDATE products SET product_name = ?, expiry_date = ?, stock_quantity = ?, cost_price = ?, maximum_retail_price = ?, category_id = ? WHERE product_id = ?";
+        String sql2 = "DELETE FROM product_manufacturers WHERE product_id = ?";
+        String sql3 = "INSERT INTO product_manufacturers (product_id, manufacturer_id) VALUES (?, ?)";
         jdbcTemplate.update(sql, a.getProductName(), a.getExpiryDate(), a.getStockQuantity(), a.getCostPrice(), a.getMaximumRetailPrice(), a.getCategory().getCategoryId(), id);
+        jdbcTemplate.update(sql2, id);
+        jdbcTemplate.batchUpdate(sql3, a.getManufacturers().stream().map(manufacturer -> new Object[]{id, manufacturer.getManufacturerId()}).toList());
     }
 
     @Override

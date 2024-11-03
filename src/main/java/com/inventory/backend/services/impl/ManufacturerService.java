@@ -1,6 +1,5 @@
 package com.inventory.backend.services.impl;
 
-import com.inventory.backend.dao.IDao;
 import com.inventory.backend.dao.impl.ManufacturerDao;
 import com.inventory.backend.entities.Manufacturer;
 import com.inventory.backend.services.IModelService;

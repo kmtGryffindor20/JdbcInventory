@@ -24,4 +24,12 @@ public class Manufacturer {
 
     private Set<String> emailIds;
 
+    public void addContactNumber(String contactNumber) {
+        contactNumbers.add(contactNumber);
+    }
+
+    public void addEmailId(String emailAddress) {
+        emailIds.add(emailAddress);
+    }
+
 }

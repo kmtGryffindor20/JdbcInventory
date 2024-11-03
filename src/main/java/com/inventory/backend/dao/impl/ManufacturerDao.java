@@ -1,7 +1,7 @@
 package com.inventory.backend.dao.impl;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
 import com.inventory.backend.dao.IDao;
@@ -10,7 +10,11 @@ import com.inventory.backend.entities.Manufacturer;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -62,14 +66,14 @@ public class ManufacturerDao implements IDao<Manufacturer, Long> {
 
     @Override
     public Optional<Manufacturer> findById(Long id) {
-        String sql = "SELECT * FROM manufacturers WHERE manufacturer_id = ?";
+        String sql = "SELECT m.*, me.email_address, mp.phone_number FROM manufacturers m LEFT JOIN manufacturer_email_addresses me ON m.manufacturer_id = me.manufacturer_id LEFT JOIN manufacturer_phone_numbers mp ON m.manufacturer_id = mp.manufacturer_id WHERE m.manufacturer_id = ?";
         List<Manufacturer> results = jdbcTemplate.query(sql, new ManufacturerRowMapper(), id);
         return results.stream().findFirst();
     }
 
     @Override
     public List<Manufacturer> findAll() {
-        String sql = "SELECT * FROM manufacturers";
+        String sql = "SELECT m.*, me.email_address, mp.phone_number FROM manufacturers m LEFT JOIN manufacturer_email_addresses me ON m.manufacturer_id = me.manufacturer_id LEFT JOIN manufacturer_phone_numbers mp ON m.manufacturer_id = mp.manufacturer_id";
         return jdbcTemplate.query(sql, new ManufacturerRowMapper());
     }
 
@@ -77,6 +81,10 @@ public class ManufacturerDao implements IDao<Manufacturer, Long> {
     public void update(Manufacturer manufacturer, Long id) {
         String sql = "UPDATE manufacturers SET manufacturer_name = ?, manufacturer_address = ? WHERE manufacturer_id = ?";
         jdbcTemplate.update(sql, manufacturer.getManufacturerName(), manufacturer.getAddress(), id);
+        sql = "DELETE FROM manufacturer_email_addresses WHERE manufacturer_id = ?";
+        jdbcTemplate.update(sql, id);
+        sql = "INSERT INTO manufacturer_email_addresses (manufacturer_id, email_address) VALUES (?, ?)";
+        jdbcTemplate.batchUpdate(sql, manufacturer.getEmailIds().stream().map(email -> new Object[]{id, email}).toList());
     }
 
     @Override
@@ -85,15 +93,38 @@ public class ManufacturerDao implements IDao<Manufacturer, Long> {
         jdbcTemplate.update(sql, id);
     }
 
-    public static class ManufacturerRowMapper implements RowMapper<Manufacturer> {
+    public static class ManufacturerRowMapper implements ResultSetExtractor<List<Manufacturer>> {
         @Override
-        public Manufacturer mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
-            return Manufacturer.builder()
-                    .manufacturerId(rs.getLong("manufacturer_id"))
-                    .manufacturerName(rs.getString("manufacturer_name"))
-                    .address(rs.getString("manufacturer_address"))
-                    .build();
-        }
+        public List<Manufacturer> extractData(ResultSet rs) throws SQLException {
+            
+            Map <Long, Manufacturer> manufacturerMap = new HashMap<>();
+            while (rs.next()) {
+                Long manufacturerId = rs.getLong("manufacturer_id");
+                Manufacturer manufacturer = manufacturerMap.get(manufacturerId);
+                if (manufacturer == null) {
+                    manufacturer = Manufacturer.builder()
+                                                .manufacturerId(manufacturerId)
+                                                .manufacturerName(rs.getString("manufacturer_name"))
+                                                .address(rs.getString("manufacturer_address"))
+                                                .emailIds(new HashSet<>())
+                                                .contactNumbers(new HashSet<>())
+                                                .build();
+                    manufacturerMap.put(manufacturerId, manufacturer);
+                }
+                String email = rs.getString("email_address");
+                if (email != null) {
+                    manufacturer.getEmailIds().add(email);
+                }
+                String phone = rs.getString("phone_number");
+                if (phone != null) {
+                    manufacturer.getContactNumbers().add(phone);
+                }
+            }
+            return new ArrayList<>(manufacturerMap.values());
+
+
+                                                
     }
+}
     
 }
