@@ -115,7 +115,7 @@ public class ProductDao implements IDao<Product, Long> {
     }
 
     public List<Product> getByCategory(Long categoryId) {
-        String sql = "SELECT p.*, c.category_name, m.* FROM products p LEFT JOIN categories c ON p.category_id = c.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id LEFT JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE c.category_id = ?";
+        String sql = "SELECT p.*, c.*, m.* FROM products p LEFT JOIN categories c ON p.category_id = c.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id LEFT JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE c.category_id = ?";
         Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper(), categoryId);
         return List.copyOf(productMap.values());
     }
@@ -138,6 +138,7 @@ public class ProductDao implements IDao<Product, Long> {
                             .category(Category.builder()
                                     .categoryId(rs.getLong("category_id"))
                                     .categoryName(rs.getString("category_name"))
+                                    .categoryDescription(rs.getString("category_description"))
                                     .build())
                             .manufacturers(new HashSet<>())
                             .build();

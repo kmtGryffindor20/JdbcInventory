@@ -23,8 +23,8 @@ public class CategoryDaoImpl implements IDao<Category, Long>{
     @Override
     public void create(Category category) {
         System.out.println("sves");
-        String sql = "INSERT INTO categories (category_name) VALUES (?)";
-        jdbcTemplate.update(sql, category.getCategoryName());
+        String sql = "INSERT INTO categories (category_name, category_description) VALUES (?, ?)";
+        jdbcTemplate.update(sql, category.getCategoryName(), category.getCategoryDescription());
     }
 
     @Override
@@ -40,6 +40,7 @@ public class CategoryDaoImpl implements IDao<Category, Long>{
             return Category.builder()
                     .categoryId(rs.getLong("category_id"))
                     .categoryName(rs.getString("category_name"))
+                    .categoryDescription(rs.getString("category_description"))
                     .build();
         }
     }
@@ -52,8 +53,8 @@ public class CategoryDaoImpl implements IDao<Category, Long>{
 
     @Override
     public void update(Category a, Long id) {
-        String sql = "UPDATE categories SET category_name = ? WHERE category_id = ?";
-        jdbcTemplate.update(sql, a.getCategoryName(), id);
+        String sql = "UPDATE categories SET category_name = ?, category_description = ? WHERE category_id = ?";
+        jdbcTemplate.update(sql, a.getCategoryName(), a.getCategoryDescription(), id);
     }
 
     @Override

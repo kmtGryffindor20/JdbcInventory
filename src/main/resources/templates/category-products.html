@@ -4,7 +4,7 @@
 
 <body>
     <div th:replace="~{fragments/navbar :: navbar}"></div>
-    <div th:replace="~{fragments/cards :: jumbotron(title=${title}, desc=${cathphrase})}"></div>
+    <div th:replace="~{fragments/cards :: jumbotron}" th:with="category=${category}"></div>
     <!-- display product cards from fragments/cards :: product_card with each row having 5 cards -->
      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 m-4 gap-4 justify-content-center">
         <div th:each="i : ${#numbers.sequence(0, products.size() - 1)}" th:insert="~{fragments/cards :: product_card}" th:with="productName=${products[i].productName}, costPrice=${products[i].costPrice}, maximumRetailPrice=${products[i].maximumRetailPrice}, productId=${products[i].productId}">

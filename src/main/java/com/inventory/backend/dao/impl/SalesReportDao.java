@@ -53,6 +53,11 @@ public class SalesReportDao implements IDao<SalesReport, SalesReportCompositeKey
         jdbcTemplate.update(sql, id.getDay(), id.getMonth(), id.getYear());
     }
 
+    public List<SalesReport> weeklySales(SalesReportCompositeKey startKey, SalesReportCompositeKey endKey) {
+        String sql = "SELECT sr.*, p.* FROM sales_report sr JOIN products p ON sr.top_selling_product_id = p.product_id WHERE (sr.day >= ? AND sr.month >= ? AND sr.year >= ?) AND (sr.day <= ? AND sr.month <= ? AND sr.year <= ?)";
+        return jdbcTemplate.query(sql, new SalesReportRowMapper(), startKey.getDay(), startKey.getMonth(), startKey.getYear(), endKey.getDay(), endKey.getMonth(), endKey.getYear());
+    }
+
     public static class SalesReportRowMapper implements RowMapper<SalesReport> {
         @Override
         public SalesReport mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {

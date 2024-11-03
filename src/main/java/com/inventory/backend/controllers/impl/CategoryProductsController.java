@@ -1,9 +1,6 @@
 package com.inventory.backend.controllers.impl;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,20 +18,6 @@ public class CategoryProductsController {
         this.productService = productService;
     }
 
-    Map<String, String> categoryCatchphrase = new HashMap<String, String>() {{
-        put("Electronics", "Innovating the Future, One Device at a Time.");
-        put("Clothing", "Dress Your Best for Every Occasion.");
-        put("Groceries", "Freshness Delivered, Daily.");
-        put("Furniture", "Comfort and Style, Delivered.");
-        put("Books", "For the Love of Learning and Leisure.");
-        put("Toys", "Playtime, All the Time.");
-        put("Sports Equipment", "For the Athlete in You.");
-        put("Beauty Products", "Where Self-Care Meets Elegance.");
-        put("Office Supplies", "Supplies for the Modern Workspace.");
-        put("Automotive", "For the Road Ahead.");
-        
-    }};
-
     @GetMapping("/category/{categoryId}/products")
     public String getProductsByCategory(@PathVariable Long categoryId, Model model) {
 
@@ -45,9 +28,7 @@ public class CategoryProductsController {
         }
 
         model.addAttribute("products", products);
-        model.addAttribute("title", products.get(0).getCategory().getCategoryName());
-
-        model.addAttribute("cathphrase", categoryCatchphrase.get(products.get(0).getCategory().getCategoryName()));
+        model.addAttribute("category", products.get(0).getCategory());
 
         return "category-products";
     }

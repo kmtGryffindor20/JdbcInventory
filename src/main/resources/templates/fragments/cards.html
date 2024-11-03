@@ -22,9 +22,8 @@
     <div class="m-5" th:fragment="jumbotron">
         <div class="p-5 text-center bg-body-tertiary">
             <div class="container py-5">
-            <h1 class="text-body-emphasis" th:text="${title}"></h1>
-            <p class="col-lg-8 mx-auto lead" th:text="${desc}">
-            </p>
+            <h1 class="text-body-emphasis" th:text="${category.categoryName}"></h1>
+            <p class="col-lg-8 mx-auto lead" th:text="${category.categoryDescription}"></p>
             </div>
         </div>
         </div>

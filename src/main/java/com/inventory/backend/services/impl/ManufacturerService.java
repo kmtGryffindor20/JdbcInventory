@@ -1,6 +1,7 @@
 package com.inventory.backend.services.impl;
 
 import com.inventory.backend.dao.IDao;
+import com.inventory.backend.dao.impl.ManufacturerDao;
 import com.inventory.backend.entities.Manufacturer;
 import com.inventory.backend.services.IModelService;
 
@@ -12,9 +13,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ManufacturerService implements IModelService<Manufacturer, Long> {
 
-    private IDao<Manufacturer, Long> manufacturerDao;
+    private ManufacturerDao manufacturerDao;
 
-    public ManufacturerService(IDao<Manufacturer, Long> manufacturerDao) {
+    public ManufacturerService(ManufacturerDao manufacturerDao) {
         this.manufacturerDao = manufacturerDao;
     }
 

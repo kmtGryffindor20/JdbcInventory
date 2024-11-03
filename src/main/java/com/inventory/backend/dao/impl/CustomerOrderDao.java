@@ -98,6 +98,21 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
         jdbcTemplate.update(sql, id);
     }
 
+    // total sales grouped by category
+    public Map<String, Double> totalSalesByCategory() {
+        String sql = "SELECT c.category_name, SUM(p.maximum_retail_price * cop.quantity) as total_sales FROM customer_orders co JOIN customer_orders_products cop ON co.order_id = cop.order_id JOIN products p ON cop.product_id = p.product_id JOIN categories c ON p.category_id = c.category_id GROUP BY c.category_name LIMIT 5";
+        return jdbcTemplate.query(sql, new ResultSetExtractor<Map<String, Double>>() {
+            @Override
+            public Map<String, Double> extractData(ResultSet rs) throws SQLException {
+                Map<String, Double> totalSalesByCategory = new HashMap<>();
+                while (rs.next()) {
+                    totalSalesByCategory.put(rs.getString("category_name"), rs.getDouble("total_sales"));
+                }
+                return totalSalesByCategory;
+            }
+        });
+    }
+
     public static class CustomerOrderRowMapper implements ResultSetExtractor<Map<Long, CustomerOrder>>
     {
         @Override

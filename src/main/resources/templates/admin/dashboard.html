@@ -55,6 +55,12 @@
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" th:href="@{/admin/categories}">
+                <i class="bi bi-grid"></i>
+                Categories
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link d-flex align-items-center gap-2" href="#">
                 <i class="bi bi-people"></i>
                 Customers
@@ -80,7 +86,7 @@
             <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
             <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
           </div>
-          <input type="week" class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">
+          <input id="week" type="week" class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">
         </input>
         </div>
       </div>
@@ -103,7 +109,7 @@
   </div>
 </div>
 
-      <script>
+      <script th:inline="javascript">
         const ctx = document.getElementById('myChart')
   // eslint-disable-next-line no-unused-vars
   const myChart = new Chart(ctx, {
@@ -150,14 +156,17 @@
     
   })
        
-       const categorySalesChart = document.getElementById('categorySalesChart')
+       const categorySalesChart = document.getElementById('categorySalesChart');
   // eslint-disable-next-line no-unused-vars
+
+      const totalSalesByCategory = /*[[${totalSalesByCategory}]]*/ {};
+
   const myCategorySalesChart = new Chart(categorySalesChart, {
     type: 'pie',
     data: {
-      labels: ['Electronics', 'Clothing', 'Footwear', 'Grocery'],
+      labels: Object.keys(totalSalesByCategory),
       datasets: [{
-        data: [3000, 2000, 1000, 500],
+        data: Object.values(totalSalesByCategory),
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
           'rgba(54, 162, 235, 0.2)',
@@ -179,6 +188,29 @@
         text: 'Category wise sales'
       }
     }
+  })
+
+  function getMondayFromWeekNum(weekNum, year) {
+    var monday = new Date(year, 0, (1 + (weekNum - 1) * 7));
+    while (monday.getDay() !== 1) {
+        monday.setDate(monday.getDate() - 1);
+    }
+    return monday;
+}
+
+        const week = document.getElementById('week')
+  week.addEventListener('change', (event) => {
+    const monday = getMondayFromWeekNum(week.value.split('-W')[1], week.value.split('-W')[0]);
+    const API = `http://localhost:8080/admin/sales/weekly?date=${monday.toISOString().split('T')[0]}`;
+    fetch(API)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        
+        myChart.data.labels = data.map((d) => d.day);
+        myChart.data.datasets[0].data = data.map((d) => d.total);
+        myChart.update();
+      });
   })
 
        </script>

@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS authorities (
 
 CREATE TABLE IF NOT EXISTS categories (
     category_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    category_description VARCHAR(255) NOT NULL,
     category_name VARCHAR(255) NOT NULL
 );
 
