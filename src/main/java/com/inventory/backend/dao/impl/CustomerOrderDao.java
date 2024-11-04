@@ -16,6 +16,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,7 +36,6 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
     @Override
     public void create(CustomerOrder customerOrder) {
         String sql = "INSERT INTO customer_orders (date_of_order, customer_email, processed_by_employee_id, payment_method) VALUES (?, ?, ?, ?)";
-        int insertId = -1;
         try{
             PreparedStatement preparedStatement = jdbcTemplate.getDataSource().getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setDate(1, customerOrder.getDateOfOrder());
@@ -54,12 +55,10 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
 
                 if (generatedKeys.next() && customerOrder.getProducts() != null)
                 {
-                    insertId = generatedKeys.getInt(1);
-    
-                    String sql2 = "INSERT INTO customer_order_products (order_id, product_id, quantity) VALUES (?, ?, ?)";
-                    for (CustomerOrder.Pair<Product, Integer> product : customerOrder.getProducts()) {
-                        jdbcTemplate.update(sql2, insertId, product.first.getProductId(), product.second);
-                    }
+                    int insertId = generatedKeys.getInt(1);
+                    
+                    String sql2 = "INSERT INTO customer_orders_products (order_id, product_id, quantity) VALUES (?, ?, ?)";
+                    jdbcTemplate.batchUpdate(sql2, customerOrder.getProducts().stream().map(pair -> new Object[]{insertId, pair.first.getProductId(), pair.second}).toList());
                 }
 
 
@@ -74,22 +73,27 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
     @Override
     public Optional<CustomerOrder> findById(Long id) {
         String sql = "SELECT co.*, c.*, e.first_name as e_first_name, e.last_name as e_last_name, p.product_id, p.product_name, p.maximum_retail_price, cop.quantity FROM customer_orders co LEFT JOIN customers c ON co.customer_email = c.email LEFT JOIN employees e ON co.processed_by_employee_id = e.employee_id LEFT JOIN customer_orders_products cop ON co.order_id = cop.order_id LEFT JOIN products p ON cop.product_id = p.product_id WHERE co.order_id = ?";
-        Map <Long, CustomerOrder> customerOrderMap = jdbcTemplate.query(sql, new CustomerOrderRowMapper());
+        TreeMap <Long, CustomerOrder> customerOrderMap = jdbcTemplate.query(sql, new CustomerOrderRowMapper(), id);
         return Optional.ofNullable(customerOrderMap.get(id));
     }
 
     @Override
     public List<CustomerOrder> findAll() {
-        String sql = "SELECT co.*, c.*, e.first_name as e_first_name, e.last_name as e_last_name, p.product_id, p.product_name, p.maximum_retail_price, cop.quantity FROM customer_orders co LEFT JOIN customers c ON co.customer_email = c.email LEFT JOIN employees e ON co.processed_by_employee_id = e.employee_id LEFT JOIN customer_orders_products cop ON co.order_id = cop.order_id LEFT JOIN products p ON cop.product_id = p.product_id;";
-        Map <Long, CustomerOrder> customerOrderMap = jdbcTemplate.query(sql, new CustomerOrderRowMapper());
-
-        return List.copyOf(customerOrderMap.values());
+        String sql = "SELECT co.*, c.*, e.first_name as e_first_name, e.last_name as e_last_name, p.product_id, p.product_name, p.maximum_retail_price, cop.quantity FROM customer_orders co LEFT JOIN customers c ON co.customer_email = c.email LEFT JOIN employees e ON co.processed_by_employee_id = e.employee_id LEFT JOIN customer_orders_products cop ON co.order_id = cop.order_id LEFT JOIN products p ON cop.product_id = p.product_id ORDER BY co.order_id";
+        TreeMap <Long, CustomerOrder> customerOrderMap = jdbcTemplate.query(sql, new CustomerOrderRowMapper());
+        return new ArrayList<>(customerOrderMap.values());
     }
 
     @Override
     public void update(CustomerOrder customerOrder, Long id) {
         String sql = "UPDATE customer_orders SET date_of_order = ?, customer_email = ?, processed_by_employee_id = ?, payment_method = ? WHERE order_id = ?";
-        jdbcTemplate.update(sql, customerOrder.getDateOfOrder(), customerOrder.getCustomer().getEmailId(), customerOrder.getProcessorEmployee().getEmployeeId(), customerOrder.getPaymentMethod(), id);
+        jdbcTemplate.update(sql, customerOrder.getDateOfOrder(), customerOrder.getCustomer().getEmailId(), customerOrder.getProcessorEmployee().getEmployeeId(), customerOrder.getPaymentMethod().name(), id);
+        sql = "DELETE FROM customer_orders_products WHERE order_id = ?";
+        jdbcTemplate.update(sql, id);
+        if (customerOrder.getProducts() != null) {
+            sql = "INSERT INTO customer_orders_products (order_id, product_id, quantity) VALUES (?, ?, ?)";
+            jdbcTemplate.batchUpdate(sql, customerOrder.getProducts().stream().map(pair -> new Object[]{id, pair.first.getProductId(), pair.second}).toList());
+        }
     }
 
     @Override
@@ -113,12 +117,12 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
         });
     }
 
-    public static class CustomerOrderRowMapper implements ResultSetExtractor<Map<Long, CustomerOrder>>
+    public static class CustomerOrderRowMapper implements ResultSetExtractor<TreeMap<Long, CustomerOrder>>
     {
         @Override
-        public Map<Long, CustomerOrder> extractData(ResultSet rs) throws SQLException
+        public TreeMap<Long, CustomerOrder> extractData(ResultSet rs) throws SQLException
         {
-            Map<Long, CustomerOrder> customerOrderMap = new HashMap<>();
+            TreeMap<Long, CustomerOrder> customerOrderMap = new TreeMap<>();
 
             rs.next();
 

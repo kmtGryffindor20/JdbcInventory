@@ -10,15 +10,18 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.inventory.backend.entities.Category;
 import com.inventory.backend.entities.Customer;
+import com.inventory.backend.entities.CustomerOrder;
 import com.inventory.backend.entities.Employee;
 import com.inventory.backend.entities.Manufacturer;
 import com.inventory.backend.entities.Product;
@@ -26,6 +29,7 @@ import com.inventory.backend.services.impl.CategoryServiceImpl;
 import com.inventory.backend.services.impl.CustomerOrderService;
 import com.inventory.backend.services.impl.CustomerService;
 import com.inventory.backend.services.impl.EmployeeService;
+import com.inventory.backend.services.impl.ManufacturerOrderService;
 import com.inventory.backend.services.impl.ManufacturerService;
 import com.inventory.backend.services.impl.ProductService;
 import com.inventory.backend.services.impl.SalesReportService;
@@ -47,13 +51,16 @@ public class AdminController {
 
     private CustomerService customerService;
 
+    private ManufacturerOrderService manufacturerOrderService;
+
     public AdminController(ManufacturerService manufacturerService,
                                  ProductService productService,
                                   EmployeeService employeeService,
                                    CategoryServiceImpl categoryService,
                                     CustomerOrderService customerOrderService,
                                      SalesReportService salesReportService,
-                                      CustomerService customerService) {
+                                      CustomerService customerService,
+                                       ManufacturerOrderService manufacturerOrderService) {
         this.manufacturerService = manufacturerService;
         this.productService = productService;
         this.employeeService = employeeService;
@@ -61,6 +68,7 @@ public class AdminController {
         this.customerOrderService = customerOrderService;
         this.salesReportService = salesReportService;
         this.customerService = customerService;
+        this.manufacturerOrderService = manufacturerOrderService;
     }
 
     @GetMapping("/admin/categories")
@@ -299,15 +307,81 @@ public class AdminController {
         return "redirect:/admin/customers";
     }
     
+    @GetMapping("admin/orders")
+    public String showOrders(Model model) {
+        List<CustomerOrder> customerOrders = customerOrderService.findAll();
+        model.addAttribute("customerOrders", customerOrders);
+        // model.addAttribute("manufacturerOrders", manufacturerOrderService.findAll());
+        return "admin/orders";
+    }
 
+    @GetMapping("admin/orders/customer/create")
+    public String createCustomerOrder(Model model) {
+        model.addAttribute("customerOrder", new CustomerOrder());
+        model.addAttribute("products", productService.findAll());
+        model.addAttribute("customers", customerService.findAll());
+        model.addAttribute("employees", employeeService.findAll());
+        return "admin/create/customerOrderCreateForm";
+    }
+
+    @PostMapping("admin/orders/customer/create")
+    public String createCustomerOrder(@ModelAttribute("customerOrder") CustomerOrder customerOrder,
+                                      @RequestParam("productIds") List<Long> productIds,
+                                      @RequestParam("quantities") List<Integer> quantities,
+                                      @RequestParam("customerId") String customerId,
+                                      @RequestParam("employeeId") Long employeeId) {
+        customerOrder.setCustomer(customerService.findById(customerId).get());
+        customerOrder.setProcessorEmployee(employeeService.findById(employeeId).get());
+        for (int i = 0; i < productIds.size(); i++) {
+            Product product = productService.findById(productIds.get(i)).get();
+            customerOrder.getProducts().add(new CustomerOrder.Pair<>(product, quantities.get(i)));
+        }
+        System.out.println(customerOrder);
+        customerOrderService.save(customerOrder);
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("admin/orders/customer/update")
+    public String updateCustomerOrder(@RequestParam Long id, Model model) {
+        CustomerOrder customerOrder = customerOrderService.findById(id).get();
+        model.addAttribute("customerOrder", customerOrder);
+        model.addAttribute("products", productService.findAll());
+        model.addAttribute("customers", customerService.findAll());
+        model.addAttribute("employees", employeeService.findAll());
+        return "admin/update/customerOrderUpdateForm";
+    }
+
+    @PostMapping("admin/orders/customer/update")
+    public String updateCustomerOrder(@ModelAttribute("customerOrder") CustomerOrder customerOrder,
+                                      @RequestParam("productIds") List<Long> productIds,
+                                      @RequestParam("quantities") List<Integer> quantities,
+                                      @RequestParam("customerId") String customerId,
+                                      @RequestParam("employeeId") Long employeeId,
+                                      @RequestParam Long id) {
+        customerOrder.setCustomer(customerService.findById(customerId).get());
+        customerOrder.setProcessorEmployee(employeeService.findById(employeeId).get());
+        customerOrder.getProducts().clear();
+        for (int i = 0; i < productIds.size(); i++) {
+            Product product = productService.findById(productIds.get(i)).get();
+            customerOrder.getProducts().add(new CustomerOrder.Pair<>(product, quantities.get(i)));
+        }
+        customerOrderService.update(customerOrder, id);
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("admin/orders/customer/delete")
+    public String deleteCustomerOrder(@RequestParam Long id) {
+        customerOrderService.delete(id);
+        return "redirect:/admin/orders";
+    }
 
 
     @GetMapping("admin/sales/weekly")
     public ResponseEntity<Map<Date, Double>> weeklySales(@RequestParam String date) {
-        System.out.println(date);
         Date startDate = Date.valueOf(date);
         Date endDate = Date.valueOf(startDate.toLocalDate().plusDays(7));
-        return ResponseEntity.ok(salesReportService.weeklySales(startDate, endDate));
+        Map<Date, Double> weeklySales = salesReportService.weeklySales(startDate, endDate);
+        return ResponseEntity.ok(weeklySales);
     }
 
 

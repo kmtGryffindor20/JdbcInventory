@@ -19,7 +19,7 @@
             <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
             <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
           </div>
-          <input id="week" type="week" class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">
+          <input id="week" type="week" class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1" value="2024-W44">
         </input>
         </div>
       </div>
@@ -127,7 +127,7 @@
     var monday = new Date(year, 0, (1 + (weekNum - 1) * 7));
     while (monday.getDay() !== 1) {
         monday.setDate(monday.getDate() - 1);
-    }
+    }    
     return monday;
 }
 
@@ -139,9 +139,15 @@
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        
-        myChart.data.labels = data.map((d) => d.day);
-        myChart.data.datasets[0].data = data.map((d) => d.total);
+        var labels = [];
+        var dataPoints = [];
+        for (var key in data) {
+          var date = new Date(key);
+          labels.push(date.toLocaleDateString());
+          dataPoints.push(data[key]);
+        }
+        myChart.data.labels = labels;
+        myChart.data.datasets[0].data = dataPoints;
         myChart.update();
       });
   })

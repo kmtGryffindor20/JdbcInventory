@@ -11,6 +11,8 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,9 +61,40 @@ public class SalesReportService implements IModelService<SalesReport, SalesRepor
             SalesReport newSalesReport = SalesReport.builder()
                                                     .salesReportCompositeKey(key)
                                                     .totalOrders(1)
+                                                    .totalSales(0.0)
+                                                    .topSellingProduct(null)
                                                     .build();
             for (CustomerOrder.Pair<Product, Integer> iterable_element : customerOrder.getProducts()) {
-                newSalesReport.setTotalSales(newSalesReport.getTotalSales() + iterable_element.first.getCostPrice() * iterable_element.second);
+                newSalesReport.setTotalSales(newSalesReport.getTotalSales() + iterable_element.first.getMaximumRetailPrice() * iterable_element.second);
+            }
+            salesReportDao.create(newSalesReport);
+        }
+        return salesReport;
+    }
+
+
+    public Optional<SalesReport> updateSalesReport(Date orderDate, CustomerOrder newCustomerOrder, CustomerOrder oldCustomerOrder)
+    {
+        SalesReportCompositeKey key = convertToKey(orderDate);
+        Optional<SalesReport> salesReport = salesReportDao.findById(key);
+        if (salesReport.isPresent()) {
+            SalesReport sr = salesReport.get();
+            for (CustomerOrder.Pair<Product, Integer> iterable_element : oldCustomerOrder.getProducts()) {
+                sr.setTotalSales(sr.getTotalSales() - iterable_element.first.getCostPrice() * iterable_element.second);
+            }
+            for (CustomerOrder.Pair<Product, Integer> iterable_element : newCustomerOrder.getProducts()) {
+                sr.setTotalSales(sr.getTotalSales() + iterable_element.first.getCostPrice() * iterable_element.second);
+            }
+            salesReportDao.update(sr, key);
+        } else {
+            SalesReport newSalesReport = SalesReport.builder()
+                                                    .salesReportCompositeKey(key)
+                                                    .totalOrders(1)
+                                                    .totalSales(0.0)
+                                                    .topSellingProduct(null)
+                                                    .build();
+            for (CustomerOrder.Pair<Product, Integer> iterable_element : newCustomerOrder.getProducts()) {
+                newSalesReport.setTotalSales(newSalesReport.getTotalSales() + iterable_element.first.getMaximumRetailPrice() * iterable_element.second);
             }
             salesReportDao.create(newSalesReport);
         }
@@ -73,27 +106,27 @@ public class SalesReportService implements IModelService<SalesReport, SalesRepor
         salesReportDao.delete(id);
     }   
 
-    public Map<Date, Double> weeklySales(Date startDate, Date endDate) {
+    public TreeMap<Date, Double> weeklySales(Date startDate, Date endDate) {
         new SalesReportCompositeKey();
-        SalesReportCompositeKey startDateKey =  SalesReportCompositeKey.builder()
-                                                                            .day(startDate.toLocalDate().getDayOfMonth())
-                                                                            .month(startDate.toLocalDate().getMonthValue())
-                                                                            .year(startDate.toLocalDate().getYear())
-                                                                            .build();
 
-        SalesReportCompositeKey endDateKey =  SalesReportCompositeKey.builder()
-                                                                            .day(endDate.toLocalDate().getDayOfMonth())
-                                                                            .month(endDate.toLocalDate().getMonthValue())
-                                                                            .year(endDate.toLocalDate().getYear())
-                                                                            .build();
 
-        List<SalesReport> sr = salesReportDao.weeklySales(startDateKey, endDateKey);
+        List<SalesReport> sr = salesReportDao.weeklySales(startDate, endDate);
+        
         Map <Date, Double> weeklySales = new java.util.HashMap<>();
         for (SalesReport salesReport : sr) {
-            weeklySales.put(convertToDate(salesReport.getSalesReportCompositeKey()), salesReport.getTotalSales());
+            Date date = convertToDate(salesReport.getSalesReportCompositeKey());
+            weeklySales.put(date, salesReport.getTotalSales());
+        }
+        // fill in missing dates with null
+        Date currentDate = startDate;
+        while (currentDate.before(endDate)) {
+            if (!weeklySales.containsKey(currentDate)) {
+                weeklySales.put(currentDate, 0.0);
+            }
+            currentDate = Date.valueOf(currentDate.toLocalDate().plusDays(1));
         }
 
-        return weeklySales;
+        return new TreeMap<>(weeklySales);
     }
 
     private Date convertToDate(SalesReportCompositeKey key) {

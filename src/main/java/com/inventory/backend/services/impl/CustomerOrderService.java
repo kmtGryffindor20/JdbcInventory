@@ -43,7 +43,9 @@ public class CustomerOrderService implements IModelService<CustomerOrder, Long> 
 
     @Override
     public Optional<CustomerOrder> update(CustomerOrder customerOrder, Long id) {
+        CustomerOrder oldCustomerOrder = customerOrderDao.findById(id).get();
         customerOrderDao.update(customerOrder, id);
+        salesReportService.updateSalesReport(customerOrder.getDateOfOrder(), customerOrder, oldCustomerOrder);
         return Optional.of(customerOrder);
     }
 

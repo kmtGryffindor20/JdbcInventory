@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -26,7 +27,7 @@ public class CustomerOrder {
 
     private Employee processorEmployee;
 
-    private Set<Pair<Product, Integer>> products;
+    private Set<Pair<Product, Integer>> products = new HashSet<>();
 
 
     public static class Pair<T, U> {
