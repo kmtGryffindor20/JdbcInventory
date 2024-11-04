@@ -69,14 +69,14 @@ public class ProductDao implements IDao<Product, Long> {
 
     @Override
     public Optional<Product> findById(Long id) {
-        String sql = "SELECT p.*, c.category_name, m.* FROM products p JOIN categories c ON p.category_id = c.category JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE p.product_id = ?";
+        String sql = "SELECT p.*, c.category_name, m.* FROM products p JOIN categories c ON p.category_id = c.category_id JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE p.product_id = ?";
         Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper(), id);
         return Optional.ofNullable(productMap.get(id));
     }
 
     @Override
     public List<Product> findAll() {
-        String sql = "SELECT p.*, c.category_name, m.* FROM products p JOIN categories c ON p.category_id = c.category JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id";
+        String sql = "SELECT p.*, c.category_name, m.* FROM products p JOIN categories c ON p.category_id = c.category_id JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id";
         Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper());
         return List.copyOf(productMap.values());
     }

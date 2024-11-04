@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Product Details</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="product-container">
+        <!-- Display product name -->
+        <h1 th:text="${product.productName}">Product Name</h1>
+
+        <!-- Display category -->
+        <p><strong>Category:</strong> <span th:text="${product.category.categoryName}">Category</span></p>
+
+        <!-- Display maximum retail price -->
+        <p><strong>Maximum Retail Price:</strong> $<span th:text="${product.maximumRetailPrice}">0.00</span></p>
+
+        <!-- Quantity selection -->
+        <div class="quantity-selection">
+            <label for="quantity">Quantity:</label>
+            <button type="button" onclick="decreaseQuantity()">-</button>
+            <input type="number" id="quantity" name="quantity" value="1" min="1" />
+            <button type="button" onclick="increaseQuantity()">+</button>
+        </div>
+
+        <!-- Add to Cart button -->
+        <form id="addToCartForm" th:action="@{/cart/add}" method="post" onsubmit="return false;">
+            <input type="hidden" th:value="${product.productId}" name="productId" />
+            <input type="hidden" th:value="${product.productName}" name="productName" />
+            <input type="hidden" th:value="${product.maximumRetailPrice}" name="productPrice" />
+            <input type="hidden" id="productQuantity" name="productQuantity" value="1" />
+            <button type="submit" class="add-to-cart-btn" onclick="return false;">Add to Cart</button>
+        </form>
+    </div>
+
+    <script>
+        function increaseQuantity() {
+            let quantityInput = document.getElementById('quantity');
+            let quantity = parseInt(quantityInput.value);
+            quantityInput.value = quantity + 1; // Increment quantity
+            document.getElementById('productQuantity').value = quantityInput.value;
+        }
+
+        function decreaseQuantity() {
+            let quantityInput = document.getElementById('quantity');
+            let quantity = parseInt(quantityInput.value);
+            if (quantity > 1) {
+                quantityInput.value = quantity - 1;
+            }
+            document.getElementById('productQuantity').value = quantityInput.value;
+        }
+    </script>
+</body>
+</html>

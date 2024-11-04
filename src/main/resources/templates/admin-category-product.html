@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Products in Category</title>
+</head>
+<body>
+    <h2>Products in Category: [[${category.categoryName}]]</h2>
+
+    <form th:action="@{/categories/{categoryId}/products/add(categoryId=${category.categoryId})}" method="post">
+        <label>Product Name: <input type="text" name="productName" /></label>
+        <label>Cost Price: <input type="number" name="costPrice" step="0.01" /></label>
+        <label>MRP: <input type="number" name="maximumRetailPrice" step="0.01" /></label>
+        <button type="submit">Add Product</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Cost Price</th>
+                <th>MRP</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.productId}"></td>
+                <td th:text="${product.productName}"></td>
+                <td th:text="${product.costPrice}"></td>
+                <td th:text="${product.maximumRetailPrice}"></td>
+                <td>
+                    <a th:href="@{/categories/{categoryId}/products/{productId}(categoryId=${category.categoryId}, productId=${product.productId})}">View</a>
+                    <a th:href="@{/categories/{categoryId}/products/delete/{productId}(categoryId=${category.categoryId}, productId=${product.productId})}"
+                       onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
