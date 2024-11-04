@@ -92,7 +92,19 @@ public class EmployeeDao implements IDao<Employee, Long> {
     @Override
     public void update(Employee employee, Long id) {
         String sql = "UPDATE employees SET first_name = ?, last_name = ?, phone_number = ?, hire_date = ?, designation = ?, manager_employee_id = ? WHERE employee_id = ?";
-        jdbcTemplate.update(sql, employee.getFirstName(), employee.getLastName(), employee.getPhoneNumber(), employee.getHireDate(), employee.getDesignation(), employee.getManager().getEmployeeId(), id);
+        if (employee.getManager() == null) {
+            jdbcTemplate.update(sql, employee.getFirstName(), employee.getLastName(), employee.getPhoneNumber(), employee.getHireDate(), employee.getDesignation(), null, id);
+        } else {
+            jdbcTemplate.update(sql, employee.getFirstName(), employee.getLastName(), employee.getPhoneNumber(), employee.getHireDate(), employee.getDesignation(), employee.getManager().getEmployeeId(), id);
+        }
+        sql = "DELETE FROM employee_email_addresses WHERE employee_id = ?";
+        jdbcTemplate.update(sql, id);
+        sql = "INSERT INTO employee_email_addresses (employee_id, email_address) VALUES (?, ?)";
+        List<Object[]> batchArgs = new ArrayList<>();
+        for (String email : employee.getEmailAddresses()) {
+            batchArgs.add(new Object[]{id, email});
+        }
+        jdbcTemplate.batchUpdate(sql, batchArgs);
     }
 
     @Override

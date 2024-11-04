@@ -25,8 +25,8 @@
                             <div class="mb-3">
                                 <label for="contactNumbers" class="form-label">Contact Numbers</label>
                                 <div id="contacts">
-                                    <div class="d-flex gap-2 align-items-center">
-                                        <input type="tel" class="form-control" th:field="*{contactNumbers}" name="contactNumbers" required>
+                                    <div th:each="contactNumber, iterStat : *{contactNumbers}" class="d-flex gap-2 align-items-center">
+                                        <input type="tel" class="form-control" name="contactNumbers" th:value="${contactNumber}">
                                         <i class="bi bi-x-circle-fill text-danger"></i>
                                     </div>
                                 </div>
@@ -35,8 +35,8 @@
                             <div class="mb-3">
                                 <label for="emails" class="form-label">Emails</label>
                                 <div id="emails">
-                                    <div class="d-flex gap-2 align-items-center">
-                                        <input type="email" class="form-control" th:field="*{emailIds}" name="emails" required>
+                                    <div th:each="emailId, iterStat : *{emailIds}" class="d-flex gap-2 align-items-center">
+                                        <input type="email" class="form-control" name="emailIds" th:value="${emailId}">
                                         <i class="bi bi-x-circle-fill text-danger"></i>
                                     </div>
                                 </div>

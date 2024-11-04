@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.inventory.backend.entities.Category;
+import com.inventory.backend.entities.Customer;
+import com.inventory.backend.entities.Employee;
 import com.inventory.backend.entities.Manufacturer;
 import com.inventory.backend.entities.Product;
 import com.inventory.backend.services.impl.CategoryServiceImpl;
@@ -203,6 +205,45 @@ public class AdminController {
         manufacturerService.delete(id);
         return "redirect:/admin/manufacturers";
     }
+
+    @GetMapping("admin/employees")
+    public String showEmployees(Model model) {
+        model.addAttribute("employees", employeeService.findAll());
+        return "admin/employees";
+    }
+
+    @GetMapping("admin/employees/create")
+    public String createEmployee(Model model) {
+        model.addAttribute("employee", new Employee());
+        return "admin/create/employeeCreateForm";
+    }
+
+    @PostMapping("admin/employees/create")
+    public String createEmployee(@ModelAttribute("employee") Employee employee) {
+        employeeService.save(employee);
+        return "redirect:/admin/employees";
+    }
+
+    @GetMapping("admin/employees/update")
+    public String updateEmployee(@RequestParam Long id, Model model) {
+        model.addAttribute("employee", employeeService.findById(id).get());
+        return "admin/update/employeeUpdateForm";
+    }
+
+    @PostMapping("admin/employees/update")
+    public String updateEmployee(@ModelAttribute("employee") Employee employee, @RequestParam Long id) {
+        employeeService.update(employee, id);
+        return "redirect:/admin/employees";
+    }
+
+    @GetMapping("admin/employees/delete")
+    public String deleteEmployee(@RequestParam Long id) {
+        employeeService.delete(id);
+        return "redirect:/admin/employees";
+    }
+
+    
+
 
 
     @GetMapping("admin/sales/weekly")
