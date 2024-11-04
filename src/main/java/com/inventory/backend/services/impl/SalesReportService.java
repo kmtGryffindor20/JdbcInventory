@@ -53,7 +53,7 @@ public class SalesReportService implements IModelService<SalesReport, SalesRepor
         if (salesReport.isPresent()) {
             SalesReport sr = salesReport.get();
             for (CustomerOrder.Pair<Product, Integer> iterable_element : customerOrder.getProducts()) {
-                sr.setTotalSales(sr.getTotalSales() + iterable_element.first.getCostPrice() * iterable_element.second);
+                sr.setTotalSales(sr.getTotalSales() + iterable_element.first.getMaximumRetailPrice() * iterable_element.second);
             }
             sr.setTotalOrders(sr.getTotalOrders() + 1);
             salesReportDao.update(sr, key);
@@ -62,7 +62,6 @@ public class SalesReportService implements IModelService<SalesReport, SalesRepor
                                                     .salesReportCompositeKey(key)
                                                     .totalOrders(1)
                                                     .totalSales(0.0)
-                                                    .topSellingProduct(null)
                                                     .build();
             for (CustomerOrder.Pair<Product, Integer> iterable_element : customerOrder.getProducts()) {
                 newSalesReport.setTotalSales(newSalesReport.getTotalSales() + iterable_element.first.getMaximumRetailPrice() * iterable_element.second);
@@ -80,10 +79,10 @@ public class SalesReportService implements IModelService<SalesReport, SalesRepor
         if (salesReport.isPresent()) {
             SalesReport sr = salesReport.get();
             for (CustomerOrder.Pair<Product, Integer> iterable_element : oldCustomerOrder.getProducts()) {
-                sr.setTotalSales(sr.getTotalSales() - iterable_element.first.getCostPrice() * iterable_element.second);
+                sr.setTotalSales(sr.getTotalSales() - iterable_element.first.getMaximumRetailPrice() * iterable_element.second);
             }
             for (CustomerOrder.Pair<Product, Integer> iterable_element : newCustomerOrder.getProducts()) {
-                sr.setTotalSales(sr.getTotalSales() + iterable_element.first.getCostPrice() * iterable_element.second);
+                sr.setTotalSales(sr.getTotalSales() + iterable_element.first.getMaximumRetailPrice() * iterable_element.second);
             }
             salesReportDao.update(sr, key);
         } else {
@@ -91,7 +90,6 @@ public class SalesReportService implements IModelService<SalesReport, SalesRepor
                                                     .salesReportCompositeKey(key)
                                                     .totalOrders(1)
                                                     .totalSales(0.0)
-                                                    .topSellingProduct(null)
                                                     .build();
             for (CustomerOrder.Pair<Product, Integer> iterable_element : newCustomerOrder.getProducts()) {
                 newSalesReport.setTotalSales(newSalesReport.getTotalSales() + iterable_element.first.getMaximumRetailPrice() * iterable_element.second);

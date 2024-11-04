@@ -46,20 +46,21 @@
                                 <label class="form-label">Products</label>
                                 <div id="productList">
                                     <div th:each="productPair : ${customerOrder.products}">
-                                        <div class="input-group mb-2">
+                                        <div class="input-group mb-2 align-items-center justify-content-center">
                                             <select class="form-select" name="productIds">
                                                 <option th:each="prod : ${products}" th:value="${prod.productId}" th:text="${prod.productName}"
                                                         th:selected="${prod.productId == productPair.first.productId}"
                                                 ></option>
                                             </select>
                                             <input type="number" class="form-control" placeholder="Quantity" name="quantities" th:value="${productPair.second}">
+                                            <i class="bi bi-x-circle-fill text-danger ms-1"></i>
                                         </div>
                                     </div>
                                 </div>
                                 <button type="button" class="btn btn-secondary" id="addProduct">Add Product</button>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <button type="submit" class="btn btn-primary">Create Customer Order</button>
+                                <button type="submit" class="btn btn-primary">Update Customer Order</button>
                                 <h4 class="text-success" id="amount"></h4>
                             </div>
                         </form>
@@ -82,7 +83,7 @@
             const productList = document.getElementById('productList');
             const index = productList.childElementCount;
             const productField = document.createElement('div');
-            productField.className = 'input-group mb-2';
+            productField.className = 'input-group mb-2 align-items-center justify-content-center';
     
             const productSelect = document.createElement('select');
             productSelect.className = 'form-select';
@@ -108,6 +109,14 @@
             quantityInput.required = true;
             productField.appendChild(quantityInput);
 
+            var removeButton = document.createElement('i');
+            removeButton.className = 'bi bi-x-circle-fill text-danger ms-1';
+            removeButton.addEventListener('click', function() {
+                productField.remove();
+            });
+            productField.appendChild(removeButton);
+
+
             productList.appendChild(productField);
 
             productSelect.addEventListener('change', function() {
@@ -125,6 +134,13 @@
         }
 
         document.getElementById('addProduct').addEventListener('click', addProductField);
+
+        document.querySelectorAll('.bi-x-circle-fill').forEach(icon => {
+            icon.addEventListener('click', function() {
+                icon.parentElement.remove();
+            });
+        });
+
         /*]]>*/
     </script>
 

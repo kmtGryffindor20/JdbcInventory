@@ -77,7 +77,7 @@
             const productList = document.getElementById('productList');
             const index = productList.childElementCount;
             const productField = document.createElement('div');
-            productField.className = 'input-group mb-2';
+            productField.className = 'input-group mb-2 align-items-center justify-content-center';
     
             const productSelect = document.createElement('select');
             productSelect.className = 'form-select';
@@ -103,6 +103,13 @@
             quantityInput.required = true;
             productField.appendChild(quantityInput);
 
+            const crossButton = document.createElement('i');
+            crossButton.className = 'bi bi-x-circle-fill text-danger ms-1';
+            crossButton.addEventListener('click', function() {
+                productField.remove();
+            });
+            productField.appendChild(crossButton);
+
             productList.appendChild(productField);
 
             productSelect.addEventListener('change', function() {
@@ -127,4 +134,4 @@
 
 
 </body>
-</html>
+</html>;

@@ -53,6 +53,10 @@ public class SalesReportDao implements IDao<SalesReport, SalesReportCompositeKey
     @Override
     public void update(SalesReport a, SalesReportCompositeKey id) {
         String sql = "UPDATE sales_report SET total_sales = ?, total_orders = ?, top_selling_product_id = ? WHERE day = ? AND month = ? AND year = ?";
+        if (a.getTopSellingProduct().getProductId() == 0) {
+            jdbcTemplate.update(sql, a.getTotalSales(), a.getTotalOrders(), null, id.getDay(), id.getMonth(), id.getYear());
+            return;
+        }
         jdbcTemplate.update(sql, a.getTotalSales(), a.getTotalOrders(), a.getTopSellingProduct().getProductId(), id.getDay(), id.getMonth(), id.getYear());
     }
 

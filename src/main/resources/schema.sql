@@ -186,5 +186,50 @@ CREATE TABLE IF NOT EXISTS sales_report (
     top_selling_product_id BIGINT,
     FOREIGN KEY (top_selling_product_id) REFERENCES products(product_id) ON DELETE SET NULL,
     PRIMARY KEY (day, month, year)
-)
+);
+
+
+
+-- CREATE TRIGGER update_sales_report
+-- AFTER INSERT, UPDATE, DELETE ON customer_orders
+-- FOR EACH ROW
+-- BEGIN
+--     DECLARE day INT//
+--     DECLARE month INT//
+--     DECLARE year INT//
+--     DECLARE total_sales DECIMAL(10, 2)//
+--     DECLARE total_orders INT//
+--     DECLARE top_selling_product_id BIGINT//
+    
+--     SET day = DAY(NEW.date_of_order)//
+--     SET month = MONTH(NEW.date_of_order)//
+--     SET year = YEAR(NEW.date_of_order)//
+    
+--     SELECT SUM(products.maximum_retail_price * customer_orders_products.quantity) INTO total_sales
+--     FROM customer_orders_products
+--     JOIN products ON customer_orders_products.product_id = products.product_id
+--     WHERE customer_orders_products.order_id = NEW.order_id//
+    
+--     SELECT COUNT(*) INTO total_orders
+--     FROM customer_orders
+--     WHERE DAY(date_of_order) = day AND MONTH(date_of_order) = month AND YEAR(date_of_order) = year//
+    
+--     SELECT product_id INTO top_selling_product_id
+--     FROM customer_orders_products
+--     WHERE order_id = NEW.order_id
+--     GROUP BY product_id
+--     ORDER BY SUM(quantity) DESC
+--     LIMIT 1//
+    
+--     IF EXISTS (SELECT * FROM sales_report WHERE day = day AND month = month AND year = year) THEN
+--         UPDATE sales_report
+--         SET total_sales = total_sales + NEW.total_price,
+--             total_orders = total_orders + 1,
+--             top_selling_product_id = top_selling_product_id
+--         WHERE day = day AND month = month AND year = year//
+--     ELSE
+--         INSERT INTO sales_report (day, month, year, total_sales, total_orders, top_selling_product_id)
+--         VALUES (day, month, year, total_sales, total_orders, top_selling_product_id)//
+--     END IF//
+-- END;
 
