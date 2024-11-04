@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,7 @@ import com.inventory.backend.entities.Manufacturer;
 import com.inventory.backend.entities.Product;
 import com.inventory.backend.services.impl.CategoryServiceImpl;
 import com.inventory.backend.services.impl.CustomerOrderService;
+import com.inventory.backend.services.impl.CustomerService;
 import com.inventory.backend.services.impl.EmployeeService;
 import com.inventory.backend.services.impl.ManufacturerService;
 import com.inventory.backend.services.impl.ProductService;
@@ -43,18 +45,22 @@ public class AdminController {
 
     private SalesReportService salesReportService;
 
+    private CustomerService customerService;
+
     public AdminController(ManufacturerService manufacturerService,
                                  ProductService productService,
                                   EmployeeService employeeService,
                                    CategoryServiceImpl categoryService,
                                     CustomerOrderService customerOrderService,
-                                     SalesReportService salesReportService) {
+                                     SalesReportService salesReportService,
+                                      CustomerService customerService) {
         this.manufacturerService = manufacturerService;
         this.productService = productService;
         this.employeeService = employeeService;
         this.categoryService = categoryService;
         this.customerOrderService = customerOrderService;
         this.salesReportService = salesReportService;
+        this.customerService = customerService;
     }
 
     @GetMapping("/admin/categories")
@@ -242,6 +248,56 @@ public class AdminController {
         return "redirect:/admin/employees";
     }
 
+
+    @GetMapping("admin/customers")
+    public String showCustomers(Model model) {
+        model.addAttribute("customers", customerService.findAll());
+        return "admin/customers";
+    }
+
+    @GetMapping("admin/customers/create")
+    public String createCustomer(Model model) {
+        model.addAttribute("customer", new Customer());
+        return "admin/create/customerCreateForm";
+    }
+
+    @PostMapping("admin/customers/create")
+    public String createCustomer(@ModelAttribute("customer") Customer customer, Model model) {
+        try {
+            customerService.save(customer);
+        } catch (DuplicateKeyException e) {
+            model.addAttribute("error", "Customer with email " + customer.getEmailId() + " already exists");
+            model.addAttribute("customer", customer);
+            return "admin/create/customerCreateForm";
+        }
+        return "redirect:/admin/customers";
+    }
+
+    @GetMapping("admin/customers/update")
+    public String updateCustomer(@RequestParam String id, Model model) {
+        model.addAttribute("customer", customerService.findById(id).get());
+        return "admin/update/customerUpdateForm";
+    }
+
+    @PostMapping("admin/customers/update")
+    public String updateCustomer(@ModelAttribute("customer") Customer customer, @RequestParam String id, Model model) {
+
+        try {
+            customerService.update(customer, id);
+        } catch (DuplicateKeyException e) {
+            model.addAttribute("error", "Customer with email " + customer.getEmailId() + " already exists");
+            model.addAttribute("customer", customer);
+            return "admin/update/customerUpdateForm";
+        }
+        
+        return "redirect:/admin/customers";
+    }
+
+    @GetMapping("admin/customers/delete")
+    public String deleteCustomer(@RequestParam String id) {
+        customerService.delete(id);
+        return "redirect:/admin/customers";
+    }
     
 
 

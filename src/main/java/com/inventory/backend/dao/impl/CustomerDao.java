@@ -22,8 +22,8 @@ public class CustomerDao implements IDao<Customer, String> {
 
     @Override
     public void create(Customer customer) {
-        String sql = "INSERT INTO customers (email, first_name, last_name, phone_number, shipping_address, billing_address) VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, customer.getEmailId(), customer.getFirstName(), customer.getLastName(), customer.getPhoneNumber(), customer.getShippingAddress(), customer.getBillingAddress());
+        String sql = "INSERT INTO customers (first_name, last_name, phone_number, shipping_address, billing_address) VALUES (?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, customer.getFirstName(), customer.getLastName(), customer.getPhoneNumber(), customer.getShippingAddress(), customer.getBillingAddress());
     }
 
     @Override
@@ -41,8 +41,8 @@ public class CustomerDao implements IDao<Customer, String> {
 
     @Override
     public void update(Customer customer, String id) {
-        String sql = "UPDATE customers SET first_name = ?, last_name = ?, phone_number = ?, shipping_address = ?, billing_address = ? WHERE email = ?";
-        jdbcTemplate.update(sql, customer.getFirstName(), customer.getLastName(), customer.getPhoneNumber(), customer.getShippingAddress(), customer.getBillingAddress(), id);
+        String sql = "UPDATE customers SET email = ?, first_name = ?, last_name = ?, phone_number = ?, shipping_address = ?, billing_address = ? WHERE email = ?";
+        jdbcTemplate.update(sql, customer.getEmailId(), customer.getFirstName(), customer.getLastName(), customer.getPhoneNumber(), customer.getShippingAddress(), customer.getBillingAddress(), id);
     }
 
     @Override
