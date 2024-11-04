@@ -27,6 +27,8 @@ import com.inventory.backend.entities.Employee;
 import com.inventory.backend.entities.Manufacturer;
 import com.inventory.backend.entities.ManufacturerOrder;
 import com.inventory.backend.entities.Product;
+import com.inventory.backend.entities.ShippingInfoCustomerOrder;
+import com.inventory.backend.entities.ShippingInfoManufacturerOrder;
 import com.inventory.backend.services.impl.CategoryServiceImpl;
 import com.inventory.backend.services.impl.CustomerOrderService;
 import com.inventory.backend.services.impl.CustomerService;
@@ -35,6 +37,8 @@ import com.inventory.backend.services.impl.ManufacturerOrderService;
 import com.inventory.backend.services.impl.ManufacturerService;
 import com.inventory.backend.services.impl.ProductService;
 import com.inventory.backend.services.impl.SalesReportService;
+import com.inventory.backend.services.impl.ShippingInfoCustomerOrderService;
+import com.inventory.backend.services.impl.ShippingInfoManufacturerOrderService;
 
 @Controller
 public class AdminController {
@@ -55,6 +59,10 @@ public class AdminController {
 
     private ManufacturerOrderService manufacturerOrderService;
 
+    private ShippingInfoCustomerOrderService shippingInfoCustomerOrderService;
+
+    private ShippingInfoManufacturerOrderService shippingInfoManufacturerOrderService;
+
     public AdminController(ManufacturerService manufacturerService,
                                  ProductService productService,
                                   EmployeeService employeeService,
@@ -62,7 +70,9 @@ public class AdminController {
                                     CustomerOrderService customerOrderService,
                                      SalesReportService salesReportService,
                                       CustomerService customerService,
-                                       ManufacturerOrderService manufacturerOrderService) {
+                                       ManufacturerOrderService manufacturerOrderService,
+                                        ShippingInfoCustomerOrderService shippingInfoCustomerOrderService,
+                                         ShippingInfoManufacturerOrderService shippingInfoManufacturerOrderService) {
         this.manufacturerService = manufacturerService;
         this.productService = productService;
         this.employeeService = employeeService;
@@ -71,6 +81,8 @@ public class AdminController {
         this.salesReportService = salesReportService;
         this.customerService = customerService;
         this.manufacturerOrderService = manufacturerOrderService;
+        this.shippingInfoCustomerOrderService = shippingInfoCustomerOrderService;
+        this.shippingInfoManufacturerOrderService = shippingInfoManufacturerOrderService;
     }
 
     @GetMapping("/admin/categories")
@@ -456,6 +468,21 @@ public class AdminController {
         manufacturerOrderService.delete(id);
         return "redirect:/admin/orders";
     }
+
+    @GetMapping("admin/orders/customer/shipping")
+    public String showShippingInfoCustomerOrder(@RequestParam Long id, Model model) {
+        model.addAttribute("customerOrder", customerOrderService.findById(id).get());
+        model.addAttribute("shippingInfo", shippingInfoCustomerOrderService.findByOrderId(id).get());
+        return "admin/customerShipping";
+    }
+
+    @PostMapping("admin/orders/customer/shipping/update")
+    public String updateShippingInfoCustomerOrder(@ModelAttribute("shippingInfo") ShippingInfoCustomerOrder shippingInfo,
+                                                @RequestParam Long id) {
+        shippingInfoCustomerOrderService.update(shippingInfo, id);
+        return "redirect:/admin/orders";
+    }
+
 
     @GetMapping("admin/sales/weekly")
     public ResponseEntity<Map<Date, Double>> weeklySales(@RequestParam String date) {

@@ -141,8 +141,8 @@ CREATE TABLE IF NOT EXISTS orders_returned (
 CREATE TABLE IF NOT EXISTS customer_order_shipping_info (
     shipping_info_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     order_id BIGINT NOT NULL,
-    shipping_date DATE NOT NULL,
-    expected_delivery_date DATE NOT NULL,
+    shipping_date DATE,
+    expected_delivery_date DATE,
     status ENUM ('SHIPPED', 'DELIVERED', 'PENDING', 'CANCELLED') NOT NULL,
     FOREIGN KEY (order_id) REFERENCES customer_orders(order_id) ON DELETE CASCADE
 );

@@ -70,6 +70,10 @@
                                         <i class="bi bi-trash"></i>    
                                         Delete
                                     </button>
+                                    <a class="btn btn-warning" th:href="@{'/admin/orders/customer/shipping?id=' + ${order.orderId}}">
+                                        <i class="bi bi-truck"></i>    
+                                        Shipping
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>
@@ -117,6 +121,10 @@
                                     <i class="bi bi-trash"></i>    
                                     Delete
                                 </button>
+                                <a class="btn btn-warning">
+                                    <i class="bi bi-truck"></i>    
+                                    Shipping
+                                </a>
                             </td>
                         </tr>
                     </tbody>

@@ -99,6 +99,21 @@ public class SalesReportService implements IModelService<SalesReport, SalesRepor
         return salesReport;
     }
 
+    public Optional<SalesReport> removeCustomerOrderData(Date orderDate, CustomerOrder customerOrder)
+    {
+        SalesReportCompositeKey key = convertToKey(orderDate);
+        Optional<SalesReport> salesReport = salesReportDao.findById(key);
+        if (salesReport.isPresent()) {
+            SalesReport sr = salesReport.get();
+            for (CustomerOrder.Pair<Product, Integer> iterable_element : customerOrder.getProducts()) {
+                sr.setTotalSales(sr.getTotalSales() - iterable_element.first.getMaximumRetailPrice() * iterable_element.second);
+            }
+            sr.setTotalOrders(sr.getTotalOrders() - 1);
+            salesReportDao.update(sr, key);
+        }
+        return salesReport;
+    }
+
     @Override
     public void delete(SalesReportCompositeKey id) {
         salesReportDao.delete(id);

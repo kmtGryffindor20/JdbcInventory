@@ -9,6 +9,8 @@ import com.inventory.backend.entities.Customer;
 import com.inventory.backend.entities.CustomerOrder;
 import com.inventory.backend.entities.Employee;
 import com.inventory.backend.entities.Product;
+import com.inventory.backend.entities.ShippingInfoCustomerOrder;
+import com.inventory.backend.services.impl.ShippingInfoCustomerOrderService;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,8 +31,12 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public CustomerOrderDao(JdbcTemplate jdbcTemplate) {
+    private ShippingInfoCustomerOrderService shippingInfoCustomerOrderService;
+
+    public CustomerOrderDao(JdbcTemplate jdbcTemplate,
+                                        ShippingInfoCustomerOrderService shippingInfoCustomerOrderService) {
         this.jdbcTemplate = jdbcTemplate;
+        this.shippingInfoCustomerOrderService = shippingInfoCustomerOrderService;
     }
 
     @Override
@@ -59,6 +65,17 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
                     
                     String sql2 = "INSERT INTO customer_orders_products (order_id, product_id, quantity) VALUES (?, ?, ?)";
                     jdbcTemplate.batchUpdate(sql2, customerOrder.getProducts().stream().map(pair -> new Object[]{insertId, pair.first.getProductId(), pair.second}).toList());
+
+                    customerOrder.setOrderId((long) insertId);
+
+                    ShippingInfoCustomerOrder shippingInfoCustomerOrder = ShippingInfoCustomerOrder.builder()
+                        .order(customerOrder)
+                        .shippingDate(null)
+                        .expectedDeliveryDate(null)
+                        .status(ShippingInfoCustomerOrder.Status.PENDING)
+                        .build();
+
+                    shippingInfoCustomerOrderService.save(shippingInfoCustomerOrder);
                 }
 
 

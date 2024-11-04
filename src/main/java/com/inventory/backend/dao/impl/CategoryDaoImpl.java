@@ -22,7 +22,6 @@ public class CategoryDaoImpl implements IDao<Category, Long>{
 
     @Override
     public void create(Category category) {
-        System.out.println("sves");
         String sql = "INSERT INTO categories (category_name, category_description) VALUES (?, ?)";
         jdbcTemplate.update(sql, category.getCategoryName(), category.getCategoryDescription());
     }

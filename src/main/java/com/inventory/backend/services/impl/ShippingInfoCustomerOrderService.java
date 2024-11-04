@@ -1,6 +1,6 @@
 package com.inventory.backend.services.impl;
 
-import com.inventory.backend.dao.IDao;
+import com.inventory.backend.dao.impl.ShippingInfoCustomerOrderDao;
 import com.inventory.backend.entities.ShippingInfoCustomerOrder;
 import com.inventory.backend.services.IModelService;
 
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ShippingInfoCustomerOrderService implements IModelService<ShippingInfoCustomerOrder, Long> {
 
-    private IDao<ShippingInfoCustomerOrder, Long> shippingInfoCustomerOrderDao;
+    private ShippingInfoCustomerOrderDao shippingInfoCustomerOrderDao;
 
-    public ShippingInfoCustomerOrderService(IDao<ShippingInfoCustomerOrder, Long> shippingInfoCustomerOrderDao) {
+    public ShippingInfoCustomerOrderService(ShippingInfoCustomerOrderDao shippingInfoCustomerOrderDao) {
         this.shippingInfoCustomerOrderDao = shippingInfoCustomerOrderDao;
     }
 
@@ -43,6 +43,10 @@ public class ShippingInfoCustomerOrderService implements IModelService<ShippingI
     @Override
     public void delete(Long id) {
         shippingInfoCustomerOrderDao.delete(id);
+    }
+
+    public Optional<ShippingInfoCustomerOrder> findByOrderId(Long orderId) {
+        return shippingInfoCustomerOrderDao.findByOrderId(orderId);
     }
     
 }

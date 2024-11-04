@@ -37,6 +37,7 @@ public class CustomerOrderService implements IModelService<CustomerOrder, Long> 
         for (CustomerOrder.Pair<Product, Integer> product : customerOrder.getProducts()) {
             productService.updateProductQuantity(product.first.getProductId(), product.second);
         }
+
         return Optional.of(customerOrder);
     }
 
@@ -60,6 +61,11 @@ public class CustomerOrderService implements IModelService<CustomerOrder, Long> 
 
     @Override
     public void delete(Long id) {
+        CustomerOrder customerOrder = customerOrderDao.findById(id).get();
+        for (CustomerOrder.Pair<Product, Integer> product : customerOrder.getProducts()) {
+            productService.updateProductQuantity(product.first.getProductId(), -product.second);
+        }
+        salesReportService.removeCustomerOrderData(customerOrder.getDateOfOrder(), customerOrder);
         customerOrderDao.delete(id);
     }
 

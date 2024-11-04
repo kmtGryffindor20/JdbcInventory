@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/header :: header(title='Admin - Update Customer Order')}"></head>
+<body data-bs-theme="dark">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div th:replace="~{fragments/header :: sidebar}"></div>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                    <div class="container justify-content-center align-content-center ">
+                        <div class="row">
+                            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                <h1>Update Customer Order</h1>
+                            </div>
+                        </div>
+                        <form action="" th:object="${customerOrder}">
+                            <div class="mb-3">
+                                <label for="customer" class="form-label">Customer</label>
+                                <input type="text" class="form-control" id="customer" th:value="${customerOrder.customer.firstName} + ' ' + ${customerOrder.customer.lastName}" disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label for="orderDate" class="form-label">Order Date</label>
+                                <input type="date" class="form-control" id="orderDate" th:field="*{dateOfOrder}" disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label for="paymentMethod" class="form-label">Payment Method</label>
+                                <input type="text" class="form-control" id="paymentMethod" th:value="${customerOrder.paymentMethod}" disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label for="processorEmployee" class="form-label">Processed by Employee</label>
+                                <input type="text" class="form-control" id="processorEmployee" th:value="${customerOrder.processorEmployee.firstName} + ' ' + ${customerOrder.processorEmployee.lastName}" disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Products</label>
+                                <div id="productList">
+                                    <div th:each="productPair : ${customerOrder.products}">
+                                        <div class="input-group mb-2 align-items-center justify-content-center">
+                                            <input type="text" class="form-control" placeholder="Product Name" name="productIds" th:value="${productPair.first.productName}" disabled>
+                                            <input type="number" class="form-control" placeholder="Quantity" name="quantities" th:value="${productPair.second}" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <form th:action="@{/admin/orders/customer/shipping/update?id={id}(id=${shippingInfo.shippingInfoId})}" method="post" th:object="${shippingInfo}">
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" th:field="*{status}">
+                                    <option value="SHIPPED">SHIPPED</option>
+                                    <option value="DELIVERED">DELIVERED</option>
+                                    <option value="PENDING">PENDING</option>
+                                    <option value="CANCELLED">CANCELLED</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="shippingDate" class="form-label">Shipping Date</label>
+                                <input type="date" class="form-control" id="shippingDate" th:field="*{shippingDate}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="expectedDeliveryDate" class="form-label">Expected Delivery Date</label>
+                                <input type="date" class="form-control" id="expectedDeliveryDate" th:field="*{expectedDeliveryDate}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Shipping Info</button>
+                        </form>
+                    </div>
+            </main>
+
+        </div>
+    </div>
+
+
+
+
+</body>
+</html>
