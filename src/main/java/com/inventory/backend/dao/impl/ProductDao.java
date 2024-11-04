@@ -124,6 +124,22 @@ public class ProductDao implements IDao<Product, Long> {
         return List.copyOf(productMap.values());
     }
 
+    public void updateProductQuantity(Long productId, int quantityBought) {
+        String sql = "UPDATE products SET stock_quantity = stock_quantity - ? WHERE product_id = ?";
+        jdbcTemplate.update(sql, quantityBought, productId);
+    }
+
+    public Map<String, Integer> stockQuantityByCategory() {
+        String sql = "SELECT c.category_name, SUM(p.stock_quantity) AS total_stock FROM products p RIGHT JOIN categories c ON p.category_id = c.category_id GROUP BY c.category_name";
+        return jdbcTemplate.query(sql, (rs) -> {
+            Map<String, Integer> stockQuantityByCategory = new HashMap<>();
+            while (rs.next()) {
+                stockQuantityByCategory.put(rs.getString("category_name"), rs.getInt("total_stock"));
+            }
+            return stockQuantityByCategory;
+        });
+    }
+
     public static class ProductRowMapper implements ResultSetExtractor<Map<Long, Product>> {
         @Override
         public Map<Long, Product> extractData(ResultSet rs) throws SQLException, DataAccessException {

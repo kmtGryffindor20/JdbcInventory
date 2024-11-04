@@ -5,6 +5,7 @@ import com.inventory.backend.entities.Product;
 import com.inventory.backend.services.IModelService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -51,6 +52,14 @@ public class ProductService implements IModelService<Product, Long> {
 
     public List<Product> getByCategory(Long categoryId) {
         return productDao.getByCategory(categoryId);
+    }
+
+    public void updateProductQuantity(Long productId, int quantityBought) {
+        productDao.updateProductQuantity(productId, quantityBought);
+    }
+
+    public Map<String, Integer> stockQuantityByCategory() {
+        return productDao.stockQuantityByCategory();
     }
     
 }

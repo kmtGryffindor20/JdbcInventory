@@ -1,10 +1,13 @@
 package com.inventory.backend.controllers.impl;
 
+import java.lang.StackWalker.Option;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
@@ -81,6 +84,8 @@ public class AdminController {
     public String showDashboard(Model model) {
         Map<String, Double> totalSalesByCategory = customerOrderService.totalSalesByCategory();
         model.addAttribute("totalSalesByCategory", totalSalesByCategory);
+        TreeMap<String, Integer> stockQuantityByCategory = new TreeMap<>(productService.stockQuantityByCategory());
+        model.addAttribute("stockQuantityByCategory", stockQuantityByCategory);
         return "admin/dashboard";
     }
 
@@ -374,14 +379,7 @@ public class AdminController {
         return "redirect:/admin/orders";
     }
 
-    @GetMapping("admin/orders/manufacturer/create")
-    public String createManufacturerOrder(Model model) {
-        model.addAttribute("manufacturerOrder", new ManufacturerOrder());
-        model.addAttribute("products", productService.findAll());
-        model.addAttribute("manufacturers", manufacturerService.findAll());
-        model.addAttribute("employees", employeeService.findAll());
-        return "admin/create/manufacturerOrderCreateForm";
-    }
+  
 
     @PostMapping("admin/orders/manufacturer/create")
     public String createManufacturerOrder(@ModelAttribute("manufacturerOrder") ManufacturerOrder manufacturerOrder,
@@ -398,6 +396,32 @@ public class AdminController {
         manufacturerOrderService.save(manufacturerOrder);
         return "redirect:/admin/orders";
     }
+
+    @GetMapping("admin/orders/manufacturer/create")
+    public String createManufacturerOrder(Model model, @RequestParam(required = false) Long productId) {
+        ManufacturerOrder manufacturerOrder;
+        if (productId != null) {
+            Optional<Product> product = productService.findById(productId);
+            if (product.isPresent()) {
+                Manufacturer manufacturer = product.get().getManufacturers().iterator().next();
+                manufacturerOrder = ManufacturerOrder.builder()
+                                                    .manufacturer(manufacturer)
+                                                    .build();
+                manufacturerOrder.setProducts(Set.of(new CustomerOrder.Pair<>(product.get(), 1)));
+            } else {
+                manufacturerOrder = new ManufacturerOrder();  // Fallback if product is not found
+            }
+        } else {
+            manufacturerOrder = new ManufacturerOrder();  // Default behavior when productId is not provided
+        }
+
+        model.addAttribute("manufacturerOrder", manufacturerOrder);
+        model.addAttribute("products", productService.findAll());
+        model.addAttribute("manufacturers", manufacturerService.findAll());
+        model.addAttribute("employees", employeeService.findAll());
+        return "admin/create/manufacturerOrderCreateForm";
+    }
+
 
     @GetMapping("admin/orders/manufacturer/update")
     public String updateManufacturerOrder(@RequestParam Long id, Model model) {

@@ -2,6 +2,7 @@ package com.inventory.backend.services.impl;
 
 import com.inventory.backend.dao.impl.CustomerOrderDao;
 import com.inventory.backend.entities.CustomerOrder;
+import com.inventory.backend.entities.Product;
 import com.inventory.backend.services.IModelService;
 
 import java.sql.Date;
@@ -16,10 +17,14 @@ public class CustomerOrderService implements IModelService<CustomerOrder, Long> 
 
     private CustomerOrderDao customerOrderDao;
     private SalesReportService salesReportService;
+    private ProductService productService;
 
-    public CustomerOrderService(CustomerOrderDao customerOrderDao, SalesReportService salesReportService) {
+    public CustomerOrderService(CustomerOrderDao customerOrderDao,
+                                 SalesReportService salesReportService,
+                                 ProductService productService) {
         this.customerOrderDao = customerOrderDao;
         this.salesReportService = salesReportService;
+        this.productService = productService;
     }
 
     @Override
@@ -28,6 +33,10 @@ public class CustomerOrderService implements IModelService<CustomerOrder, Long> 
         // update SalesReport
         Date orderDate = customerOrder.getDateOfOrder();
         salesReportService.updateSalesReport(orderDate, customerOrder);
+        // update Products
+        for (CustomerOrder.Pair<Product, Integer> product : customerOrder.getProducts()) {
+            productService.updateProductQuantity(product.first.getProductId(), product.second);
+        }
         return Optional.of(customerOrder);
     }
 

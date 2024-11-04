@@ -3,6 +3,7 @@ package com.inventory.backend.dao.impl;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,11 +28,17 @@ public class SalesReportDao implements IDao<SalesReport, SalesReportCompositeKey
     @Override
     public void create(SalesReport a) {
         String sql = "INSERT INTO sales_report (day, month, year, total_sales, total_orders, top_selling_product_id) VALUES (?, ?, ?, ?, ?, ?)";
-        if (a.getTopSellingProduct() == null) {
-            jdbcTemplate.update(sql, a.getSalesReportCompositeKey().getDay(), a.getSalesReportCompositeKey().getMonth(), a.getSalesReportCompositeKey().getYear(), a.getTotalSales(), a.getTotalOrders(), null);
-            return;
-        }
+        a.setTopSellingProduct(findTopSellingProduct(a.getSalesReportCompositeKey()));
         jdbcTemplate.update(sql, a.getSalesReportCompositeKey().getDay(), a.getSalesReportCompositeKey().getMonth(), a.getSalesReportCompositeKey().getYear(), a.getTotalSales(), a.getTotalOrders(), a.getTopSellingProduct().getProductId());
+    }
+
+    private Product findTopSellingProduct(SalesReportCompositeKey key) {
+        String sql = "SELECT p.*, c.*, m.* FROM products p LEFT JOIN categories c ON c.category_id = p.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE p.product_id = (SELECT product_id FROM customer_orders_products WHERE order_id IN (SELECT order_id FROM customer_orders WHERE date_of_order = DATE_FORMAT(?, '%Y-%m-%d')) GROUP BY product_id ORDER BY SUM(quantity) DESC LIMIT 1)";
+        Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductDao.ProductRowMapper(), Date.valueOf(key.getYear() + "-" + key.getMonth() + "-" + key.getDay()));
+        if (productMap.isEmpty()) {
+            return Product.builder().productId(0L).build();
+        }
+        return productMap.values().iterator().next();
     }
 
     @Override
@@ -53,10 +60,7 @@ public class SalesReportDao implements IDao<SalesReport, SalesReportCompositeKey
     @Override
     public void update(SalesReport a, SalesReportCompositeKey id) {
         String sql = "UPDATE sales_report SET total_sales = ?, total_orders = ?, top_selling_product_id = ? WHERE day = ? AND month = ? AND year = ?";
-        if (a.getTopSellingProduct().getProductId() == 0) {
-            jdbcTemplate.update(sql, a.getTotalSales(), a.getTotalOrders(), null, id.getDay(), id.getMonth(), id.getYear());
-            return;
-        }
+        a.setTopSellingProduct(findTopSellingProduct(id));
         jdbcTemplate.update(sql, a.getTotalSales(), a.getTotalOrders(), a.getTopSellingProduct().getProductId(), id.getDay(), id.getMonth(), id.getYear());
     }
 

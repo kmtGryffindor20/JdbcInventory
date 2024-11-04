@@ -10,14 +10,16 @@
                     <div class="container justify-content-center align-content-center ">
                         <div class="row">
                             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                                <h1>Add New Manufacturer Order</h1>
+                                <h1 th:text="${manufacturerOrder.manufacturer == null ? 'Add New Manufacturer Order' : 'Restock on ' + manufacturerOrder.products[0].first.productName}"></h1>
                             </div>
                         </div>
                         <form th:action="@{/admin/orders/manufacturer/create}" method="post" th:object="${manufacturerOrder}">
                             <div class="mb-3">
                                 <label for="manufacturerId" class="form-label">Manufacturer</label>
                                 <select name="manufacturerId" class="form-select" id="manufacturerId">
-                                    <option th:each="man : ${manufacturers}" th:value="${man.manufacturerId}" th:text="${man.manufacturerName}"></option>
+                                    <option th:each="man : ${manufacturers}" th:value="${man.manufacturerId}" th:text="${man.manufacturerName}"
+                                        th:selected="${man.manufacturerId == manufacturerOrder.manufacturer.manufacturerId}"></option>
+                                    ></option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -33,15 +35,17 @@
                             <div class="mb-3">
                                 <label class="form-label">Products</label>
                                 <div id="productList">
-                                    <!-- Dynamically add products here -->
-                                    <!-- <div th:each="product, iterStat : ${products}">
-                                        <div class="input-group mb-2">
-                                            <select class="form-select" th:field="*{products[__${iterStat.index}__].first}">
-                                                <option th:each="prod : ${allProducts}" th:value="${prod.productId}" th:text="${prod.productName}"></option>
+                                    <div th:each="productPair : ${manufacturerOrder.products}">
+                                        <div class="input-group mb-2 align-items-center justify-content-center">
+                                            <select class="form-select" name="productIds">
+                                                <option th:each="prod : ${products}" th:value="${prod.productId}" th:text="${prod.productName}"
+                                                        th:selected="${prod.productId == productPair.first.productId}"
+                                                ></option>
                                             </select>
-                                            <input type="number" class="form-control" th:field="*{products[__${iterStat.index}__].second}" placeholder="Quantity">
+                                            <input type="number" class="form-control" placeholder="Quantity" name="quantities" th:value="${productPair.second}">
+                                            <i class="bi bi-x-circle-fill text-danger ms-1"></i>
                                         </div>
-                                    </div> -->
+                                    </div>
                                 </div>
                                 <button type="button" class="btn btn-secondary" id="addProduct">Add Product</button>
                             </div>

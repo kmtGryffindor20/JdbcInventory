@@ -26,14 +26,25 @@
 
       <canvas class="my-4 w-100" id="myChart" width="1364" height="576" style="display: block; box-sizing: border-box; height: 460px; width: 1091px;"></canvas>
       <!-- Category wise sales pie chart -->
-      <div class="row">
-        <div class="col-md-6">
+      <div class="row align-items-center justify-content-center">
+        <div class="col">
           <div class="card">
             <div class="card-header">
               <h5 class="card-title">Category wise sales</h5>
             </div>
             <div class="card-body">
               <canvas id="categorySalesChart" width="400" height="400"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Category wise stock quantity bar chart -->
+        <div class="col">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title">Category wise stock quantity</h5>
+            </div>
+            <div class="card-body">
+              <canvas id="categoryStockChart" width="400" height="400"></canvas>
             </div>
           </div>
         </div>
@@ -168,6 +179,38 @@
           myChart.data.datasets[0].data = dataPoints;
           myChart.update();
         });
+
+        const categoryStockChart = document.getElementById('categoryStockChart');
+        const stockQuantityByCategory = /*[[${stockQuantityByCategory}]]*/ {};
+        const colors = Object.keys(stockQuantityByCategory).map(() => getRandomColor());        
+
+
+        const myCategoryStockChart = new Chart(categoryStockChart, {
+          type: 'bar',
+          data: {
+            labels: Object.keys(stockQuantityByCategory),
+            datasets: [{
+              label: 'Stock Quantity',
+              data: Object.values(stockQuantityByCategory),
+              backgroundColor: colors.map((color) => `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.2)`),
+              borderColor: colors.map((color) => `rgba(${color[0]}, ${color[1]}, ${color[2]}, 1)`),
+              borderWidth: 1
+            }]
+          },
+          options: {
+            title: {
+              display: true,
+              text: 'Category wise stock quantity'
+            }
+          }
+        })
+
+        function getRandomColor() {
+          var r = Math.floor(Math.random() * 255);
+          var g = Math.floor(Math.random() * 255);
+          var b = Math.floor(Math.random() * 255);
+          return [r, g, b];
+        }
 
        </script>
 </body>

@@ -55,7 +55,12 @@
                                 <td th:text="${product.maximumRetailPrice}"></td>
                                 <td th:text="${product.costPrice}"></td>
                                 <td th:text="${product.category.categoryName}"></td>
-                                <td th:text="${product.stockQuantity}"></td>
+                                <td>
+                                    <span th:text="${product.stockQuantity}"></span>
+                                    <a th:href="@{'/admin/orders/manufacturer/create?productId=' + ${product.productId}}">
+                                        <i th:if="${product.stockQuantity < 20}" class="bi bi-exclamation-circle text-danger" title="Low stock"></i>
+                                    </a>
+                                </td>
                                 <!-- multiple manufacturers -->
                                 <td>
                                     <ul>
