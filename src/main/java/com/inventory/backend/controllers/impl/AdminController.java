@@ -10,11 +10,9 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +22,7 @@ import com.inventory.backend.entities.Customer;
 import com.inventory.backend.entities.CustomerOrder;
 import com.inventory.backend.entities.Employee;
 import com.inventory.backend.entities.Manufacturer;
+import com.inventory.backend.entities.ManufacturerOrder;
 import com.inventory.backend.entities.Product;
 import com.inventory.backend.services.impl.CategoryServiceImpl;
 import com.inventory.backend.services.impl.CustomerOrderService;
@@ -311,7 +310,7 @@ public class AdminController {
     public String showOrders(Model model) {
         List<CustomerOrder> customerOrders = customerOrderService.findAll();
         model.addAttribute("customerOrders", customerOrders);
-        // model.addAttribute("manufacturerOrders", manufacturerOrderService.findAll());
+        model.addAttribute("manufacturerOrders", manufacturerOrderService.findAll());
         return "admin/orders";
     }
 
@@ -375,6 +374,64 @@ public class AdminController {
         return "redirect:/admin/orders";
     }
 
+    @GetMapping("admin/orders/manufacturer/create")
+    public String createManufacturerOrder(Model model) {
+        model.addAttribute("manufacturerOrder", new ManufacturerOrder());
+        model.addAttribute("products", productService.findAll());
+        model.addAttribute("manufacturers", manufacturerService.findAll());
+        model.addAttribute("employees", employeeService.findAll());
+        return "admin/create/manufacturerOrderCreateForm";
+    }
+
+    @PostMapping("admin/orders/manufacturer/create")
+    public String createManufacturerOrder(@ModelAttribute("manufacturerOrder") ManufacturerOrder manufacturerOrder,
+                                         @RequestParam("productIds") List<Long> productIds,
+                                         @RequestParam("quantities") List<Integer> quantities,
+                                         @RequestParam("manufacturerId") Long manufacturerId,
+                                         @RequestParam("employeeId") Long employeeId) {
+        manufacturerOrder.setManufacturer(manufacturerService.findById(manufacturerId).get());
+        manufacturerOrder.setProcessedByEmployee(employeeService.findById(employeeId).get());
+        for (int i = 0; i < productIds.size(); i++) {
+            Product product = productService.findById(productIds.get(i)).get();
+            manufacturerOrder.getProducts().add(new CustomerOrder.Pair<>(product, quantities.get(i)));
+        }
+        manufacturerOrderService.save(manufacturerOrder);
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("admin/orders/manufacturer/update")
+    public String updateManufacturerOrder(@RequestParam Long id, Model model) {
+        ManufacturerOrder manufacturerOrder = manufacturerOrderService.findById(id).get();
+        model.addAttribute("manufacturerOrder", manufacturerOrder);
+        model.addAttribute("products", productService.findAll());
+        model.addAttribute("manufacturers", manufacturerService.findAll());
+        model.addAttribute("employees", employeeService.findAll());
+        return "admin/update/manufacturerOrderUpdateForm";
+    }
+
+    @PostMapping("admin/orders/manufacturer/update")
+    public String updateManufacturerOrder(@ModelAttribute("manufacturerOrder") ManufacturerOrder manufacturerOrder,
+                                         @RequestParam("productIds") List<Long> productIds,
+                                         @RequestParam("quantities") List<Integer> quantities,
+                                         @RequestParam("manufacturerId") Long manufacturerId,
+                                         @RequestParam("employeeId") Long employeeId,
+                                         @RequestParam Long id) {
+        manufacturerOrder.setManufacturer(manufacturerService.findById(manufacturerId).get());
+        manufacturerOrder.setProcessedByEmployee(employeeService.findById(employeeId).get());
+        manufacturerOrder.getProducts().clear();
+        for (int i = 0; i < productIds.size(); i++) {
+            Product product = productService.findById(productIds.get(i)).get();
+            manufacturerOrder.getProducts().add(new CustomerOrder.Pair<>(product, quantities.get(i)));
+        }
+        manufacturerOrderService.update(manufacturerOrder, id);
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("admin/orders/manufacturer/delete")
+    public String deleteManufacturerOrder(@RequestParam Long id) {
+        manufacturerOrderService.delete(id);
+        return "redirect:/admin/orders";
+    }
 
     @GetMapping("admin/sales/weekly")
     public ResponseEntity<Map<Date, Double>> weeklySales(@RequestParam String date) {

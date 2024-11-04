@@ -27,6 +27,7 @@ public class CustomerOrder {
 
     private Employee processorEmployee;
 
+    @Builder.Default
     private Set<Pair<Product, Integer>> products = new HashSet<>();
 
 

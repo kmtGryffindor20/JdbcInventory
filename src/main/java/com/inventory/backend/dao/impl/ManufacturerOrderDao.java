@@ -3,11 +3,10 @@ package com.inventory.backend.dao.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -52,7 +51,7 @@ public class ManufacturerOrderDao implements IDao<ManufacturerOrder, Long> {
                 if (generatedKeys.next())
                 {
                     insertId = generatedKeys.getInt(1);
-                    String sql2 = "INSERT INTO manufacturer_order_products (manufacturer_order_id, product_id, quantity) VALUES (?, ?, ?)";
+                    String sql2 = "INSERT INTO manufacturer_orders_products (manufacturer_order_id, product_id, quantity) VALUES (?, ?, ?)";
                     for (CustomerOrder.Pair<Product, Integer> product : a.getProducts()) {
                         jdbcTemplate.update(sql2, insertId, product.first.getProductId(), product.second);
                     }
@@ -66,37 +65,41 @@ public class ManufacturerOrderDao implements IDao<ManufacturerOrder, Long> {
 
     @Override
     public Optional<ManufacturerOrder> findById(Long id) {
-        String sql = "SELECT mo.*, m.*, p.* FROM manufacturer_orders mo JOIN manufacturers m ON mo.ordered_from = m.manufacturer_id JOIN manufacturer_orders_products mop ON mo.manufacturer_order_id = mop.manufacturer_order_id JOIN products p ON mop.product_id = p.product_id WHERE mo.manufacturer_order_id = ?";
-        Map<Long, ManufacturerOrder> manufacturerOrderMap = jdbcTemplate.query(sql, new ManufacturerOrderRowMapper(), id);
+        String sql = "SELECT mo.*, m.*, p.*, e.*, mop.quantity FROM manufacturer_orders mo LEFT JOIN manufacturers m ON mo.ordered_from = m.manufacturer_id LEFT JOIN manufacturer_orders_products mop ON mo.order_id = mop.manufacturer_order_id LEFT JOIN products p ON mop.product_id = p.product_id LEFT JOIN employees e ON mo.processed_by_employee_id = e.employee_id WHERE mo.order_id = ?";
+        TreeMap<Long, ManufacturerOrder> manufacturerOrderMap = jdbcTemplate.query(sql, new ManufacturerOrderRowMapper(), id);
         return manufacturerOrderMap.values().stream().findFirst();
     }
 
     @Override
     public List<ManufacturerOrder> findAll() {
-        String sql = "SELECT mo.*, m.*, p.* FROM manufacturer_orders mo JOIN manufacturers m ON mo.ordered_from = m.manufacturer_id JOIN manufacturer_orders_products mop ON mo.manufacturer_order_id = mop.manufacturer_order_id JOIN products p ON mop.product_id = p.product_id";
-        Map<Long, ManufacturerOrder> manufacturerOrderMap = jdbcTemplate.query(sql, new ManufacturerOrderRowMapper());
+        String sql = "SELECT mo.*, m.*, p.*, e.*, mop.quantity FROM manufacturer_orders mo LEFT JOIN manufacturers m ON mo.ordered_from = m.manufacturer_id LEFT JOIN manufacturer_orders_products mop ON mo.order_id = mop.manufacturer_order_id LEFT JOIN products p ON mop.product_id = p.product_id LEFT JOIN employees e ON mo.processed_by_employee_id = e.employee_id";
+        TreeMap<Long, ManufacturerOrder> manufacturerOrderMap = jdbcTemplate.query(sql, new ManufacturerOrderRowMapper());
         return List.copyOf(manufacturerOrderMap.values());
     }
 
     @Override
     public void update(ManufacturerOrder a, Long id) {
-        String sql = "UPDATE manufacturer_orders SET processed_by_employee_id = ?, date_of_order = ? WHERE manufacturer_order_id = ?";
-        jdbcTemplate.update(sql, a.getProcessedByEmployee().getEmployeeId(), a.getDateOfOrder(), id);
+        String sql = "UPDATE manufacturer_orders SET ordered_from = ?, processed_by_employee_id = ?, date_of_order = ? WHERE order_id = ?";
+        jdbcTemplate.update(sql, a.getManufacturer().getManufacturerId(), a.getProcessedByEmployee().getEmployeeId(), a.getDateOfOrder(), id);
+        sql = "DELETE FROM manufacturer_orders_products WHERE manufacturer_order_id = ?";
+        jdbcTemplate.update(sql, id);
+        sql = "INSERT INTO manufacturer_orders_products (manufacturer_order_id, product_id, quantity) VALUES (?, ?, ?)";
+        jdbcTemplate.batchUpdate(sql, a.getProducts().stream().map(pair -> new Object[]{id, pair.first.getProductId(), pair.second}).toList());
     }
 
     @Override
     public void delete(Long id) {
-        String sql = "DELETE FROM manufacturer_orders WHERE manufacturer_order_id = ?";
+        String sql = "DELETE FROM manufacturer_orders WHERE order_id = ?";
         jdbcTemplate.update(sql, id);
     }
 
-    public static class ManufacturerOrderRowMapper implements ResultSetExtractor<Map<Long, ManufacturerOrder>> {
+    public static class ManufacturerOrderRowMapper implements ResultSetExtractor<TreeMap<Long, ManufacturerOrder>> {
         @Override
-        public Map<Long, ManufacturerOrder> extractData(ResultSet rs) throws SQLException, DataAccessException {
-            Map<Long, ManufacturerOrder> manufacturerOrderMap = new HashMap<>();
+        public TreeMap<Long, ManufacturerOrder> extractData(ResultSet rs) throws SQLException, DataAccessException {
+            TreeMap<Long, ManufacturerOrder> manufacturerOrderMap = new TreeMap<>();
             while (rs.next()) {
                 ManufacturerOrder manufacturerOrder = ManufacturerOrder.builder()
-                        .orderId(rs.getLong("manufacturer_order_id"))
+                        .orderId(rs.getLong("order_id"))
                         .manufacturer(Manufacturer.builder()
                                 .manufacturerId(rs.getLong("manufacturer_id"))
                                 .manufacturerName(rs.getString("manufacturer_name"))
@@ -116,7 +119,6 @@ public class ManufacturerOrderDao implements IDao<ManufacturerOrder, Long> {
 
                 Category category = Category.builder()
                         .categoryId(rs.getLong("category_id"))
-                        .categoryName(rs.getString("category_name"))
                         .build();
 
                 manufacturerOrderMap.get(manufacturerOrder.getOrderId()).getProducts().add(new CustomerOrder.Pair<>(Product.builder()

@@ -1,6 +1,7 @@
 package com.inventory.backend.entities;
 
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ public class ManufacturerOrder{
 
     private Date dateOfOrder;
 
-    private Set<CustomerOrder.Pair<Product, Integer>> products;
+    @Builder.Default
+    private Set<CustomerOrder.Pair<Product, Integer>> products = new HashSet<>();
 
 }

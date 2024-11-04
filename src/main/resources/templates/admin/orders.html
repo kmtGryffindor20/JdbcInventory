@@ -27,7 +27,7 @@
             <div th:replace="~{fragments/header :: sidebar}"></div>
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mb-3 border-bottom">
                         <div class="col">
                             <h1>Customer Orders</h1>
                         </div>
@@ -66,7 +66,7 @@
                                         <i class="bi bi-pencil"></i>
                                         Edit
                                     </a>
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#orderDeletionModal" th:data-bs-id="${order.orderId}" th:data-bs-name="${order.orderId}">
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#orderDeletionModal" th:data-bs-id="${order.orderId}" th:data-bs-name="${order.orderId}" th:data-bs-orderType="customer">
                                         <i class="bi bi-trash"></i>    
                                         Delete
                                     </button>
@@ -74,6 +74,53 @@
                             </tr>
                         </tbody>
                     </table> 
+            </main>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                    <div class="col">
+                        <h1>Manufacturer Orders</h1>
+                    </div>
+                    <div class="col">
+                        <a href="/admin/orders/manufacturer/create" class="btn btn-primary">Create Manufacturer Order</a>
+                    </div>
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Manufacturer</th>
+                            <th>Date</th>
+                            <th>Processed By</th>
+                            <th>Products</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${manufacturerOrders}">
+                            <td th:text="${order.orderId}"></td>
+                            <td th:text="${order.manufacturer.manufacturerName}"></td>
+                            <td th:text="${order.dateOfOrder}"></td>
+                            <td th:text="${order.processedByEmployee.firstName} + ' ' + ${order.processedByEmployee.lastName}"></td>
+                            <td>
+                                <ul>
+                                    <li th:each="product : ${order.products}">
+                                        <span th:text="${product.second} + ' x ' + ${product.first.productName}"></span>
+                                    </li>
+                                </ul>
+                            </td>
+                            <td>
+                                <a th:href="@{'/admin/orders/manufacturer/update?id=' + ${order.orderId}}" class="btn btn-primary">
+                                    <i class="bi bi-pencil"></i>
+                                    Edit
+                                </a>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#orderDeletionModal" th:data-bs-id="${order.orderId}" th:data-bs-name="${order.orderId}" th:data-bs-orderType="manufacturer">
+                                    <i class="bi bi-trash"></i>    
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table> 
             </main>
         </div>
 
@@ -91,7 +138,10 @@
 
                             var del = document.getElementById('delete');
                             var orderId = button.getAttribute('data-bs-id');
-                            del.href = '/admin/orders/customer/delete?id=' + orderId;
+
+                            var orderType = button.getAttribute('data-bs-orderType');
+
+                            del.href = `/admin/orders/${orderType}/delete?id=${orderId}`;
                         });
                     </script>
 </body>
