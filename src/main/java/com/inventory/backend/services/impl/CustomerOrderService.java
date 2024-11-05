@@ -73,6 +73,9 @@ public class CustomerOrderService implements IModelService<CustomerOrder, Long> 
         return customerOrderDao.totalSalesByCategory();
     }
 
+    public List<CustomerOrder> findOrdersByCustomerEmail(String customerEmail) {
+        return customerOrderDao.findOrdersByCustomerEmail(customerEmail);
+    }
     
     
 }
