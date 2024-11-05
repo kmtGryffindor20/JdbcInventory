@@ -22,7 +22,7 @@ public class Product {
 
     private Integer stockQuantity;
 
-    private Double costPrice;
+    private Double sellingPrice;
 
     private Double maximumRetailPrice;
 
