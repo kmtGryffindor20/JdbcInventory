@@ -25,6 +25,7 @@ import com.inventory.backend.entities.CustomerOrder;
 import com.inventory.backend.entities.Employee;
 import com.inventory.backend.entities.Manufacturer;
 import com.inventory.backend.entities.ManufacturerOrder;
+import com.inventory.backend.entities.OrderReturns;
 import com.inventory.backend.entities.Product;
 import com.inventory.backend.entities.ShippingInfoCustomerOrder;
 import com.inventory.backend.entities.ShippingInfoManufacturerOrder;
@@ -34,6 +35,7 @@ import com.inventory.backend.services.impl.CustomerService;
 import com.inventory.backend.services.impl.EmployeeService;
 import com.inventory.backend.services.impl.ManufacturerOrderService;
 import com.inventory.backend.services.impl.ManufacturerService;
+import com.inventory.backend.services.impl.OrderReturnsService;
 import com.inventory.backend.services.impl.ProductService;
 import com.inventory.backend.services.impl.SalesReportService;
 import com.inventory.backend.services.impl.ShippingInfoCustomerOrderService;
@@ -62,6 +64,8 @@ public class AdminController {
 
     private ShippingInfoManufacturerOrderService shippingInfoManufacturerOrderService;
 
+    private OrderReturnsService orderReturnsService;
+
     public AdminController(ManufacturerService manufacturerService,
                                  ProductService productService,
                                   EmployeeService employeeService,
@@ -71,7 +75,8 @@ public class AdminController {
                                       CustomerService customerService,
                                        ManufacturerOrderService manufacturerOrderService,
                                         ShippingInfoCustomerOrderService shippingInfoCustomerOrderService,
-                                         ShippingInfoManufacturerOrderService shippingInfoManufacturerOrderService) {
+                                         ShippingInfoManufacturerOrderService shippingInfoManufacturerOrderService,
+                                          OrderReturnsService orderReturnsService) {
         this.manufacturerService = manufacturerService;
         this.productService = productService;
         this.employeeService = employeeService;
@@ -82,6 +87,7 @@ public class AdminController {
         this.manufacturerOrderService = manufacturerOrderService;
         this.shippingInfoCustomerOrderService = shippingInfoCustomerOrderService;
         this.shippingInfoManufacturerOrderService = shippingInfoManufacturerOrderService;
+        this.orderReturnsService = orderReturnsService;
     }
 
     @GetMapping("/admin/categories")
@@ -327,6 +333,8 @@ public class AdminController {
         List<CustomerOrder> customerOrders = customerOrderService.findAll();
         model.addAttribute("customerOrders", customerOrders);
         model.addAttribute("manufacturerOrders", manufacturerOrderService.findAll());
+        Map<Long, String> customerOrderStatusMap = shippingInfoCustomerOrderService.idStatusMap();
+        model.addAttribute("customerOrderStatusMap", customerOrderStatusMap);
         return "admin/orders";
     }
 
@@ -477,8 +485,35 @@ public class AdminController {
 
     @PostMapping("admin/orders/customer/shipping/update")
     public String updateShippingInfoCustomerOrder(@ModelAttribute("shippingInfo") ShippingInfoCustomerOrder shippingInfo,
+                                                @RequestParam("orderId") Long orderId,
                                                 @RequestParam Long id) {
         shippingInfoCustomerOrderService.update(shippingInfo, id);
+        CustomerOrder customerOrder = customerOrderService.findById(orderId).get();
+        if (shippingInfo.getStatus().equals(ShippingInfoCustomerOrder.Status.CANCELLED))
+        {
+            if(orderReturnsService.findById(customerOrder).isPresent())
+            {
+                return "redirect:/admin/orders";
+            }
+            OrderReturns orderReturns = OrderReturns.builder()
+                    .order(customerOrder)
+                    .returnDate(new java.sql.Date(System.currentTimeMillis()))
+                    .returnReason("Order Cancelled")
+                    .build();
+            orderReturnsService.save(orderReturns);
+            for (CustomerOrder.Pair<Product, Integer> product : customerOrder.getProducts()) {
+                productService.updateProductQuantity(product.first.getProductId(), -product.second);
+            }
+        }
+        else{
+            if(orderReturnsService.findById(customerOrder).isPresent())
+            {
+                for (CustomerOrder.Pair<Product, Integer> product : customerOrder.getProducts()) {
+                    productService.updateProductQuantity(product.first.getProductId(), product.second);
+                }
+                orderReturnsService.delete(customerOrder);
+            }
+        }
         return "redirect:/admin/orders";
     }
 
@@ -496,6 +531,14 @@ public class AdminController {
         return "redirect:/admin/orders";
     }
 
+
+    @GetMapping("admin/orders/customer/return")
+    public String showAllReturnedOrders(Model model) {
+        List<OrderReturns> orderReturns = orderReturnsService.findAll();
+        System.out.println(orderReturns);
+        model.addAttribute("returns", orderReturns);
+        return "admin/customerReturns";
+    }
 
     @GetMapping("admin/sales/weekly")
     public ResponseEntity<Map<Date, Double>> weeklySales(@RequestParam String date) {

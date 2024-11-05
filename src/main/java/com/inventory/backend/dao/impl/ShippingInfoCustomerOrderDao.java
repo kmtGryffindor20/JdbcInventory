@@ -1,6 +1,7 @@
 package com.inventory.backend.dao.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -66,6 +67,18 @@ public class ShippingInfoCustomerOrderDao implements IDao<ShippingInfoCustomerOr
             results = jdbcTemplate.query(sql, new ShippingInfoCustomerOrderRowMapper(), orderId);
         }
         return results.stream().findFirst();
+    }
+
+    public Map<Long, String> idStatusMap() {
+        String sql = "SELECT order_id, status FROM customer_order_shipping_info";
+        return jdbcTemplate.query(sql, new IdStatusRowMapper()).stream().collect(java.util.stream.Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public static class IdStatusRowMapper implements RowMapper<Map.Entry<Long, String>> {
+        @Override
+        public Map.Entry<Long, String> mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
+            return Map.entry(rs.getLong("order_id"), rs.getString("status"));
+        }
     }
 
     public static class ShippingInfoCustomerOrderRowMapper implements RowMapper<ShippingInfoCustomerOrder> {

@@ -1,6 +1,6 @@
 package com.inventory.backend.services.impl;
 
-import com.inventory.backend.dao.IDao;
+import com.inventory.backend.dao.impl.OrderReturnsDao;
 import com.inventory.backend.entities.CustomerOrder;
 import com.inventory.backend.entities.OrderReturns;
 import com.inventory.backend.services.IModelService;
@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderReturnsService implements IModelService<OrderReturns, CustomerOrder> {
 
-    private IDao<OrderReturns, CustomerOrder> orderReturnsDao;
+    private OrderReturnsDao orderReturnsDao;
 
-    public OrderReturnsService(IDao<OrderReturns, CustomerOrder> orderReturnsDao) {
+    public OrderReturnsService(OrderReturnsDao orderReturnsDao) {
         this.orderReturnsDao = orderReturnsDao;
     }
 
@@ -45,5 +45,10 @@ public class OrderReturnsService implements IModelService<OrderReturns, Customer
     public void delete(CustomerOrder id) {
         orderReturnsDao.delete(id);
     }
+
+    public List<Long> getReturnedOrderIds() {
+        return orderReturnsDao.findOrderIds();
+    }
+
     
 }
