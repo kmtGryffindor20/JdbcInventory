@@ -92,7 +92,7 @@ public class SalesReportDao implements IDao<SalesReport, SalesReportCompositeKey
                             .productName(rs.getString("product_name"))
                             .expiryDate(rs.getDate("expiry_date"))
                             .stockQuantity(rs.getInt("stock_quantity"))
-                            .costPrice(rs.getDouble("cost_price"))
+                            .sellingPrice(rs.getDouble("selling_price"))
                             .maximumRetailPrice(rs.getDouble("maximum_retail_price"))
                             .category(Category.builder()
                                     .categoryId(rs.getLong("category_id"))
