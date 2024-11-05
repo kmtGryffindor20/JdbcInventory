@@ -1,6 +1,7 @@
 package com.inventory.backend.dao.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,18 +30,19 @@ public class ShippingInfoManufacturerOrderDao implements IDao<ShippingInfoManufa
 
     @Override
     public Optional<ShippingInfoManufacturerOrder> findById(Long id) {
-        String sql = "SELECT simo.*, mo.* FROM manufacturer_order_shipping_info simo JOIN manufacturer orders mo ON simo.manufacturer_order_id = mo.order_id WHERE simo.shipping_info_id = ?";
+        String sql = "SELECT simo.*, mo.* FROM manufacturer_order_shipping_info simo JOIN manufacturer_orders mo ON simo.manufacturer_order_id = mo.order_id WHERE simo.shipping_info_id = ?";
         return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new ShippingInfoManufacturerOrderRowMapper(), id));
     }
 
     @Override
     public List<ShippingInfoManufacturerOrder> findAll() {
-        String sql = "SELECT simo.*, mo.* FROM manufacturer_order_shipping_info simo JOIN manufacturer orders mo ON simo.manufacturer_order_id = mo.order_id";
+        String sql = "SELECT simo.*, mo.* FROM manufacturer_order_shipping_info simo JOIN manufacturer_orders mo ON simo.manufacturer_order_id = mo.order_id";
         return jdbcTemplate.query(sql, new ShippingInfoManufacturerOrderRowMapper());
     }
 
     @Override
     public void update(ShippingInfoManufacturerOrder a, Long id) {
+        System.out.println(a.getStatus());
         String sql = "UPDATE manufacturer_order_shipping_info SET shipping_date = ?, expected_delivery_date = ?, status = ? WHERE shipping_info_id = ?";
         jdbcTemplate.update(sql, a.getShippingDate(), a.getExpectedDeliveryDate(), a.getStatus().name(), id);
     }
@@ -66,6 +68,18 @@ public class ShippingInfoManufacturerOrderDao implements IDao<ShippingInfoManufa
             results = jdbcTemplate.query(sql, new ShippingInfoManufacturerOrderRowMapper(), orderId);
         }
         return results.stream().findFirst();
+    }
+
+    public Map<Long, String> idStatusMap() {
+        String sql = "SELECT manufacturer_order_id, status FROM manufacturer_order_shipping_info";
+        return jdbcTemplate.query(sql, new IdStatusRowMapper()).stream().collect(java.util.stream.Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public static class IdStatusRowMapper implements RowMapper<Map.Entry<Long, String>> {
+        @Override
+        public Map.Entry<Long, String> mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
+            return Map.entry(rs.getLong("manufacturer_order_id"), rs.getString("status"));
+        }
     }
 
     public static class ShippingInfoManufacturerOrderRowMapper implements RowMapper<ShippingInfoManufacturerOrder> {

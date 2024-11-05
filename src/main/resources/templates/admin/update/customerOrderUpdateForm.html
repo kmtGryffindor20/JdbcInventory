@@ -13,6 +13,9 @@
                                 <h1>Update Customer Order</h1>
                             </div>
                         </div>
+                        <div th:if="${error}" class="alert alert-danger" role="alert">
+                            <p th:text="${error}"></p>
+                        </div>
                         <form th:action="@{/admin/orders/customer/update?id={id}(id=${customerOrder.orderId})}" method="post" th:object="${customerOrder}">
                             <div class="mb-3">
                                 <label for="customer" class="form-label">Customer</label>

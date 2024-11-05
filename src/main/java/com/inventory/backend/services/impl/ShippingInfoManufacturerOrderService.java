@@ -5,6 +5,7 @@ import com.inventory.backend.entities.ShippingInfoManufacturerOrder;
 import com.inventory.backend.services.IModelService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -47,5 +48,9 @@ public class ShippingInfoManufacturerOrderService implements IModelService<Shipp
     
     public Optional<ShippingInfoManufacturerOrder> findByOrderId(Long orderId) {
         return shippingInfoManufacturerOrderDao.findByOrderId(orderId);
+    }
+
+    public Map<Long, String> idStatusMap() {
+        return shippingInfoManufacturerOrderDao.idStatusMap();
     }
 }

@@ -39,11 +39,12 @@
                             </div>
                         </form>
                         <form th:action="@{/admin/orders/manufacturer/shipping/update?id={id}(id=${shippingInfo.shippingInfoId})}" method="post" th:object="${shippingInfo}">
+                            <input type="hidden" name="orderId" th:value="${manufacturerOrder.orderId}">
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
                                 <select class="form-select" id="status" th:field="*{status}">
                                     <option value="SHIPPED">SHIPPED</option>
-                                    <option value="DELIVERED">DELIVERED</option>
+                                    <option value="ARRIVED">ARRIVED</option>
                                     <option value="ORDERED">ORDERED</option>
                                     <option value="CANCELLED">CANCELLED</option>
                                 </select>
@@ -65,7 +66,34 @@
     </div>
 
 
+    <script>
+         function getDate() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
 
+            today = yyyy + '-' + mm + '-' + dd;
+
+            if (document.getElementById('shippingDate').value == '') {
+                document.getElementById('shippingDate').value = today;
+            }
+
+            var expectedDeliveryDate = new Date();
+            expectedDeliveryDate.setDate(expectedDeliveryDate.getDate() + 7);
+            dd = String(expectedDeliveryDate.getDate()).padStart(2, '0');
+            mm = String(expectedDeliveryDate.getMonth() + 1).padStart(2, '0'); //January is 0!
+            yyyy = expectedDeliveryDate.getFullYear();
+
+            expectedDeliveryDate = yyyy + '-' + mm + '-' + dd;
+
+            if (document.getElementById('expectedDeliveryDate').value == '') {
+                document.getElementById('expectedDeliveryDate').value = expectedDeliveryDate;
+            }
+        }
+
+        window.onload = getDate;
+    </script>
 
 </body>
 </html>

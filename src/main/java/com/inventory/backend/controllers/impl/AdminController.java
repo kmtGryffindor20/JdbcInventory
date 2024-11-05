@@ -335,6 +335,8 @@ public class AdminController {
         model.addAttribute("manufacturerOrders", manufacturerOrderService.findAll());
         Map<Long, String> customerOrderStatusMap = shippingInfoCustomerOrderService.idStatusMap();
         model.addAttribute("customerOrderStatusMap", customerOrderStatusMap);
+        Map<Long, String> manufacturerOrderStatusMap = shippingInfoManufacturerOrderService.idStatusMap();
+        model.addAttribute("manufacturerOrderStatusMap", manufacturerOrderStatusMap);
         return "admin/orders";
     }
 
@@ -352,14 +354,26 @@ public class AdminController {
                                       @RequestParam("productIds") List<Long> productIds,
                                       @RequestParam("quantities") List<Integer> quantities,
                                       @RequestParam("customerId") String customerId,
-                                      @RequestParam("employeeId") Long employeeId) {
+                                      @RequestParam("employeeId") Long employeeId,
+                                      Model model) {
         customerOrder.setCustomer(customerService.findById(customerId).get());
         customerOrder.setProcessorEmployee(employeeService.findById(employeeId).get());
         for (int i = 0; i < productIds.size(); i++) {
             Product product = productService.findById(productIds.get(i)).get();
             customerOrder.getProducts().add(new CustomerOrder.Pair<>(product, quantities.get(i)));
         }
-        System.out.println(customerOrder);
+
+        for (CustomerOrder.Pair<Product, Integer> product : customerOrder.getProducts()) {
+            if (product.first.getStockQuantity() < product.second) {
+                model.addAttribute("error", "Not enough stock for product " + product.first.getProductName() + " (Available: " + product.first.getStockQuantity() + ")");
+                model.addAttribute("customerOrder", customerOrder);
+                model.addAttribute("products", productService.findAll());
+                model.addAttribute("customers", customerService.findAll());
+                model.addAttribute("employees", employeeService.findAll());
+                return "admin/create/customerOrderCreateForm";
+            }
+        }
+        
         customerOrderService.save(customerOrder);
         return "redirect:/admin/orders";
     }
@@ -380,14 +394,31 @@ public class AdminController {
                                       @RequestParam("quantities") List<Integer> quantities,
                                       @RequestParam("customerId") String customerId,
                                       @RequestParam("employeeId") Long employeeId,
-                                      @RequestParam Long id) {
+                                      @RequestParam Long id,
+                                      Model model) {
         customerOrder.setCustomer(customerService.findById(customerId).get());
         customerOrder.setProcessorEmployee(employeeService.findById(employeeId).get());
         customerOrder.getProducts().clear();
+
+        CustomerOrder prevCustomerOrder = customerOrderService.findById(id).get();
+
         for (int i = 0; i < productIds.size(); i++) {
             Product product = productService.findById(productIds.get(i)).get();
             customerOrder.getProducts().add(new CustomerOrder.Pair<>(product, quantities.get(i)));
         }
+        
+        // for each product in the order, check if the quantity is available by increasing stock by previous quantity ordered
+        for (CustomerOrder.Pair<Product, Integer> product : customerOrder.getProducts()) {
+            if (product.first.getStockQuantity() + prevCustomerOrder.getQuantity(product.first.getProductId()) < product.second) {
+                model.addAttribute("error", "Not enough stock for product " + product.first.getProductName() + " (More Available: " + product.first.getStockQuantity() + ")");
+                model.addAttribute("customerOrder", customerOrder);
+                model.addAttribute("products", productService.findAll());
+                model.addAttribute("customers", customerService.findAll());
+                model.addAttribute("employees", employeeService.findAll());
+                return "admin/update/customerOrderUpdateForm";
+            }
+        }
+
         customerOrderService.update(customerOrder, id);
         return "redirect:/admin/orders";
     }
@@ -526,7 +557,24 @@ public class AdminController {
 
     @PostMapping("admin/orders/manufacturer/shipping/update")
     public String updateShippingInfoManufacturerOrder(@ModelAttribute("shippingInfo") ShippingInfoManufacturerOrder shippingInfo,
+                                                    @RequestParam("orderId") Long orderId,
                                                     @RequestParam Long id) {
+                                                        ManufacturerOrder manufacturerOrder = manufacturerOrderService.findById(orderId).get();
+        if (shippingInfo.getStatus().equals(ShippingInfoManufacturerOrder.Status.ARRIVED))
+        {
+            for (CustomerOrder.Pair<Product, Integer> product : manufacturerOrder.getProducts()) {
+                productService.updateProductQuantity(product.first.getProductId(), -product.second);
+            }
+        }
+        else{
+            ShippingInfoManufacturerOrder shippingInfoManufacturerOrder = shippingInfoManufacturerOrderService.findById(id).get();
+            if(shippingInfoManufacturerOrder.getStatus().equals(ShippingInfoManufacturerOrder.Status.ARRIVED))
+            {
+                for (CustomerOrder.Pair<Product, Integer> product : manufacturerOrder.getProducts()) {
+                    productService.updateProductQuantity(product.first.getProductId(), product.second);
+                }
+            }
+        }
         shippingInfoManufacturerOrderService.update(shippingInfo, id);
         return "redirect:/admin/orders";
     }

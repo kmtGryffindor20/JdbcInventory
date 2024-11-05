@@ -26,7 +26,7 @@ public class ShippingInfoManufacturerOrder {
 
     public enum Status {
         SHIPPED,
-        DELIVERED,
+        ARRIVED,
         ORDERED,
         CANCELLED
     }

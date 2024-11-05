@@ -13,6 +13,9 @@
                                 <h1>Add New Customer Order</h1>
                             </div>
                         </div>
+                        <div th:if="${error}" class="alert alert-danger" role="alert">
+                            <p th:text="${error}"></p>
+                        </div>
                         <form th:action="@{/admin/orders/customer/create}" method="post" th:object="${customerOrder}">
                             <div class="mb-3">
                                 <label for="customer" class="form-label">Customer</label>
@@ -41,15 +44,17 @@
                             <div class="mb-3">
                                 <label class="form-label">Products</label>
                                 <div id="productList">
-                                    <!-- Dynamically add products here -->
-                                    <!-- <div th:each="product, iterStat : ${products}">
-                                        <div class="input-group mb-2">
-                                            <select class="form-select" th:field="*{products[__${iterStat.index}__].first}">
-                                                <option th:each="prod : ${allProducts}" th:value="${prod.productId}" th:text="${prod.productName}"></option>
+                                    <div th:each="productPair : ${customerOrder.products}">
+                                        <div class="input-group mb-2 align-items-center justify-content-center">
+                                            <select class="form-select" name="productIds">
+                                                <option th:each="prod : ${products}" th:value="${prod.productId}" th:text="${prod.productName}"
+                                                        th:selected="${prod.productId == productPair.first.productId}"
+                                                ></option>
                                             </select>
-                                            <input type="number" class="form-control" th:field="*{products[__${iterStat.index}__].second}" placeholder="Quantity">
+                                            <input type="number" class="form-control" placeholder="Quantity" name="quantities" th:value="${productPair.second}">
+                                            <i class="bi bi-x-circle-fill text-danger ms-1"></i>
                                         </div>
-                                    </div> -->
+                                    </div>
                                 </div>
                                 <button type="button" class="btn btn-secondary" id="addProduct">Add Product</button>
                             </div>
@@ -113,6 +118,8 @@
             productList.appendChild(productField);
 
             productSelect.addEventListener('change', function() {
+                // set quantity max and min
+                const selectedProduct = products.find(product => product.productId == productSelect.value);
                 quantityInput.addEventListener('input', function() {
                     const allProducts = document.querySelectorAll('select[name="productIds"]');
                     const allQuantities = document.querySelectorAll('input[name="quantities"]');

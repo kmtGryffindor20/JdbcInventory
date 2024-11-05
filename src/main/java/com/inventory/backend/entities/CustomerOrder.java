@@ -31,6 +31,16 @@ public class CustomerOrder {
     private Set<Pair<Product, Integer>> products = new HashSet<>();
 
 
+    public Integer getQuantity(Long productId) {
+        for (Pair<Product, Integer> pair : products) {
+            if (pair.first.getProductId().equals(productId)) {
+                return pair.second;
+            }
+        }
+        return 0;
+    }   
+
+
     public static class Pair<T, U> {
         public final T first;
         public final U second;

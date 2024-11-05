@@ -137,7 +137,7 @@ public class ManufacturerOrderDao implements IDao<ManufacturerOrder, Long> {
                         .productId(rs.getLong("product_id"))
                         .productName(rs.getString("product_name"))
                         .expiryDate(rs.getDate("expiry_date"))
-                        .stockQuantity(rs.getLong("stock_quantity"))
+                        .stockQuantity(rs.getInt("stock_quantity"))
                         .costPrice(rs.getDouble("cost_price"))
                         .maximumRetailPrice(rs.getDouble("maximum_retail_price"))
                         .category(category)

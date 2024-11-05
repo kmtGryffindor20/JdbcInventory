@@ -20,7 +20,7 @@ public class Product {
 
     private Date expiryDate;
 
-    private Long stockQuantity;
+    private Integer stockQuantity;
 
     private Double costPrice;
 

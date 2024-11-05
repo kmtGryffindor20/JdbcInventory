@@ -77,7 +77,11 @@
             var yyyy = today.getFullYear();
 
             today = yyyy + '-' + mm + '-' + dd;
-            document.getElementById('shippingDate').value = today;
+
+            // update value only if it is empty
+            if (document.getElementById('shippingDate').value === '') {
+                document.getElementById('shippingDate').value = today;
+            }
 
             var expectedDeliveryDate = new Date();
             expectedDeliveryDate.setDate(expectedDeliveryDate.getDate() + 7);
@@ -86,7 +90,11 @@
             yyyy = expectedDeliveryDate.getFullYear();
 
             expectedDeliveryDate = yyyy + '-' + mm + '-' + dd;
-            document.getElementById('expectedDeliveryDate').value = expectedDeliveryDate;
+            
+            // update value only if it is empty
+            if (document.getElementById('expectedDeliveryDate').value === '') {
+                document.getElementById('expectedDeliveryDate').value = expectedDeliveryDate;
+            }
         }
 
         window.onload = getDate;
