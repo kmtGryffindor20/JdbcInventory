@@ -18,7 +18,7 @@
                                 <label for="manufacturerId" class="form-label">Manufacturer</label>
                                 <select name="manufacturerId" class="form-select" id="manufacturerId">
                                     <option th:each="man : ${manufacturers}" th:value="${man.manufacturerId}" th:text="${man.manufacturerName}"
-                                        th:selected="${man.manufacturerId == manufacturerOrder.manufacturer.manufacturerId}"></option>
+                                        th:selected="${manufacturerOrder.manufacturer == null ? false : man.manufacturerId == manufacturerOrder.manufacturer.manufacturerId}"></option>
                                     ></option>
                                 </select>
                             </div>
@@ -143,6 +143,13 @@
             document.getElementById('amount').innerText = "Amount: $0.00"; // Reset amount display
             amount = 0;
         });
+
+        document.querySelectorAll("input[name='quantities']").forEach(input => {
+            input.addEventListener('input', calculateTotal);
+        });
+
+        calculateTotal();
+
         /*]]>*/
     </script>
     

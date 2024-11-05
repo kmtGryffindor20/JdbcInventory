@@ -13,27 +13,23 @@
                                 <h1>Order Shipping Details</h1>
                             </div>
                         </div>
-                        <form action="" th:object="${customerOrder}">
+                        <form action="" th:object="${manufacturerOrder}">
                             <div class="mb-3">
-                                <label for="customer" class="form-label">Customer</label>
-                                <input type="text" class="form-control" id="customer" th:value="${customerOrder.customer.firstName} + ' ' + ${customerOrder.customer.lastName}" disabled>
+                                <label for="manufacturer" class="form-label">Manufacturer</label>
+                                <input type="text" class="form-control" id="manufacturer" th:value="${manufacturerOrder.manufacturer.manufacturerName}" disabled>
                             </div>
                             <div class="mb-3">
                                 <label for="orderDate" class="form-label">Order Date</label>
                                 <input type="date" class="form-control" id="orderDate" th:field="*{dateOfOrder}" disabled>
                             </div>
                             <div class="mb-3">
-                                <label for="paymentMethod" class="form-label">Payment Method</label>
-                                <input type="text" class="form-control" id="paymentMethod" th:value="${customerOrder.paymentMethod}" disabled>
-                            </div>
-                            <div class="mb-3">
-                                <label for="processorEmployee" class="form-label">Processed by Employee</label>
-                                <input type="text" class="form-control" id="processorEmployee" th:value="${customerOrder.processorEmployee.firstName} + ' ' + ${customerOrder.processorEmployee.lastName}" disabled>
+                                <label for="processedByEmployee" class="form-label">Processed by Employee</label>
+                                <input type="text" class="form-control" id="processedByEmployee" th:value="${manufacturerOrder.processedByEmployee.firstName} + ' ' + ${manufacturerOrder.processedByEmployee.lastName}" disabled>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Products</label>
                                 <div id="productList">
-                                    <div th:each="productPair : ${customerOrder.products}">
+                                    <div th:each="productPair : ${manufacturerOrder.products}">
                                         <div class="input-group mb-2 align-items-center justify-content-center">
                                             <input type="text" class="form-control" placeholder="Product Name" name="productIds" th:value="${productPair.first.productName}" disabled>
                                             <input type="number" class="form-control" placeholder="Quantity" name="quantities" th:value="${productPair.second}" disabled>
@@ -42,13 +38,13 @@
                                 </div>
                             </div>
                         </form>
-                        <form th:action="@{/admin/orders/customer/shipping/update?id={id}(id=${shippingInfo.shippingInfoId})}" method="post" th:object="${shippingInfo}">
+                        <form th:action="@{/admin/orders/manufacturer/shipping/update?id={id}(id=${shippingInfo.shippingInfoId})}" method="post" th:object="${shippingInfo}">
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
                                 <select class="form-select" id="status" th:field="*{status}">
                                     <option value="SHIPPED">SHIPPED</option>
                                     <option value="DELIVERED">DELIVERED</option>
-                                    <option value="PENDING">PENDING</option>
+                                    <option value="ORDERED">ORDERED</option>
                                     <option value="CANCELLED">CANCELLED</option>
                                 </select>
                             </div>

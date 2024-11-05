@@ -121,7 +121,7 @@
                                     <i class="bi bi-trash"></i>    
                                     Delete
                                 </button>
-                                <a class="btn btn-warning">
+                                <a class="btn btn-warning" th:href="@{'/admin/orders/manufacturer/shipping?id=' + ${order.orderId}}">
                                     <i class="bi bi-truck"></i>    
                                     Shipping
                                 </a>

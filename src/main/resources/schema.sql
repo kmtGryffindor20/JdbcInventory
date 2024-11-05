@@ -171,9 +171,9 @@ CREATE TABLE IF NOT EXISTS manufacturer_orders_products (
 CREATE TABLE IF NOT EXISTS manufacturer_order_shipping_info (
     shipping_info_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     manufacturer_order_id BIGINT NOT NULL,
-    shipping_date DATE NOT NULL,
-    expected_delivery_date DATE NOT NULL,
-    status ENUM ('SHIPPED', 'DELIVERED', 'PENDING', 'CANCELLED') NOT NULL,
+    shipping_date DATE,
+    expected_delivery_date DATE,
+    status ENUM ('SHIPPED', 'ARRIVED', 'ORDERED', 'CANCELLED') NOT NULL,
     FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(order_id) ON DELETE CASCADE
 );
 

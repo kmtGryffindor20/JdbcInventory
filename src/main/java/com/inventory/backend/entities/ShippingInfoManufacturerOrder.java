@@ -20,7 +20,14 @@ public class ShippingInfoManufacturerOrder {
 
     private Date expectedDeliveryDate;
 
-    private ShippingInfoCustomerOrder.Status status;
+    private Status status;
 
     private ManufacturerOrder manufacturerOrder;
+
+    public enum Status {
+        SHIPPED,
+        DELIVERED,
+        ORDERED,
+        CANCELLED
+    }
 }

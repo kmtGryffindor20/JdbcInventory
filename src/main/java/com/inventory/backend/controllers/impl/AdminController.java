@@ -1,6 +1,5 @@
 package com.inventory.backend.controllers.impl;
 
-import java.lang.StackWalker.Option;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -480,6 +479,20 @@ public class AdminController {
     public String updateShippingInfoCustomerOrder(@ModelAttribute("shippingInfo") ShippingInfoCustomerOrder shippingInfo,
                                                 @RequestParam Long id) {
         shippingInfoCustomerOrderService.update(shippingInfo, id);
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("admin/orders/manufacturer/shipping")
+    public String showShippingInfoManufacturerOrder(@RequestParam Long id, Model model) {
+        model.addAttribute("manufacturerOrder", manufacturerOrderService.findById(id).get());
+        model.addAttribute("shippingInfo", shippingInfoManufacturerOrderService.findByOrderId(id).get());
+        return "admin/manufacturerShipping";
+    }
+
+    @PostMapping("admin/orders/manufacturer/shipping/update")
+    public String updateShippingInfoManufacturerOrder(@ModelAttribute("shippingInfo") ShippingInfoManufacturerOrder shippingInfo,
+                                                    @RequestParam Long id) {
+        shippingInfoManufacturerOrderService.update(shippingInfo, id);
         return "redirect:/admin/orders";
     }
 

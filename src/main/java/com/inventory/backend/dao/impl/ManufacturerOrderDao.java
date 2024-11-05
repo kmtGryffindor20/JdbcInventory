@@ -20,21 +20,26 @@ import com.inventory.backend.entities.Employee;
 import com.inventory.backend.entities.Manufacturer;
 import com.inventory.backend.entities.ManufacturerOrder;
 import com.inventory.backend.entities.Product;
+import com.inventory.backend.entities.ShippingInfoManufacturerOrder;
+import com.inventory.backend.services.impl.ShippingInfoManufacturerOrderService;
 
 @Repository
 public class ManufacturerOrderDao implements IDao<ManufacturerOrder, Long> {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public ManufacturerOrderDao(JdbcTemplate jdbcTemplate) {
+    private ShippingInfoManufacturerOrderService shippingInfoManufacturerOrderService;
+
+    public ManufacturerOrderDao(JdbcTemplate jdbcTemplate,
+                                ShippingInfoManufacturerOrderService shippingInfoManufacturerOrderService) {
         this.jdbcTemplate = jdbcTemplate;
+        this.shippingInfoManufacturerOrderService = shippingInfoManufacturerOrderService;
     }
 
     @Override
     public void create(ManufacturerOrder a) {
         String sql = "INSERT INTO manufacturer_orders (ordered_from, processed_by_employee_id, date_of_order) VALUES (?, ?, ?)";
         
-        int insertId = -1;
 
         try{
             PreparedStatement preparedStatement = jdbcTemplate.getDataSource().getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -50,11 +55,18 @@ public class ManufacturerOrderDao implements IDao<ManufacturerOrder, Long> {
                 
                 if (generatedKeys.next())
                 {
-                    insertId = generatedKeys.getInt(1);
+                    int insertId = generatedKeys.getInt(1);
                     String sql2 = "INSERT INTO manufacturer_orders_products (manufacturer_order_id, product_id, quantity) VALUES (?, ?, ?)";
-                    for (CustomerOrder.Pair<Product, Integer> product : a.getProducts()) {
-                        jdbcTemplate.update(sql2, insertId, product.first.getProductId(), product.second);
-                    }
+                    jdbcTemplate.batchUpdate(sql2, a.getProducts().stream().map(pair -> new Object[]{insertId, pair.first.getProductId(), pair.second}).toList());
+
+                    a.setOrderId((long) insertId);
+                    ShippingInfoManufacturerOrder shippingInfoManufacturerOrder = ShippingInfoManufacturerOrder.builder()
+                            .shippingDate(null)
+                            .expectedDeliveryDate(null)
+                            .status(ShippingInfoManufacturerOrder.Status.ORDERED)
+                            .manufacturerOrder(a)
+                            .build();
+                    shippingInfoManufacturerOrderService.save(shippingInfoManufacturerOrder);
                 }
             }
         }
