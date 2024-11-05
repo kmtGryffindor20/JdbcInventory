@@ -12,21 +12,21 @@
             <div class="carousel-item active">
                 <div class="d-flex flex-row gap-2 justify-content-evenly">
                     <!-- Loop for 5 cards -->
-                     <div th:each="i : ${#numbers.sequence(0, 4)}" th:insert="~{fragments/cards :: product_card}" th:with="productName=${deals[i].productName}, costPrice=${deals[i].costPrice}, maximumRetailPrice=${deals[i].maximumRetailPrice}, productId=${deals[i].productId}">
+                     <div th:each="i : ${#numbers.sequence(0, 4)}" th:insert="~{fragments/cards :: product_card}" th:with="productName=${deals[i].productName}, sellingPrice=${deals[i].sellingPrice}, maximumRetailPrice=${deals[i].maximumRetailPrice}, productId=${deals[i].productId}">
                      </div>
                 </div>
             </div>
             <div class="carousel-item">
                 <div class="d-flex flex-row gap-2 justify-content-evenly">
                     <!-- Loop for 5 cards -->
-                    <div th:each="i : ${#numbers.sequence(5, 9)}" th:insert="~{fragments/cards :: product_card}" th:with="productName=${deals[i].productName}, costPrice=${deals[i].costPrice}, maximumRetailPrice=${deals[i].maximumRetailPrice}, productId=${deals[i].productId}">
+                    <div th:each="i : ${#numbers.sequence(5, 9)}" th:insert="~{fragments/cards :: product_card}" th:with="productName=${deals[i].productName}, sellingPrice=${deals[i].sellingPrice}, maximumRetailPrice=${deals[i].maximumRetailPrice}, productId=${deals[i].productId}">
                     </div>
                 </div>
             </div>
             <div class="carousel-item">
                 <div class="d-flex flex-row gap-2 justify-content-evenly">
                     <!-- Loop for 5 cards -->
-                    <div th:each="i : ${#numbers.sequence(10, 14)}" th:insert="~{fragments/cards :: product_card}" th:with="productName=${deals[i].productName}, costPrice=${deals[i].costPrice}, maximumRetailPrice=${deals[i].maximumRetailPrice}, productId=${deals[i].productId}">
+                    <div th:each="i : ${#numbers.sequence(10, 14)}" th:insert="~{fragments/cards :: product_card}" th:with="productName=${deals[i].productName}, sellingPrice=${deals[i].sellingPrice}, maximumRetailPrice=${deals[i].maximumRetailPrice}, productId=${deals[i].productId}">
                     </div>
                 </div>
             </div>
