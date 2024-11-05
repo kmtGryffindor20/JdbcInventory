@@ -100,7 +100,20 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
         TreeMap <Long, CustomerOrder> customerOrderMap = jdbcTemplate.query(sql, new CustomerOrderRowMapper());
         return new ArrayList<>(customerOrderMap.values());
     }
+       public List<CustomerOrder> findOrdersByCustomerEmail(String customerEmail) {
+        String sql = "SELECT co.*, c.*, e.first_name as e_first_name, e.last_name as e_last_name, p.product_id, p.product_name, p.maximum_retail_price, cop.quantity " +
+                     "FROM customer_orders co " +
+                     "LEFT JOIN customers c ON co.customer_email = c.email " +
+                     "LEFT JOIN employees e ON co.processed_by_employee_id = e.employee_id " +
+                     "LEFT JOIN customer_orders_products cop ON co.order_id = cop.order_id " +
+                     "LEFT JOIN products p ON cop.product_id = p.product_id " +
+                     "WHERE c.email = ?";
 
+        Map<Long, CustomerOrder> customerOrderMap = jdbcTemplate.query(sql, new CustomerOrderRowMapper(), customerEmail);
+        return List.copyOf(customerOrderMap.values());
+    }
+
+    
     @Override
     public void update(CustomerOrder customerOrder, Long id) {
         String sql = "UPDATE customer_orders SET date_of_order = ?, customer_email = ?, processed_by_employee_id = ?, payment_method = ? WHERE order_id = ?";
