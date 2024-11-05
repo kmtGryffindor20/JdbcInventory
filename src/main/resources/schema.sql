@@ -54,9 +54,10 @@ CREATE TABLE IF NOT EXISTS customers (
 CREATE TABLE IF NOT EXISTS products (
     product_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     product_name VARCHAR(255) NOT NULL,
-    expiry_date DATE NOT NULL,
+    expiry_date DATE,
     stock_quantity INT NOT NULL,
-    cost_price DECIMAL(10, 2) NOT NULL,
+    -- cost_price DECIMAL(10, 2) NOT NULL,
+    selling_price DECIMAL(10, 2) NOT NULL,
     maximum_retail_price DECIMAL(10, 2) NOT NULL,
     category_id BIGINT,
     FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL
@@ -73,22 +74,26 @@ CREATE TABLE IF NOT EXISTS manufacturers (
 CREATE TABLE IF NOT EXISTS manufacturer_email_addresses (
     manufacturer_id BIGINT NOT NULL,
     email_address VARCHAR(255) NOT NULL,
-    FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE CASCADE
+    FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE CASCADE,
+    PRIMARY KEY (manufacturer_id, email_address)
 );
 
 
 CREATE TABLE IF NOT EXISTS manufacturer_phone_numbers (
     manufacturer_id BIGINT NOT NULL,
     phone_number VARCHAR(255) NOT NULL,
-    FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE CASCADE
+    FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE CASCADE,
+    PRIMARY KEY (manufacturer_id, phone_number)
 );
 
 
 CREATE TABLE IF NOT EXISTS product_manufacturers (
     product_id BIGINT NOT NULL,
     manufacturer_id BIGINT NOT NULL,
+    cost_price DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
-    FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE CASCADE
+    FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id) ON DELETE CASCADE,
+    PRIMARY KEY (product_id, manufacturer_id)
 );
 
 
@@ -106,7 +111,8 @@ CREATE TABLE IF NOT EXISTS employees (
 CREATE TABLE IF NOT EXISTS employee_email_addresses (
     employee_id BIGINT NOT NULL,
     email_address VARCHAR(255) NOT NULL,
-    FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE,
+    PRIMARY KEY (employee_id, email_address)
 );
 
 
@@ -122,16 +128,17 @@ CREATE TABLE IF NOT EXISTS customer_orders (
 
 
 CREATE TABLE IF NOT EXISTS customer_orders_products (
-    order_id BIGINT NOT NULL,
+    order_id BIGINT,
     product_id BIGINT,
     quantity INT NOT NULL,
     FOREIGN KEY (order_id) REFERENCES customer_orders(order_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE SET NULL
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    PRIMARY KEY (order_id, product_id)
 );  
 
 
 CREATE TABLE IF NOT EXISTS orders_returned (
-    order_id BIGINT NOT NULL,
+    order_id BIGINT PRIMARY KEY NOT NULL,
     return_date DATE NOT NULL,
     return_reason VARCHAR(255) NOT NULL,
     FOREIGN KEY (order_id) REFERENCES customer_orders(order_id) ON DELETE CASCADE
@@ -141,8 +148,8 @@ CREATE TABLE IF NOT EXISTS orders_returned (
 CREATE TABLE IF NOT EXISTS customer_order_shipping_info (
     shipping_info_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     order_id BIGINT NOT NULL,
-    shipping_date DATE,
-    expected_delivery_date DATE,
+    shipping_date DATE NOT NULL,
+    expected_delivery_date DATE NOT NULL,
     status ENUM ('SHIPPED', 'DELIVERED', 'PENDING', 'CANCELLED') NOT NULL,
     FOREIGN KEY (order_id) REFERENCES customer_orders(order_id) ON DELETE CASCADE
 );
@@ -153,6 +160,7 @@ CREATE TABLE IF NOT EXISTS manufacturer_orders (
     ordered_from BIGINT,
     date_of_order DATE NOT NULL,
     processed_by_employee_id BIGINT,
+    quantity INT NOT NULL,
     FOREIGN KEY (ordered_from) REFERENCES manufacturers(manufacturer_id) ON DELETE SET NULL,
     FOREIGN KEY (processed_by_employee_id) REFERENCES employees(employee_id) ON DELETE SET NULL
 );
@@ -163,7 +171,8 @@ CREATE TABLE IF NOT EXISTS manufacturer_orders_products (
     product_id BIGINT,
     quantity INT NOT NULL,
     FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(order_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE SET NULL
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    PRIMARY KEY (manufacturer_order_id, product_id)
 );
 
 
@@ -171,9 +180,9 @@ CREATE TABLE IF NOT EXISTS manufacturer_orders_products (
 CREATE TABLE IF NOT EXISTS manufacturer_order_shipping_info (
     shipping_info_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     manufacturer_order_id BIGINT NOT NULL,
-    shipping_date DATE,
-    expected_delivery_date DATE,
-    status ENUM ('SHIPPED', 'ARRIVED', 'ORDERED', 'CANCELLED') NOT NULL,
+    shipping_date DATE NOT NULL,
+    expected_delivery_date DATE NOT NULL,
+    status ENUM ('SHIPPED', 'DELIVERED', 'PENDING', 'CANCELLED') NOT NULL,
     FOREIGN KEY (manufacturer_order_id) REFERENCES manufacturer_orders(order_id) ON DELETE CASCADE
 );
 
@@ -186,9 +195,7 @@ CREATE TABLE IF NOT EXISTS sales_report (
     top_selling_product_id BIGINT,
     FOREIGN KEY (top_selling_product_id) REFERENCES products(product_id) ON DELETE SET NULL,
     PRIMARY KEY (day, month, year)
-);
-
-
+)
 
 -- CREATE TRIGGER update_sales_report
 -- AFTER INSERT, UPDATE, DELETE ON customer_orders
@@ -232,4 +239,3 @@ CREATE TABLE IF NOT EXISTS sales_report (
 --         VALUES (day, month, year, total_sales, total_orders, top_selling_product_id)//
 --     END IF//
 -- END;
-
