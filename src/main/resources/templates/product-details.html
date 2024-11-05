@@ -14,7 +14,7 @@
             <div class="card-body d-flex flex-column justify-content-evenly gap-2">
               <h5 th:text="${product.productName}" class="card-title">Card title</h5>
               <a th:href="@{/category/{id}/products(id=${product.category.categoryId})}" class="card_text text-decoration-none text-body" ><strong>Category:</strong> <span th:text="${product.category.categoryName}">Category</span></a>
-              <p class="card-text"><strong>Maximum Retail Price:</strong> $<span class="text-decoration-line-through" th:text="${product.maximumRetailPrice}">0.00</span> <span class="text-primary" th:text="${product.costPrice}" ></span> </p>
+              <p class="card-text"><strong>Maximum Retail Price:</strong> $<span class="text-decoration-line-through" th:text="${product.maximumRetailPrice}">0.00</span> <span class="text-primary" th:text="${product.sellingPrice}" ></span> </p>
                 <div class="quantity-selection d-flex gap-4">
                     <label for="quantity">Quantity:</label>
                     <button type="button" class="btn btn-primary text-center" onclick="decreaseQuantity()">-</button>
