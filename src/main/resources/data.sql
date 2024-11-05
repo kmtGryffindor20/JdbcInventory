@@ -97,7 +97,7 @@ VALUES
 ('Home Decor', 'Add a Touch of Elegance to Your Home.');
 
 
-INSERT INTO products (product_name, expiry_date, stock_quantity, cost_price, maximum_retail_price, category_id) VALUES
+INSERT INTO products (product_name, expiry_date, stock_quantity, selling_price, maximum_retail_price, category_id) VALUES
 -- Electronics (Category ID: 1)
 ('Apple iPhone 14', '2026-12-31', 50, 799.99, 999.99, 1),
 ('Samsung Galaxy S22', '2026-11-30', 40, 699.99, 899.99, 1),
@@ -133,42 +133,42 @@ INSERT INTO products (product_name, expiry_date, stock_quantity, cost_price, max
 ('Fresh Spinach', '2024-09-20', 220, 1.49, 2.49, 5),
 ('Bananas (1 Dozen)', '2024-08-15', 300, 0.99, 1.29, 5);
 
-
-INSERT INTO product_manufacturers (product_id, manufacturer_id) VALUES
+INSERT INTO product_manufacturers (product_id, manufacturer_id, cost_price) VALUES
 -- Electronics
-(1, 1),  -- Apple iPhone 14 by Apple Inc.
-(2, 2),  -- Samsung Galaxy S22 by Samsung Electronics
-(3, 3),  -- Sony Bravia 4K TV by Sony Corporation
-(4, 4),  -- Dell Inspiron Laptop by Dell Technologies
-(5, 5),  -- Bose QuietComfort Headphones by Bose Corporation
+(1, 1, 699.99),  -- Apple iPhone 14 by Apple Inc.
+(2, 2, 599.99),  -- Samsung Galaxy S22 by Samsung Electronics
+(3, 3, 999.99),  -- Sony Bravia 4K TV by Sony Corporation
+(4, 4, 799.99),  -- Dell Inspiron Laptop by Dell Technologies
+(5, 5, 299.99),  -- Bose QuietComfort Headphones by Bose Corporation
 
 -- Furniture
-(6, 6), -- Wooden Dining Table by IKEA
-(7, 7), -- Leather Sofa Set by Ashley Furniture
-(8, 8), -- Office Chair by Herman Miller
-(9, 9), -- Queen Size Bed by Sealy
-(10, 10), -- Bookshelf by Sauder
+(6, 6, 149.99),  -- Wooden Dining Table by IKEA
+(7, 7, 499.99),  -- Leather Sofa Set by Ashley Furniture
+(8, 8, 199.99),  -- Office Chair by Herman Miller
+(9, 9, 399.99),  -- Queen Size Bed by Sealy
+(10, 10, 99.99),  -- Bookshelf by Sauder
 
 -- Clothing
-(11, 11), -- Levi's Jeans by Levi Strauss & Co.
-(12, 12), -- Nike Running Shoes by Nike Inc.
-(13, 13), -- Adidas T-Shirt by Adidas AG
-(14, 14), -- H&M Jacket by H&M
-(15, 15), -- Zara Dress by Inditex
+(11, 11, 39.99),  -- Levi's Jeans by Levi Strauss & Co.
+(12, 12, 79.99),  -- Nike Running Shoes by Nike Inc.
+(13, 13, 24.99),  -- Adidas T-Shirt by Adidas AG
+(14, 14, 59.99),  -- H&M Jacket by H&M
+(15, 15, 49.99),  -- Zara Dress by Inditex
 
 -- Books
-(16, 16), -- The Great Gatsby by Penguin Random House
-(17, 17), -- 1984 by George Orwell by HarperCollins
-(18, 17), -- To Kill a Mockingbird by HarperCollins
-(19, 18), -- The Catcher in the Rye by Little, Brown and Company
-(20, 16), -- Pride and Prejudice by Penguin Random House
+(16, 16, 9.99),  -- The Great Gatsby by Penguin Random House
+(17, 17, 14.99),  -- 1984 by George Orwell by HarperCollins
+(18, 17, 12.99),  -- To Kill a Mockingbird by HarperCollins
+(19, 18, 8.99),  -- The Catcher in the Rye by Little, Brown and Company
+(20, 16, 10.99),  -- Pride and Prejudice by Penguin Random House
 
 -- Groceries
-(21, 19), -- Organic Milk by Organic Valley
-(22, 20), -- Whole Wheat Bread by Nature's Own
-(23, 21), -- Free-range Eggs by Happy Egg Co.
-(24, 22), -- Fresh Spinach by Earthbound Farm
-(25, 23); -- Bananas by Chiquita
+(21, 19, 2.99),  -- Organic Milk by Organic Valley
+(22, 20, 1.99),  -- Whole Wheat Bread by Nature's Own
+(23, 21, 3.49),  -- Free-range Eggs by Happy Egg Co.
+(24, 22, 1.49),  -- Fresh Spinach by Earthbound Farm
+(25, 23, 0.99);  -- Bananas by Chiquita
+
 
 
 INSERT INTO customers (email, first_name, last_name, phone_number, shipping_address, billing_address) VALUES
