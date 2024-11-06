@@ -1,7 +1,12 @@
 package com.inventory.backend.controllers.impl;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.inventory.backend.entities.Category;
 import com.inventory.backend.entities.Customer;
@@ -152,17 +158,37 @@ public class AdminController {
         return "admin/create/productCreateForm";
     }
 
+    private String saveImage(MultipartFile image, Long id) throws IOException {
+
+        String uploadDir = "uploads/";
+
+        if (image.isEmpty()) {
+            return null;
+        }
+
+        String filename = image.getOriginalFilename();
+        Path path = Paths.get(uploadDir, filename + "_" + id);
+
+        Files.createDirectories(Paths.get(uploadDir));
+        Files.write(path, image.getBytes());
+
+
+        return path.toString();
+    }
+
     @PostMapping("admin/products/create")
     public String createProduct(@ModelAttribute("product") Product product,
                                 @RequestParam("manufacturerIds") List<Long> manufacturerIds,
-                                @RequestParam("categoryId") Long categoryId) {
+                                @RequestParam("costPrices") List<Double> costPrices,
+                                @RequestParam("categoryId") Long categoryId,
+                                @RequestParam("image") MultipartFile image) throws IOException {
         product.setCategory(categoryService.findById(categoryId).get());
-        Set<Manufacturer> manufacturers = new HashSet<>();
-        for (Long manufacturerId : manufacturerIds) {
-            manufacturers.add(manufacturerService.findById(manufacturerId).get());
+        TreeMap<Long, Double> manufacturerCostPriceMap = new TreeMap<>();
+        for (int i = 0; i < manufacturerIds.size(); i++) {
+            manufacturerCostPriceMap.put(manufacturerIds.get(i), costPrices.get(i));
         }
-        product.setManufacturers(manufacturers);
-        productService.save(product);
+        product.setImageUrl(saveImage(image, product.getProductId()));
+        productService.save(product, manufacturerCostPriceMap);
         return "redirect:/admin/products";
     }
 
@@ -175,11 +201,15 @@ public class AdminController {
         List<Manufacturer> manufacturers = manufacturerService.findAll();
         model.addAttribute("manufacturers", manufacturers);
 
-        Set<Long> manufacturerIds = new HashSet<>();
-        for (Manufacturer manufacturer : product.getManufacturers()) {
-            manufacturerIds.add(manufacturer.getManufacturerId());
+        List<Long> manufacturerIds = new LinkedList<>();
+        List<Double> costPrices = new LinkedList<>();
+        
+        for (Product.Pair<Manufacturer, Double> manufacturer : product.getManufacturers()) {
+            manufacturerIds.add(manufacturer.first.getManufacturerId());
+            costPrices.add(manufacturer.second);
         }
         model.addAttribute("manufacturerIds", manufacturerIds);
+        model.addAttribute("costPrices", costPrices);
 
         return "admin/update/productUpdateForm";
     }
@@ -187,14 +217,19 @@ public class AdminController {
     @PostMapping("admin/products/update")
     public String updateProduct(@ModelAttribute("product") Product product,
                                 @RequestParam("manufacturerIds") List<Long> manufacturerIds,
+                                @RequestParam("costPrices") List<Double> costPrices,
                                 @RequestParam("categoryId") Long categoryId,
-                                @RequestParam Long id) {
+                                @RequestParam("image") MultipartFile image,
+                                @RequestParam Long id) throws IOException {
         product.setCategory(categoryService.findById(categoryId).get());
-        Set<Manufacturer> manufacturers = new HashSet<>();
-        for (Long manufacturerId : manufacturerIds) {
-            manufacturers.add(manufacturerService.findById(manufacturerId).get());
+        Set<Product.Pair<Manufacturer, Double>> manufacturers = new HashSet<>();
+        for (int i = 0; i < manufacturerIds.size(); i++) {
+            Manufacturer manufacturer = manufacturerService.findById(manufacturerIds.get(i)).get();
+            manufacturers.add(new Product.Pair<>(manufacturer, costPrices.get(i)));
         }
+        System.out.println("Image: " + image);
         product.setManufacturers(manufacturers);
+        product.setImageUrl(saveImage(image, product.getProductId()));
         productService.update(product, id);
         return "redirect:/admin/products";
     }
@@ -453,7 +488,7 @@ public class AdminController {
         if (productId != null) {
             Optional<Product> product = productService.findById(productId);
             if (product.isPresent()) {
-                Manufacturer manufacturer = product.get().getManufacturers().iterator().next();
+                Manufacturer manufacturer = product.get().getManufacturers().iterator().next().first;
                 manufacturerOrder = ManufacturerOrder.builder()
                                                     .manufacturer(manufacturer)
                                                     .build();

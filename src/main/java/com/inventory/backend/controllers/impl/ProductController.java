@@ -35,7 +35,7 @@ public class ProductController {
     @GetMapping("/product/{id}")
     public String showProductDetails(@PathVariable("id") Long id, Model model) {
         Optional<Product> productOptional = productService.findById(id);
-        
+        System.out.println(productOptional);
         // If product is found, show details page
         if (productOptional.isPresent()) {
             model.addAttribute("product", productOptional.get());

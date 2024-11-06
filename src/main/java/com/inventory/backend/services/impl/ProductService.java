@@ -7,6 +7,7 @@ import com.inventory.backend.services.IModelService;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,11 @@ public class ProductService implements IModelService<Product, Long> {
     @Override
     public Optional<Product> save(Product product) {
         productDao.create(product);
+        return Optional.of(product);
+    }
+    
+    public Optional<Product> save(Product product, TreeMap<Long, Double> manufacturersCostPricesMap) {
+        productDao.create(product, manufacturersCostPricesMap);
         return Optional.of(product);
     }
 

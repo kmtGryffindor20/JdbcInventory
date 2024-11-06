@@ -1,6 +1,7 @@
 package com.inventory.backend.controllers.impl;
 
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import com.inventory.backend.entities.Cart;
 import com.inventory.backend.entities.Customer;
 import com.inventory.backend.services.impl.CartService;
 import com.inventory.backend.services.impl.CustomerService;
-import com.inventory.backend.services.impl.ProductService;
 
 @Controller
 public class CartController {
@@ -25,30 +25,39 @@ public class CartController {
     @Autowired
     private CustomerService customerService;
 
-    @Autowired
-    private ProductService productService;
 
-    @GetMapping("/cart")
-    public String showCart(Principal principal, Model model) {
-
-        String username = principal.getName();
-        Optional<Customer> customerOptional = customerService.findByUsername(username);
-        if (customerOptional.isEmpty()) {
-            model.addAttribute("message", "No customer found for this user.");
-            return "notfound";
-        }
-        String customerEmail = customerOptional.get().getEmailId();
-        Long cartId = cartService.getCartIdByCustomerEmail(customerEmail);
-        Optional<Cart> cartOptional = cartService.findById(cartId);
-        if (cartOptional.isEmpty()) {
-            Cart cart = Cart.builder().customer(customerOptional.get()).build();
-            cartService.save(cart);
-            cartId = cartService.getCartIdByCustomerEmail(customerEmail);
-        }
-        Cart cart = cartOptional.get();
-        model.addAttribute("cart", cart);
-        return "cart";
+   @GetMapping("/cart")
+public String showCart(Principal principal, Model model) {
+    String username = principal.getName();
+    Optional<Customer> customerOptional = customerService.findByUsername(username);
+    if (customerOptional.isEmpty()) {
+        model.addAttribute("message", "No customer found for this user.");
+        return "notfound";
     }
+
+    String customerEmail = customerOptional.get().getEmailId();
+    Long cartId = cartService.getCartIdByCustomerEmail(customerEmail);
+    Optional<Cart> cartOptional = cartService.findById(cartId);
+
+    Cart cart;
+    if (cartOptional.isEmpty()) {
+      
+        cart = Cart.builder()
+                   .customer(customerOptional.get())
+                   .products(new HashSet<>()) 
+                   .build();
+        cartService.save(cart);
+    } else {
+        cart = cartOptional.get();
+       
+        if (cart.getProducts() == null) {
+            cart.setProducts(new HashSet<>());
+        }
+    }
+
+    model.addAttribute("cart", cart);
+    return "cart";
+}
 
     @PostMapping("/cart/update")
     public String updateCart(@RequestParam("productId") Long productId, 

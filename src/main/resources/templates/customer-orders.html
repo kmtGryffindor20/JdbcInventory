@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: header(title='Your Orders')}"></head>
 <body data-bs-theme="dark">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container mt-5">
         <h1 class="mb-4 text-center text-light">Your Orders</h1>
         <div th:if="${message}" class="alert alert-info text-center">

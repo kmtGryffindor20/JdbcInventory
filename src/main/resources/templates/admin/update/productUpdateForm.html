@@ -13,10 +13,19 @@
                                 <h1>Update Product</h1>
                             </div>
                         </div>
-                        <form th:action="@{/admin/products/update?id={id}(id=${product.productId})}" method="post" th:object="${product}">
+                        <form th:action="@{/admin/products/update?id={id}(id=${product.productId})}" method="post" th:object="${product}" enctype="multipart/form-data">
                             <div class="mb-3">
-                                <label for="categoryName" class="form-label">Product Name</label>
+                                <img id="preview" class="img-fluid rounded-start" alt="Preview" th:src="@{|/${product.imageUrl}|}">
+                                <label for="image" class="form-label">Image</label>
+                                <input type="file" class="form-control" id="image" name="image">
+                            </div>
+                            <div class="mb-3">
+                                <label for="productName" class="form-label">Product Name</label>
                                 <input type="text" class="form-control" id="productName" th:field="*{productName}" name="productName" required>
+                            </div>
+                            <div for="description" class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" th:field="*{description}" name="description" required></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="expiryDate" class="form-label">Expiry Date</label>
@@ -43,17 +52,83 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="manufacturer" class="form-label">Manufacturer</label>
-                                <select class="form-select" id="manufacturerIds" name="manufacturerIds" multiple required>
-                                    <option th:each="manufacturer : ${manufacturers}" th:value="${manufacturer.manufacturerId}" th:text="${manufacturer.manufacturerName}"
-                                            th:selected="${manufacturerIds.contains(manufacturer.manufacturerId)}"
-                                    ></option>
-                                </select>
+                                <div id="manufacturersList">
+                                    <div th:each="costPrice, iterStat : ${costPrices}" class="input-group mb-2 align-items-center justify-content-center">
+                                        <select class="form-select" name="manufacturerIds">
+                                            <option th:each="manufacturer : ${manufacturers}" th:value="${manufacturer.manufacturerId}" th:text="${manufacturer.manufacturerName}"
+                                                    th:selected="${manufacturer.manufacturerId == manufacturerIds[iterStat.index]}"
+                                            ></option>
+                                        </select>
+                                        <input type="number" class="form-control" placeholder="Cost Price" name="costPrices" th:value="${costPrice}">
+                                        <i class="bi bi-x-circle-fill text-danger ms-1"></i>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary mt-1" id="addManufacturer">Add Manufacturer</button>
                             </div>
                             <button type="submit" class="btn btn-primary">Update Product</button>
                         </form>
                     </div>
             </main>
+
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const manufacturers = /*[[${manufacturers}]]*/ [];
+        document.getElementById('addManufacturer').addEventListener('click', function() {
+            var manufacturersList = document.getElementById('manufacturersList');
+            const manufacturerField = document.createElement('div');
+            manufacturerField.className = 'input-group mb-2 align-items-center justify-content-center';
+            const manufacturerSelect = document.createElement('select');
+            manufacturerSelect.className = 'form-select';
+            manufacturerSelect.name = 'manufacturerIds';
+            manufacturerSelect.required = true;
+            
+            manufacturers.forEach(manufacturer => {
+                const option = document.createElement('option');
+                option.value = manufacturer.manufacturerId;
+                option.text = manufacturer.manufacturerName;
+                manufacturerSelect.appendChild(option);
+            });
+
+            manufacturerField.append(manufacturerSelect);
+
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'form-control';
+            input.placeholder = 'Cost Price';
+            input.name = 'costPrices';
+            manufacturerField.append(input);
+
+            const icon = document.createElement('i');
+            icon.className = 'bi bi-x-circle-fill text-danger ms-1';
+            icon.addEventListener('click', function() {
+
+                manufacturerField.remove();
+            });
+            manufacturerField.append(icon);
+            manufacturersList.append(manufacturerField);
+        });
+
+        document.querySelectorAll('.bi-x-circle-fill').forEach(icon => {
+            icon.addEventListener('click', function() {
+                icon.parentElement.remove();
+            });
+        });
+
+        // Preview image
+        document.getElementById('image').addEventListener('change', function() {
+            const file = this.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview').src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+    /*]]>*/
+    </script>
 
 </body>
 </html>

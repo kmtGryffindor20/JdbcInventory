@@ -97,41 +97,42 @@ VALUES
 ('Home Decor', 'Add a Touch of Elegance to Your Home.');
 
 
-INSERT INTO products (product_name, expiry_date, stock_quantity, selling_price, maximum_retail_price, category_id) VALUES
+INSERT INTO products (product_name, expiry_date, stock_quantity, selling_price, maximum_retail_price, category_id, description) VALUES
 -- Electronics (Category ID: 1)
-('Apple iPhone 14', '2026-12-31', 50, 799.99, 999.99, 1),
-('Samsung Galaxy S22', '2026-11-30', 40, 699.99, 899.99, 1),
-('Sony Bravia 4K TV', '2027-06-30', 20, 999.99, 1199.99, 1),
-('Dell Inspiron Laptop', '2027-08-15', 15, 649.99, 799.99, 1),
-('Bose QuietComfort Headphones', '2027-07-20', 25, 249.99, 299.99, 1),
+('Apple iPhone 14', '2026-12-31', 50, 799.99, 999.99, 1, 'Latest model of Apple iPhone with advanced camera and display features.'),
+('Samsung Galaxy S22', '2026-11-30', 40, 699.99, 899.99, 1, 'High-performance Samsung smartphone with stunning display and powerful battery.'),
+('Sony Bravia 4K TV', '2027-06-30', 20, 999.99, 1199.99, 1, 'Ultra HD 4K Sony TV for a cinematic viewing experience at home.'),
+('Dell Inspiron Laptop', '2027-08-15', 15, 649.99, 799.99, 1, 'Reliable Dell laptop suitable for work, study, and everyday tasks.'),
+('Bose QuietComfort Headphones', '2027-07-20', 25, 249.99, 299.99, 1, 'Noise-cancelling Bose headphones for immersive audio quality.'),
 
 -- Furniture (Category ID: 2)
-('Wooden Dining Table', '2028-01-10', 10, 499.99, 599.99, 2),
-('Leather Sofa Set', '2028-02-20', 8, 899.99, 1099.99, 2),
-('Office Chair', '2028-03-15', 30, 149.99, 199.99, 2),
-('Queen Size Bed', '2028-04-25', 12, 799.99, 999.99, 2),
-('Bookshelf', '2028-05-05', 18, 129.99, 169.99, 2),
+('Wooden Dining Table', '2028-01-10', 10, 499.99, 599.99, 2, 'Classic wooden dining table, perfect for family gatherings.'),
+('Leather Sofa Set', '2028-02-20', 8, 899.99, 1099.99, 2, 'Elegant leather sofa set for a comfortable and stylish living space.'),
+('Office Chair', '2028-03-15', 30, 149.99, 199.99, 2, 'Ergonomic office chair with adjustable height and back support.'),
+('Queen Size Bed', '2028-04-25', 12, 799.99, 999.99, 2, 'Comfortable queen-size bed for a restful sleep experience.'),
+('Bookshelf', '2028-05-05', 18, 129.99, 169.99, 2, 'Spacious bookshelf to organize your books and decor.'),
 
 -- Clothing (Category ID: 3)
-("Levi's Jeans", '2026-11-01', 60, 39.99, 59.99, 3),
-('Nike Running Shoes', '2026-10-20', 45, 59.99, 79.99, 3),
-('Adidas T-Shirt', '2026-12-10', 100, 19.99, 29.99, 3),
-('H&M Jacket', '2026-09-15', 25, 49.99, 69.99, 3),
-('Zara Dress', '2026-08-05', 40, 39.99, 59.99, 3),
+("Levi's Jeans", '2026-11-01', 60, 39.99, 59.99, 3, "Classic Levi\'s jeans with a comfortable fit and durable fabric."),
+('Nike Running Shoes', '2026-10-20', 45, 59.99, 79.99, 3, 'Lightweight Nike running shoes with excellent grip and support.'),
+('Adidas T-Shirt', '2026-12-10', 100, 19.99, 29.99, 3, 'Comfortable Adidas t-shirt for casual wear and sports activities.'),
+('H&M Jacket', '2026-09-15', 25, 49.99, 69.99, 3, 'Stylish H&M jacket for cool weather and everyday wear.'),
+('Zara Dress', '2026-08-05', 40, 39.99, 59.99, 3, 'Elegant Zara dress suitable for various occasions.'),
 
 -- Books (Category ID: 4)
-('The Great Gatsby', '2030-12-01', 100, 9.99, 14.99, 4),
-('1984 by George Orwell', '2030-11-10', 120, 8.99, 12.99, 4),
-('To Kill a Mockingbird', '2030-10-05', 85, 7.99, 10.99, 4),
-('The Catcher in the Rye', '2030-09-20', 90, 6.99, 9.99, 4),
-('Pride and Prejudice', '2030-08-15', 75, 5.99, 8.99, 4),
+('The Great Gatsby', '2030-12-01', 100, 9.99, 14.99, 4, 'Classic novel by F. Scott Fitzgerald set in the Jazz Age.'),
+('1984 by George Orwell', '2030-11-10', 120, 8.99, 12.99, 4, 'Dystopian novel by George Orwell about a totalitarian regime.'),
+('To Kill a Mockingbird', '2030-10-05', 85, 7.99, 10.99, 4, "Harper Lee's novel exploring racial injustice in the Deep South."),
+('The Catcher in the Rye', '2030-09-20', 90, 6.99, 9.99, 4, 'Coming-of-age story by J.D. Salinger about teenage rebellion.'),
+('Pride and Prejudice', '2030-08-15', 75, 5.99, 8.99, 4, 'Romantic novel by Jane Austen exploring manners and marriage.'),
 
 -- Groceries (Category ID: 5)
-('Organic Milk', '2024-12-31', 200, 1.99, 2.99, 5),
-('Whole Wheat Bread', '2024-11-30', 150, 0.99, 1.49, 5),
-('Free-range Eggs', '2024-10-25', 180, 2.99, 3.99, 5),
-('Fresh Spinach', '2024-09-20', 220, 1.49, 2.49, 5),
-('Bananas (1 Dozen)', '2024-08-15', 300, 0.99, 1.29, 5);
+('Organic Milk', '2024-12-31', 200, 1.99, 2.99, 5, 'Fresh organic milk sourced from local farms.'),
+('Whole Wheat Bread', '2024-11-30', 150, 0.99, 1.49, 5, 'Healthy whole wheat bread baked fresh daily.'),
+('Free-range Eggs', '2024-10-25', 180, 2.99, 3.99, 5, 'Farm-fresh free-range eggs with rich flavor and nutrition.'),
+('Fresh Spinach', '2024-09-20', 220, 1.49, 2.49, 5, 'Organic spinach leaves picked fresh for maximum nutrients.'),
+('Bananas (1 Dozen)', '2024-08-15', 300, 0.99, 1.29, 5, 'A dozen ripe bananas, perfect for snacking and smoothies.');
+
 
 INSERT INTO product_manufacturers (product_id, manufacturer_id, cost_price) VALUES
 -- Electronics

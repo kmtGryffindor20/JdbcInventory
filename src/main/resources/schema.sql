@@ -60,11 +60,13 @@ CREATE TABLE IF NOT EXISTS products (
     product_name VARCHAR(255) NOT NULL,
     expiry_date DATE,
     stock_quantity INT NOT NULL,
-    -- cost_price DECIMAL(10, 2) NOT NULL,
+    description TEXT,
     selling_price DECIMAL(10, 2) NOT NULL,
     maximum_retail_price DECIMAL(10, 2) NOT NULL,
     category_id BIGINT,
-    FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL
+    image_url VARCHAR(255),
+    FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL,
+    FULLTEXT(product_name, description)
 );
 
 
@@ -164,7 +166,6 @@ CREATE TABLE IF NOT EXISTS manufacturer_orders (
     ordered_from BIGINT,
     date_of_order DATE NOT NULL,
     processed_by_employee_id BIGINT,
-    quantity INT NOT NULL,
     FOREIGN KEY (ordered_from) REFERENCES manufacturers(manufacturer_id) ON DELETE SET NULL,
     FOREIGN KEY (processed_by_employee_id) REFERENCES employees(employee_id) ON DELETE SET NULL
 );
