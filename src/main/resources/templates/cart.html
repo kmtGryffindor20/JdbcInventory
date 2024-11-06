@@ -23,6 +23,11 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <tr th:if="${#lists.isEmpty(cart.products)}">
+                                    <td colspan="6" class="text-center">
+                                        Your cart is empty! <a href="/" class="btn btn-link">Shop Now</a>
+                                    </td>
+                                </tr>
                                 <tr th:each="cartItem : ${cart.products}">
                                     <td th:text="${cartItem.getLeft().productName}"></td>
                                     <td>
