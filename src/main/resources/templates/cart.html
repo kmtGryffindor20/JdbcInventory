@@ -26,7 +26,7 @@
                                 <tr th:each="cartItem : ${cart.products}">
                                     <td th:text="${cartItem.getLeft().productName}"></td>
                                     <td>
-                                        $
+                                        $ 
                                         <span th:text="${cartItem.getLeft().sellingPrice}" class="me-2"></span>
                                         <span class="text-decoration-line-through" th:text="${cartItem.getLeft().maximumRetailPrice}"></span>
                                     </td>
@@ -50,33 +50,36 @@
                             </tbody>
                         </table>
                         <div class="d-flex justify-content-between">
-                            <a href="/checkout" class="btn btn-primary">Checkout</a>
+                            <a href="#" id="checkoutButton" class="btn btn-primary">Checkout</a>
                             <span id="total"></span>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                        <script>
-                            document.querySelectorAll('input[name="quantity"]').forEach(input => {
-                                input.addEventListener('change', function() {
-                                    const id = input.id.replace('quantity', '');
-                                    console.log(id);
-                                    if (input.value == '') {
-                                        return;
-                                    }
-                                    document.forms['update' + id].submit();
-                                });
-                            });
-                            function calculateTotal() {
-                                const total = document.querySelectorAll('td:nth-child(5)');
-                                let sum = 0;
-                                total.forEach(t => {
-                                    sum += parseFloat(t.innerText.replace('$', ''));
-                                });
-                                document.getElementById('total').innerText = "Total: $" + sum;
-                            }
-                            calculateTotal();
-                        </script>
+    <script>
+        // Function to calculate the total amount of the cart
+        function calculateTotal() {
+            const totalCells = document.querySelectorAll('td:nth-child(5)'); // This selects the "Total" column cells
+            let sum = 0;
+            
+            // Sum up all the values in the "Total" column
+            totalCells.forEach(t => {
+                sum += parseFloat(t.innerText.replace('$', '')); // Remove dollar sign and parse as number
+            });
 
+            // Display the total in the "Total" span
+            document.getElementById('total').innerText = "Total: $" + sum;
 
-    
+            // Get the checkout button and update its href with the calculated total amount
+            const checkoutButton = document.getElementById('checkoutButton');
+            checkoutButton.href = "/checkout?totalAmount=" + sum.toFixed(2);  // Append totalAmount as query param
+        }
+
+        // Call the calculateTotal function when the page loads
+        calculateTotal();
+    </script>
 </body>
 </html>

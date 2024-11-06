@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/header :: header(title='Payment')}"></head>
+<body data-bs-theme="dark">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div class="container mt-5 justify-content-center align-items-center">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Complete Payment</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5>Total Amount: $<span th:text="${totalAmount}"></span></h5>
+                        <form id="razorpay-form" action="/razorpay/payment" method="POST">
+                            <input type="hidden" name="razorpay_order_id" th:value="${razorpayOrderId}">
+                            <input type="hidden" name="totalAmount" th:value="${totalAmount}">
+                            
+                            <!-- CSRF Token -->
+                            <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                            
+                            <button type="button" id="razorpay-button" class="btn btn-success">Pay Now</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Razorpay Checkout script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.getElementById('razorpay-button').onclick = function(e) {
+            var options = {
+                "key": "[[${razorpayKeyId}]]", // Use the Razorpay key passed from the controller
+                "amount": (document.querySelector('[name="totalAmount"]').value * 100), // Convert amount to paise
+                "currency": "INR", // Currency code
+                "order_id": document.querySelector('[name="razorpay_order_id"]').value,
+                "handler": function (response) {
+                    alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+                    // You can send the payment details to your server for verification and order confirmation
+                },
+                "prefill": {
+                    "name": "Customer Name", // Pre-fill with customer details if available
+                    "email": "customer@example.com"
+                },
+                "theme": {
+                    "color": "#F37254" // Change the color of the payment button
+                }
+            };
+
+            var rzp = new Razorpay(options);
+            rzp.open(); // Open the Razorpay checkout popup
+            e.preventDefault(); // Prevent the form from submitting the regular way
+        };
+    </script>
+</body>
+</html>
