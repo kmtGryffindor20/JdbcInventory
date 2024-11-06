@@ -65,7 +65,7 @@
                                 <td>
                                     <ul>
                                         <li th:each="manufacturer : ${product.manufacturers}">
-                                            <span th:text="${manufacturer.manufacturerName}"></span>
+                                            <span th:text="${manufacturer.first.manufacturerName}"></span>
                                         </li>
                                     </ul>
                                 </td>

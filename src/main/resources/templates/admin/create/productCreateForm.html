@@ -18,6 +18,10 @@
                                 <label for="productName" class="form-label">Product Name</label>
                                 <input type="text" class="form-control" id="productName" th:field="*{productName}" name="productName" required>
                             </div>
+                            <div for="description" class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" th:field="*{description}" name="description" required></textarea>
+                            </div>
                             <div class="mb-3">
                                 <label for="expiryDate" class="form-label">Expiry Date</label>
                                 <input type="date" class="form-control" id="expiryDate" th:field="*{expiryDate}" name="expiryDate" required>
@@ -41,15 +45,68 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="manufacturer" class="form-label">Manufacturer</label>
-                                <select class="form-select" id="manufacturerIds" name="manufacturerIds" multiple required>
-                                    <option th:each="manufacturer : ${manufacturers}" th:value="${manufacturer.manufacturerId}" th:text="${manufacturer.manufacturerName}"></option>
-                                </select>
+                                <div id="manufacturersList">
+                                    <div class="input-group mb-2 align-items-center justify-content-center">
+                                        <select class="form-select" name="manufacturerIds">
+                                            <option th:each="manufacturer : ${manufacturers}" th:value="${manufacturer.manufacturerId}" th:text="${manufacturer.manufacturerName}"></option>
+                                        </select>
+                                        <input type="number" class="form-control" placeholder="Cost Price" name="costPrices">
+                                        <i class="bi bi-x-circle-fill text-danger ms-1"></i>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary mt-1" id="addManufacturer">Add Manufacturer</button>
                             </div>
                             <button type="submit" class="btn btn-primary">Create Product</button>
                         </form>
                     </div>
             </main>
+
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+                const manufacturers = /*[[${manufacturers}]]*/ [];
+                document.getElementById('addManufacturer').addEventListener('click', function() {
+                    var manufacturersList = document.getElementById('manufacturersList');
+                    const manufacturerField = document.createElement('div');
+                    manufacturerField.className = 'input-group mb-2 align-items-center justify-content-center';
+                    const manufacturerSelect = document.createElement('select');
+                    manufacturerSelect.className = 'form-select';
+                    manufacturerSelect.name = 'manufacturerIds';
+                    manufacturerSelect.required = true;
+                    
+                    manufacturers.forEach(manufacturer => {
+                        const option = document.createElement('option');
+                        option.value = manufacturer.manufacturerId;
+                        option.text = manufacturer.manufacturerName;
+                        manufacturerSelect.appendChild(option);
+                    });
+
+                    manufacturerField.append(manufacturerSelect);
+
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'form-control';
+                    input.placeholder = 'Cost Price';
+                    input.name = 'costPrices';
+                    manufacturerField.append(input);
+
+                    const icon = document.createElement('i');
+                    icon.className = 'bi bi-x-circle-fill text-danger ms-1';
+                    icon.addEventListener('click', function() {
+
+                        manufacturerField.remove();
+                    });
+                    manufacturerField.append(icon);
+                    manufacturersList.append(manufacturerField);
+                });
+
+                document.querySelectorAll('.bi-x-circle-fill').forEach(icon => {
+                    icon.addEventListener('click', function() {
+                        icon.parentElement.remove();
+                    });
+                });
+
+            /*]]>*/
+            </script>
 
 </body>
 </html>

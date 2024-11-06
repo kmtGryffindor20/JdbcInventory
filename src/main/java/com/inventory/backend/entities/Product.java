@@ -1,6 +1,7 @@
 package com.inventory.backend.entities;
 
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +19,8 @@ public class Product {
 
     private String productName;
 
+    private String description;
+
     private Date expiryDate;
 
     private Integer stockQuantity;
@@ -28,7 +31,25 @@ public class Product {
 
     private Category category;
 
-    private Set<Manufacturer> manufacturers;
+    private Set<Pair<Manufacturer, Double>> manufacturers = new HashSet<>();
+
+    public static class Pair<T, U> {
+        public T first;
+        public U second;
+
+        public Pair(T first, U second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        public T getFirst() {
+            return first;
+        }
+
+        public U getSecond() {
+            return second;
+        }
+    }
 
 
 }

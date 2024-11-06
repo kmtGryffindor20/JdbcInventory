@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -31,8 +32,7 @@ public class ProductDao implements IDao<Product, Long> {
 
     @Override
     public void create(Product a) {
-        String sql = "INSERT INTO products (product_name, expiry_date, stock_quantity, selling_price, maximum_retail_price, category_id) VALUES (?, ?, ?, ?, ?, ?)";
-        int insertId = -1;
+        String sql = "INSERT INTO products (product_name, expiry_date, stock_quantity, selling_price, maximum_retail_price, category_id, description) VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement preparedStatement = jdbcTemplate.getDataSource().getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -42,6 +42,7 @@ public class ProductDao implements IDao<Product, Long> {
             preparedStatement.setDouble(4, a.getSellingPrice());
             preparedStatement.setDouble(5, a.getMaximumRetailPrice());
             preparedStatement.setLong(6, a.getCategory().getCategoryId());
+            preparedStatement.setString(7, a.getDescription());
 
             int rowsAffected = preparedStatement.executeUpdate();
 
@@ -52,12 +53,10 @@ public class ProductDao implements IDao<Product, Long> {
                 if (generatedKeys.next())
                 {
 
-                    insertId = generatedKeys.getInt(1);
+                    int insertId = generatedKeys.getInt(1);
     
-                    String sql2 = "INSERT INTO product_manufacturers (product_id, manufacturer_id) VALUES (?, ?)";
-                    for (Manufacturer manufacturer : a.getManufacturers()) {
-                        jdbcTemplate.update(sql2, insertId, manufacturer.getManufacturerId());
-                    }
+                    String sql2 = "INSERT INTO product_manufacturers (product_id, manufacturer_id) VALUES (?, ?, ?)";
+                    jdbcTemplate.batchUpdate(sql2, a.getManufacturers().stream().map(pair -> new Object[]{insertId, pair.getFirst().getManufacturerId(), pair.getSecond()}).toList());
                 }
 
 
@@ -67,16 +66,49 @@ public class ProductDao implements IDao<Product, Long> {
             }
     }
 
+    public void create(Product a, TreeMap<Long, Double> manufacturersCostPricesMap) {
+        String sql = "INSERT INTO products (product_name, expiry_date, stock_quantity, selling_price, maximum_retail_price, category_id, description) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            PreparedStatement preparedStatement = jdbcTemplate.getDataSource().getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, a.getProductName());
+            preparedStatement.setDate(2, a.getExpiryDate());
+            preparedStatement.setLong(3, a.getStockQuantity());
+            preparedStatement.setDouble(4, a.getSellingPrice());
+            preparedStatement.setDouble(5, a.getMaximumRetailPrice());
+            preparedStatement.setLong(6, a.getCategory().getCategoryId());
+            preparedStatement.setString(7, a.getDescription());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+
+                if (generatedKeys.next())
+                {
+
+                    int insertId = generatedKeys.getInt(1);
+    
+                    String sql2 = "INSERT INTO product_manufacturers (product_id, manufacturer_id, cost_price) VALUES (?, ?, ?)";
+                    jdbcTemplate.batchUpdate(sql2, manufacturersCostPricesMap.entrySet().stream().map(entry -> new Object[]{insertId, entry.getKey(), entry.getValue()}).toList());
+                }
+            }
+        }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     @Override
     public Optional<Product> findById(Long id) {
-        String sql = "SELECT p.*, c.*, m.* FROM products p JOIN categories c ON p.category_id = c.category_id JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE p.product_id = ?";
+        String sql = "SELECT p.*, c.*, m.*, pm.cost_price FROM products p JOIN categories c ON p.category_id = c.category_id JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE p.product_id = ?";
         Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper(), id);
         return Optional.ofNullable(productMap.get(id));
     }
 
     @Override
     public List<Product> findAll() {
-        String sql = "SELECT p.*, c.*, m.* FROM products p JOIN categories c ON p.category_id = c.category_id JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id";
+        String sql = "SELECT p.*, c.*, m.*, pm.cost_price FROM products p JOIN categories c ON p.category_id = c.category_id JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id";
         Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper());
         return List.copyOf(productMap.values());
     }
@@ -88,6 +120,7 @@ public class ProductDao implements IDao<Product, Long> {
                     .productId(rs.getLong("product_id"))
                     .productName(rs.getString("product_name"))
                     .expiryDate(rs.getDate("expiry_date"))
+                    .description(rs.getString("description"))
                     .stockQuantity(rs.getInt("stock_quantity"))
                     .sellingPrice(rs.getDouble("selling_price"))
                     .maximumRetailPrice(rs.getDouble("maximum_retail_price"))
@@ -104,12 +137,14 @@ public class ProductDao implements IDao<Product, Long> {
 
     @Override
     public void update(Product a, Long id) {
-        String sql = "UPDATE products SET product_name = ?, expiry_date = ?, stock_quantity = ?, selling_price = ?, maximum_retail_price = ?, category_id = ? WHERE product_id = ?";
+        String sql = "UPDATE products SET product_name = ?, expiry_date = ?, stock_quantity = ?, selling_price = ?, maximum_retail_price = ?, category_id = ?, description = ? WHERE product_id = ?";
         String sql2 = "DELETE FROM product_manufacturers WHERE product_id = ?";
-        String sql3 = "INSERT INTO product_manufacturers (product_id, manufacturer_id) VALUES (?, ?)";
-        jdbcTemplate.update(sql, a.getProductName(), a.getExpiryDate(), a.getStockQuantity(), a.getSellingPrice(), a.getMaximumRetailPrice(), a.getCategory().getCategoryId(), id);
+        String sql3 = "INSERT INTO product_manufacturers (product_id, manufacturer_id, cost_price) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql2, id);
-        jdbcTemplate.batchUpdate(sql3, a.getManufacturers().stream().map(manufacturer -> new Object[]{id, manufacturer.getManufacturerId()}).toList());
+        jdbcTemplate.update(sql, a.getProductName(), a.getExpiryDate(), a.getStockQuantity(), a.getSellingPrice(), a.getMaximumRetailPrice(), a.getCategory().getCategoryId(), a.getDescription(), id);
+        for (Product.Pair<Manufacturer, Double> pair : a.getManufacturers()) {
+            jdbcTemplate.update(sql3, id, pair.getFirst().getManufacturerId(), pair.getSecond());
+        }
     }
 
     @Override
@@ -119,19 +154,26 @@ public class ProductDao implements IDao<Product, Long> {
     }
 
     public List<Product> getByCategory(Long categoryId) {
-        String sql = "SELECT p.*, c.*, m.* FROM products p LEFT JOIN categories c ON p.category_id = c.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id LEFT JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE c.category_id = ?";
+        String sql = "SELECT p.*, c.*, m.*, pm.cost_price FROM products p LEFT JOIN categories c ON p.category_id = c.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id LEFT JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE c.category_id = ?";
         Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper(), categoryId);
         return List.copyOf(productMap.values());
     }
 
     public List<Product> getByCategory(Long categoryId, int limit) {
-        String sql = "SELECT p.*, c.*, m.* FROM products p LEFT JOIN categories c ON p.category_id = c.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id LEFT JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE c.category_id = ? ORDER BY RAND() LIMIT ?";
+        String sql = "SELECT p.*, c.*, m.*, pm.cost_price FROM products p LEFT JOIN categories c ON p.category_id = c.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id LEFT JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE c.category_id = ? ORDER BY RAND() LIMIT ?";
         Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper(), categoryId, limit);
         return List.copyOf(productMap.values());
     }
     public void updateProductQuantity(Long productId, int quantityBought) {
         String sql = "UPDATE products SET stock_quantity = stock_quantity - ? WHERE product_id = ?";
         jdbcTemplate.update(sql, quantityBought, productId);
+    }
+
+    public List<Product> searchProducts(String keyword)
+    {
+        String sql = "SELECT p.*, c.*, m.*, pm.cost_price FROM products p LEFT JOIN categories c ON p.category_id = c.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id LEFT JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE MATCH(p.product_name, p.description) AGAINST(? IN NATURAL LANGUAGE MODE)";
+        Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper(), keyword);
+        return List.copyOf(productMap.values());
     }
 
     public Map<String, Integer> stockQuantityByCategory() {
@@ -158,6 +200,7 @@ public class ProductDao implements IDao<Product, Long> {
                             .productName(rs.getString("product_name"))
                             .expiryDate(rs.getDate("expiry_date"))
                             .stockQuantity(rs.getInt("stock_quantity"))
+                            .description(rs.getString("description"))
                             .sellingPrice(rs.getDouble("selling_price"))
                             .maximumRetailPrice(rs.getDouble("maximum_retail_price"))
                             .category(Category.builder()
@@ -173,7 +216,8 @@ public class ProductDao implements IDao<Product, Long> {
                         .manufacturerId(rs.getLong("manufacturer_id"))
                         .manufacturerName(rs.getString("manufacturer_name"))
                         .build();
-                product.getManufacturers().add(manufacturer);
+                Double costPrice = rs.getDouble("cost_price");
+                product.getManufacturers().add(new Product.Pair<>(manufacturer, costPrice));
             }
             return productMap;
         }

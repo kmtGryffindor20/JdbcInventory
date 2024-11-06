@@ -2,6 +2,7 @@ package com.inventory.backend.controllers.impl;
 
 import java.sql.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,6 +41,8 @@ import com.inventory.backend.services.impl.ProductService;
 import com.inventory.backend.services.impl.SalesReportService;
 import com.inventory.backend.services.impl.ShippingInfoCustomerOrderService;
 import com.inventory.backend.services.impl.ShippingInfoManufacturerOrderService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @Controller
 public class AdminController {
@@ -155,14 +158,14 @@ public class AdminController {
     @PostMapping("admin/products/create")
     public String createProduct(@ModelAttribute("product") Product product,
                                 @RequestParam("manufacturerIds") List<Long> manufacturerIds,
+                                @RequestParam("costPrices") List<Double> costPrices,
                                 @RequestParam("categoryId") Long categoryId) {
         product.setCategory(categoryService.findById(categoryId).get());
-        Set<Manufacturer> manufacturers = new HashSet<>();
-        for (Long manufacturerId : manufacturerIds) {
-            manufacturers.add(manufacturerService.findById(manufacturerId).get());
+        TreeMap<Long, Double> manufacturerCostPriceMap = new TreeMap<>();
+        for (int i = 0; i < manufacturerIds.size(); i++) {
+            manufacturerCostPriceMap.put(manufacturerIds.get(i), costPrices.get(i));
         }
-        product.setManufacturers(manufacturers);
-        productService.save(product);
+        productService.save(product, manufacturerCostPriceMap);
         return "redirect:/admin/products";
     }
 
@@ -175,11 +178,15 @@ public class AdminController {
         List<Manufacturer> manufacturers = manufacturerService.findAll();
         model.addAttribute("manufacturers", manufacturers);
 
-        Set<Long> manufacturerIds = new HashSet<>();
-        for (Manufacturer manufacturer : product.getManufacturers()) {
-            manufacturerIds.add(manufacturer.getManufacturerId());
+        List<Long> manufacturerIds = new LinkedList<>();
+        List<Double> costPrices = new LinkedList<>();
+        
+        for (Product.Pair<Manufacturer, Double> manufacturer : product.getManufacturers()) {
+            manufacturerIds.add(manufacturer.first.getManufacturerId());
+            costPrices.add(manufacturer.second);
         }
         model.addAttribute("manufacturerIds", manufacturerIds);
+        model.addAttribute("costPrices", costPrices);
 
         return "admin/update/productUpdateForm";
     }
@@ -187,12 +194,14 @@ public class AdminController {
     @PostMapping("admin/products/update")
     public String updateProduct(@ModelAttribute("product") Product product,
                                 @RequestParam("manufacturerIds") List<Long> manufacturerIds,
+                                @RequestParam("costPrices") List<Double> costPrices,
                                 @RequestParam("categoryId") Long categoryId,
                                 @RequestParam Long id) {
         product.setCategory(categoryService.findById(categoryId).get());
-        Set<Manufacturer> manufacturers = new HashSet<>();
-        for (Long manufacturerId : manufacturerIds) {
-            manufacturers.add(manufacturerService.findById(manufacturerId).get());
+        Set<Product.Pair<Manufacturer, Double>> manufacturers = new HashSet<>();
+        for (int i = 0; i < manufacturerIds.size(); i++) {
+            Manufacturer manufacturer = manufacturerService.findById(manufacturerIds.get(i)).get();
+            manufacturers.add(new Product.Pair<>(manufacturer, costPrices.get(i)));
         }
         product.setManufacturers(manufacturers);
         productService.update(product, id);
@@ -453,7 +462,7 @@ public class AdminController {
         if (productId != null) {
             Optional<Product> product = productService.findById(productId);
             if (product.isPresent()) {
-                Manufacturer manufacturer = product.get().getManufacturers().iterator().next();
+                Manufacturer manufacturer = product.get().getManufacturers().iterator().next().first;
                 manufacturerOrder = ManufacturerOrder.builder()
                                                     .manufacturer(manufacturer)
                                                     .build();
