@@ -1,6 +1,6 @@
 package com.inventory.backend.services.impl;
 
-import com.inventory.backend.dao.IDao;
+import com.inventory.backend.dao.impl.CustomerDao;
 import com.inventory.backend.entities.Customer;
 import com.inventory.backend.services.IModelService;
 
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomerService implements IModelService<Customer, String> {
 
-    private IDao<Customer, String> customerDao;
+    private CustomerDao customerDao;
 
-    public CustomerService(IDao<Customer, String> customerDao) {
+    public CustomerService(CustomerDao customerDao) {
         this.customerDao = customerDao;
     }
 
@@ -43,6 +43,10 @@ public class CustomerService implements IModelService<Customer, String> {
     @Override
     public void delete(String id) {
         customerDao.delete(id);
+    }
+
+    public Optional<Customer> findByUsername(String username) {
+        return customerDao.findByUsername(username);
     }
     
 }

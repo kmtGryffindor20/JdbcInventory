@@ -154,9 +154,9 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
         {
             TreeMap<Long, CustomerOrder> customerOrderMap = new TreeMap<>();
 
-            rs.next();
+        
 
-            do{ 
+            while(rs.next()){ 
                 Long customerOrderId = rs.getLong("order_id");
 
                 if (!customerOrderMap.containsKey(customerOrderId))
@@ -207,7 +207,7 @@ public class CustomerOrderDao implements IDao<CustomerOrder, Long> {
                         .maximumRetailPrice(rs.getDouble("maximum_retail_price"))
                         .build(), rs.getInt("quantity")));
                 }
-            } while(rs.next());
+            }
 
             return customerOrderMap;
         }

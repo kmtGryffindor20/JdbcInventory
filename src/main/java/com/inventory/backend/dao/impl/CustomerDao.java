@@ -22,8 +22,8 @@ public class CustomerDao implements IDao<Customer, String> {
 
     @Override
     public void create(Customer customer) {
-        String sql = "INSERT INTO customers (first_name, last_name, phone_number, shipping_address, billing_address) VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, customer.getFirstName(), customer.getLastName(), customer.getPhoneNumber(), customer.getShippingAddress(), customer.getBillingAddress());
+        String sql = "INSERT INTO customers (first_name, last_name, phone_number, shipping_address, billing_address, email, username) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, customer.getFirstName(), customer.getLastName(), customer.getPhoneNumber(), customer.getShippingAddress(), customer.getBillingAddress(), customer.getEmailId(), customer.getUsername());
     }
 
     @Override
@@ -51,6 +51,12 @@ public class CustomerDao implements IDao<Customer, String> {
         jdbcTemplate.update(sql, id);
     }
 
+    public Optional<Customer> findByUsername(String username) {
+        String sql = "SELECT * FROM customers WHERE username = ?";
+        List<Customer> results = jdbcTemplate.query(sql, new CustomerRowMapper(), username);
+        return results.stream().findFirst();
+    }
+
     public static class CustomerRowMapper implements RowMapper<Customer> {
         @Override
         public Customer mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
@@ -61,6 +67,7 @@ public class CustomerDao implements IDao<Customer, String> {
                     .phoneNumber(rs.getString("phone_number"))
                     .shippingAddress(rs.getString("shipping_address"))
                     .billingAddress(rs.getString("billing_address"))
+                    .username(rs.getString("username"))
                     .build();
         }
     }

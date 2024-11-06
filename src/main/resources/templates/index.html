@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="light">
+<html data-bs-theme="light" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <head th:replace="~{fragments/header :: header(title='Home')}"></head>
 
   <body>
     <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <!-- If admin user display link to /admin/dashboard -->
+     <div sec:authorize="hasRole('ADMIN')">
+      <a href="/admin/dashboard" class="btn btn-warning my-2">Admin Dashboard</a>
+      </div>
 
     <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
       <div class="carousel-inner">

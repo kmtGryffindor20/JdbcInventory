@@ -24,4 +24,6 @@ public class Customer {
 
     private String billingAddress;
 
+    private String username;
+
 }

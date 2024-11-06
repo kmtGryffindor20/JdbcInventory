@@ -13,18 +13,19 @@
                 </a>
         
               
-                <form class="w-100" role="search">
+                <form class="w-50" role="search">
                   <input type="search" class="form-control rounded-4" placeholder="Search..." aria-label="Search">
                 </form>
         
-                <div class="flex-shrink-0 dropdown">
-                  <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="" alt="mdo" width="32" height="32" class="rounded-circle">
-                  </a>
-                  <ul class="dropdown-menu text-small shadow">
-                    <li><a class="dropdown-item" href="#">Orders & Returns</a></li>
-                    <li><a class="dropdown-item" href="#">Sign In</a></li>
-                  </ul>
+                <!-- If user is authentication, display links for Orders, Profile and Logout else display links for Login and Register -->
+                <div sec:authorize="isAuthenticated()" class="d-flex gap-2">
+                  <a href="/orders" class="text-light text-decoration-none">Orders</a>
+                  <a href="#" class="text-light text-decoration-none">Profile</a>
+                  <a href="#" class="text-light text-decoration-none">Logout</a>
+                </div>
+                <div sec:authorize="!isAuthenticated()" class="d-flex gap-2">
+                  <a href="/login" class="text-light text-decoration-none">Login</a>
+                  <a href="/signup" class="text-light text-decoration-none">Register</a>
                 </div>
               </div>
           </header>
