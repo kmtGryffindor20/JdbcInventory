@@ -58,9 +58,26 @@ public class CartDao implements IDao<Cart, Long> {
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
+    public Boolean isProductInCart(Long cartId, Long productId) {
+        String sql = "SELECT COUNT(*) FROM cart_products WHERE cart_id = ? AND product_id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, cartId, productId);
+        return count > 0;
+    }
+
     public void addProduct(Long cartId, Long productId, Integer quantity) {
+        Boolean isProductInCart = isProductInCart(cartId, productId);
+        if (isProductInCart) {
+            String sql = "UPDATE cart_products SET quantity = ? WHERE cart_id = ? AND product_id = ?";
+            jdbcTemplate.update(sql, quantity, cartId, productId);
+            return;
+        }
         String sql = "INSERT INTO cart_products (cart_id, product_id, quantity, added_on) VALUES (?, ?, ?, NOW())";
         jdbcTemplate.update(sql, cartId, productId, quantity);
+    }
+
+    public void removeProduct(Long cartId, Long productId) {
+        String sql = "DELETE FROM cart_products WHERE cart_id = ? AND product_id = ?";
+        jdbcTemplate.update(sql, cartId, productId);
     }
 
     public Long getCartIdByCustomerEmail(String email) {
@@ -101,6 +118,7 @@ public class CartDao implements IDao<Cart, Long> {
                         .productName(rs.getString("product_name"))
                         .sellingPrice(rs.getDouble("selling_price"))
                         .maximumRetailPrice(rs.getDouble("maximum_retail_price"))
+                        .stockQuantity(rs.getInt("stock_quantity"))
                         .build();
                     cart.getProducts().add(Triple.of(product, rs.getInt("quantity"), rs.getDate("added_on")));
                     cartMap.put(cartId, cart);

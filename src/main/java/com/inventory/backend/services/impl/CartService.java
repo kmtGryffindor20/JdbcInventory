@@ -44,6 +44,10 @@ public class CartService implements IModelService<Cart, Long> {
         cartDao.addProduct(cartId, productId, quantity);
     }
 
+    public void removeProduct(Long cartId, Long productId) {
+        cartDao.removeProduct(cartId, productId);
+    }
+
     public Long getCartIdByCustomerEmail(String email) {
         return cartDao.getCartIdByCustomerEmail(email);
     }
