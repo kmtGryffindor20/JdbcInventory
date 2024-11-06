@@ -124,6 +124,11 @@ public class ProductDao implements IDao<Product, Long> {
         return List.copyOf(productMap.values());
     }
 
+    public List<Product> getByCategory(Long categoryId, int limit) {
+        String sql = "SELECT p.*, c.*, m.* FROM products p LEFT JOIN categories c ON p.category_id = c.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id LEFT JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE c.category_id = ? ORDER BY RAND() LIMIT ?";
+        Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper(), categoryId, limit);
+        return List.copyOf(productMap.values());
+    }
     public void updateProductQuantity(Long productId, int quantityBought) {
         String sql = "UPDATE products SET stock_quantity = stock_quantity - ? WHERE product_id = ?";
         jdbcTemplate.update(sql, quantityBought, productId);

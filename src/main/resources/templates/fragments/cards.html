@@ -6,9 +6,9 @@
     <title>Document</title>
 </head>
 <body>
-    <div th:fragment="product_card" class="card" style="width: 18rem;">
+    <div th:fragment="product_card" class="card bg-body-tertiary" style="width: 18rem; height: 25rem;">
             <img src="/assets/prod.png" class="card-img-top" alt="...">
-            <div class="card-body">
+            <div class="card-body justify-content-between">
                 <h5 class="card-title" th:text="${productName}"></h5>
     
                 <div class="d-flex justify-content-between fs-5 fw-bold">

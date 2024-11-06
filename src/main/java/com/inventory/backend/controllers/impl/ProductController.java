@@ -23,6 +23,7 @@ public class ProductController {
         // If product is found, show details page
         if (productOptional.isPresent()) {
             model.addAttribute("product", productOptional.get());
+            model.addAttribute("products", productService.getByCategory(productOptional.get().getCategory().getCategoryId(), 4));
             return "product-details"; // Thymeleaf template name (product-details.html)
         } else {
             // Redirect to notfound.html if product not found

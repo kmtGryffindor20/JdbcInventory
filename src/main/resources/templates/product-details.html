@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head th:replace="~{fragments/header :: header(title='Product Details')}"></head>
 
-<body>
+<body data-bs-theme="dark">
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="card mb-3 mx-5">
@@ -15,12 +15,10 @@
               <h5 th:text="${product.productName}" class="card-title">Card title</h5>
               <a th:href="@{/category/{id}/products(id=${product.category.categoryId})}" class="card_text text-decoration-none text-body" ><strong>Category:</strong> <span th:text="${product.category.categoryName}">Category</span></a>
               <p class="card-text"><strong>Maximum Retail Price:</strong> $<span class="text-decoration-line-through" th:text="${product.maximumRetailPrice}">0.00</span> <span class="text-primary" th:text="${product.sellingPrice}" ></span> </p>
-                <div class="quantity-selection d-flex gap-4">
-                    <label for="quantity">Quantity:</label>
-                    <button type="button" class="btn btn-primary text-center" onclick="decreaseQuantity()">-</button>
-                    <input type="number" id="quantity" name="quantity" value="1" min="1" />
-                    <button type="button" class="btn btn-primary text-center" onclick="increaseQuantity()">+</button>
-                </div>
+              <form id="quantityForm">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" id="quantity" class="form-control" min="1" value="1" />
+              </form>
     
             <!-- Add to Cart button -->
                 <form id="addToCartForm" th:action="@{/cart/add}" method="post" onsubmit="return false;">
@@ -28,29 +26,20 @@
                     <input type="hidden" th:value="${product.productName}" name="productName" />
                     <input type="hidden" th:value="${product.maximumRetailPrice}" name="productPrice" />
                     <input type="hidden" id="productQuantity" name="productQuantity" value="1" />
-                    <button type="submit" class="btn btn-primary" onclick="return false;">Add to Cart</button>
+                    <button type="submit" class="btn btn-primary" onclick="return false;">Order</button>
                 </form>
             </div>
           </div>
         </div>
       </div>
+      <div th:replace="~{fragments/headings :: bulletHeading(heading='You may also like')}" class="text-center"></div>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 m-4 gap-4 justify-content-center">
+        <div th:each="i : ${#numbers.sequence(0, products.size() - 1)}" th:insert="~{fragments/cards :: product_card}" th:with="productName=${products[i].productName}, sellingPrice=${products[i].sellingPrice}, maximumRetailPrice=${products[i].maximumRetailPrice}, productId=${products[i].productId}">
+      </div>
+
 
     <script>
-        function increaseQuantity() {
-            let quantityInput = document.getElementById('quantity');
-            let quantity = parseInt(quantityInput.value);
-            quantityInput.value = quantity + 1; // Increment quantity
-            document.getElementById('productQuantity').value = quantityInput.value;
-        }
-
-        function decreaseQuantity() {
-            let quantityInput = document.getElementById('quantity');
-            let quantity = parseInt(quantityInput.value);
-            if (quantity > 1) {
-                quantityInput.value = quantity - 1;
-            }
-            document.getElementById('productQuantity').value = quantityInput.value;
-        }
+      
     </script>
 </body>
 </html>

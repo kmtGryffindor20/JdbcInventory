@@ -54,6 +54,10 @@ public class ProductService implements IModelService<Product, Long> {
         return productDao.getByCategory(categoryId);
     }
 
+    public List<Product> getByCategory(Long categoryId, int limit) {
+        return productDao.getByCategory(categoryId, limit);
+    }
+
     public void updateProductQuantity(Long productId, int quantityBought) {
         productDao.updateProductQuantity(productId, quantityBought);
     }
