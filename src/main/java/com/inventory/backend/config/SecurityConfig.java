@@ -22,13 +22,15 @@ public class SecurityConfig {
         return http
                     .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/orders/**").hasRole("USER")
+                        .requestMatchers("/orders/**").authenticated()
+                        .requestMatchers("/order/**").authenticated()
+                        .requestMatchers("/cart/**").authenticated()
                         .anyRequest().permitAll()
                     )
                     .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)
+                        .defaultSuccessUrl("/", false)
                         .failureUrl("/login?error=true")
                         .permitAll()
                     )

@@ -5,6 +5,9 @@
 <body data-bs-theme="dark">
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
+    <div th:if = "${message}" class="alert alert-info text-center">
+        <p th:text="${message}"></p>
+    </div>
     <div class="card mb-3 mx-5">
         <div class="row g-0">
           <div class="col-md-4">
@@ -15,18 +18,22 @@
               <h5 th:text="${product.productName}" class="card-title">Card title</h5>
               <a th:href="@{/category/{id}/products(id=${product.category.categoryId})}" class="card_text text-decoration-none text-body" ><strong>Category:</strong> <span th:text="${product.category.categoryName}">Category</span></a>
               <p class="card-text"><strong>Maximum Retail Price:</strong> $<span class="text-decoration-line-through" th:text="${product.maximumRetailPrice}">0.00</span> <span class="text-primary" th:text="${product.sellingPrice}" ></span> </p>
-              <form id="quantityForm">
-                <label for="quantity" class="form-label">Quantity</label>
-                <input type="number" id="quantity" class="form-control" min="1" value="1" />
-              </form>
-    
             <!-- Add to Cart button -->
-                <form id="addToCartForm" th:action="@{/cart/add}" method="post" onsubmit="return false;">
+                <form id="addToCartForm" th:action="@{/cart/add}" method="post">
                     <input type="hidden" th:value="${product.productId}" name="productId" />
                     <input type="hidden" th:value="${product.productName}" name="productName" />
                     <input type="hidden" th:value="${product.maximumRetailPrice}" name="productPrice" />
-                    <input type="hidden" id="productQuantity" name="productQuantity" value="1" />
-                    <button type="submit" class="btn btn-primary" onclick="return false;">Order</button>
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <input type="number" id="quantity" class="form-control mb-2" min="1" th:max="${product.stockQuantity}" name="quantity" th:value="${quantity}" required />
+
+                    <a th:href="@{/order?id={id}(id=${product.productId})}" class="btn btn-primary text-decoration-none" >
+                      Order Now
+                      <i class="bi bi-bag-check"></i>
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                      Add to Cart
+                      <i class="bi bi-cart"></i>
+                    </button>
                 </form>
             </div>
           </div>
@@ -39,7 +46,12 @@
 
 
     <script>
-      
+      // if quantity is greater than stock quantity, set quantity to stock quantity
+      document.getElementById('quantity').addEventListener('input', function() {
+        if (parseInt(this.value) > parseInt(this.getAttribute('max'))) {
+          this.value = this.getAttribute('max');
+        }
+      });
     </script>
 </body>
 </html>

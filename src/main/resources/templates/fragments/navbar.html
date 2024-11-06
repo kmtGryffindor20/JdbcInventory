@@ -19,11 +19,15 @@
         
                 <!-- If user is authentication, display links for Orders, Profile and Logout else display links for Login and Register -->
                 <div sec:authorize="isAuthenticated()" class="d-flex gap-2">
+                  <a href="/cart" class="text-light text-decoration-none">
+                    <i class="bi bi-cart"></i>
+                    Cart
+                  </a>
                   <a href="/orders" class="text-light text-decoration-none">
                     <i class="bi bi-bag-check-fill"></i>
                     Orders
                   </a>
-                  <a href="#" class="text-light text-decoration-none">
+                  <a href="/profile" class="text-light text-decoration-none">
                     <i class="bi bi-person-circle"></i>
                     Profile
                   </a>

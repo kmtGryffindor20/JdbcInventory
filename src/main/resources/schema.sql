@@ -9,11 +9,13 @@ DROP TABLE IF EXISTS manufacturers;
 DROP TABLE IF EXISTS orders_returned;
 DROP TABLE IF EXISTS customer_orders_products;
 DROP TABLE IF EXISTS sales_report;
+DROP TABLE IF EXISTS cart_products;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS employee_email_addresses;
 DROP TABLE IF EXISTS customer_order_shipping_info;
 DROP TABLE IF EXISTS customer_orders;
+DROP TABLE IF EXISTS carts;
 DROP TABLE IF EXISTS customers;
 DROP TABLE IF EXISTS employees;
 DROP TABLE IF EXISTS authorities;
@@ -197,7 +199,23 @@ CREATE TABLE IF NOT EXISTS sales_report (
     top_selling_product_id BIGINT,
     FOREIGN KEY (top_selling_product_id) REFERENCES products(product_id) ON DELETE SET NULL,
     PRIMARY KEY (day, month, year)
-)
+);
+
+CREATE TABLE IF NOT EXISTS carts (
+    cart_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    customer_email VARCHAR(255) NOT NULL,
+    FOREIGN KEY (customer_email) REFERENCES customers(email) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS cart_products (
+    cart_id BIGINT NOT NULL,
+    added_on DATE NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity INT NOT NULL,
+    FOREIGN KEY (cart_id) REFERENCES carts(cart_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    PRIMARY KEY (cart_id, product_id)
+);
 
 -- CREATE TRIGGER update_sales_report
 -- AFTER INSERT, UPDATE, DELETE ON customer_orders
