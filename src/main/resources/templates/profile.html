@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Profile</title>
+    <link rel="stylesheet" href="/path/to/your/css/styles.css">
+    <style>
+        /* Basic layout for the sidebar and content */
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #f4f4f4;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+            width: calc(100% - 270px);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+    <script>
+        // JavaScript function to toggle between view and edit modes
+        function toggleEditMode() {
+            document.getElementById("viewMode").classList.toggle("hidden");
+            document.getElementById("editMode").classList.toggle("hidden");
+        }
+    </script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Account</h2>
+        <a href="/profile">Your Account</a>
+        <a href="/orders">Track Your Orders</a>
+        <a href="/customer-help">Customer Help</a>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+        <h1>Customer Profile</h1>
+
+        <!-- View Mode (Initial display) -->
+        <div id="viewMode">
+            <p><strong>First Name:</strong> <span th:text="${customer.firstName}"></span></p>
+            <p><strong>Last Name:</strong> <span th:text="${customer.lastName}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${customer.emailId}"></span></p>
+            <p><strong>Phone Number:</strong> <span th:text="${customer.phoneNumber}"></span></p>
+            <p><strong>Shipping Address:</strong> <span th:text="${customer.shippingAddress}"></span></p>
+            <p><strong>Billing Address:</strong> <span th:text="${customer.billingAddress}"></span></p>
+
+            <!-- Button to toggle edit mode -->
+            <button onclick="toggleEditMode()">Update Profile</button>
+        </div>
+
+        <!-- Edit Mode (Form fields for editing) -->
+        <div id="editMode" class="hidden">
+            <form th:action="@{/profile/update}" th:object="${customer}" method="post">
+                <div>
+                    <label>First Name:</label>
+                    <input type="text" th:field="*{firstName}" required>
+                </div>
+                <div>
+                    <label>Last Name:</label>
+                    <input type="text" th:field="*{lastName}" required>
+                </div>
+                <div>
+                    <label>Email:</label>
+                    <input type="email" th:field="*{emailId}" readonly>
+                </div>
+                <div>
+                    <label>Phone Number:</label>
+                    <input type="text" th:field="*{phoneNumber}">
+                </div>
+                <div>
+                    <label>Shipping Address:</label>
+                    <input type="text" th:field="*{shippingAddress}">
+                </div>
+                <div>
+                    <label>Billing Address:</label>
+                    <input type="text" th:field="*{billingAddress}">
+                </div>
+                <div>
+                    <button type="submit">Submit Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
