@@ -165,7 +165,6 @@ CREATE TABLE IF NOT EXISTS manufacturer_orders (
     ordered_from BIGINT,
     date_of_order DATE NOT NULL,
     processed_by_employee_id BIGINT,
-    quantity INT NOT NULL,
     FOREIGN KEY (ordered_from) REFERENCES manufacturers(manufacturer_id) ON DELETE SET NULL,
     FOREIGN KEY (processed_by_employee_id) REFERENCES employees(employee_id) ON DELETE SET NULL
 );

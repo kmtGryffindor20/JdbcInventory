@@ -63,7 +63,7 @@ public class ShippingInfoManufacturerOrderDao implements IDao<ShippingInfoManufa
                             .build())
                     .shippingDate(null)
                     .expectedDeliveryDate(null)
-                    .status(ShippingInfoManufacturerOrder.Status.ORDERED)
+                    .status(ShippingInfoManufacturerOrder.Status.PENDING)
                     .build());
             results = jdbcTemplate.query(sql, new ShippingInfoManufacturerOrderRowMapper(), orderId);
         }

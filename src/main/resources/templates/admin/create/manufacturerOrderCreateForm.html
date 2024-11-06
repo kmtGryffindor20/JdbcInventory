@@ -63,11 +63,10 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         const products = /*[[${products}]]*/ []; // Assumes 'products' includes manufacturer IDs for each product
-        console.log(products);
     
         let amount = 0;
-        function filterProductsByManufacturer(manufacturerId) {
-            return products.filter(product => product.manufacturers.some(man => man.manufacturerId == manufacturerId));
+        function filterProductsByManufacturer(manufacturerId) {            
+            return products.filter(product => product.manufacturers.some(man => man.first.manufacturerId == manufacturerId));
         }
     
         function addProductField(manufacturerId) {
@@ -123,7 +122,7 @@
             allProducts.forEach((product, index) => {
                 const selectedProduct = products.find(prod => prod.productId == product.value);
                 if (selectedProduct) {
-                    amount += selectedProduct.costPrice * (allQuantities[index].value || 0);
+                    amount += selectedProduct.manufacturers.find(man => man.first.manufacturerId == document.getElementById('manufacturerId').value).second * allQuantities[index].value;
                 }
             });
             document.getElementById('amount').innerText = 'Amount: $' + amount.toFixed(2);

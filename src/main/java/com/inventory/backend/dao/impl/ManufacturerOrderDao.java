@@ -63,7 +63,7 @@ public class ManufacturerOrderDao implements IDao<ManufacturerOrder, Long> {
                     ShippingInfoManufacturerOrder shippingInfoManufacturerOrder = ShippingInfoManufacturerOrder.builder()
                             .shippingDate(null)
                             .expectedDeliveryDate(null)
-                            .status(ShippingInfoManufacturerOrder.Status.ORDERED)
+                            .status(ShippingInfoManufacturerOrder.Status.PENDING)
                             .manufacturerOrder(a)
                             .build();
                     shippingInfoManufacturerOrderService.save(shippingInfoManufacturerOrder);
