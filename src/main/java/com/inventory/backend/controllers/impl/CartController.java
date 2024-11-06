@@ -15,7 +15,6 @@ import com.inventory.backend.entities.Cart;
 import com.inventory.backend.entities.Customer;
 import com.inventory.backend.services.impl.CartService;
 import com.inventory.backend.services.impl.CustomerService;
-import com.inventory.backend.services.impl.ProductService;
 
 @Controller
 public class CartController {
@@ -26,8 +25,6 @@ public class CartController {
     @Autowired
     private CustomerService customerService;
 
-    @Autowired
-    private ProductService productService;
 
    @GetMapping("/cart")
 public String showCart(Principal principal, Model model) {

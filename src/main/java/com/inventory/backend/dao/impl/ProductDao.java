@@ -17,6 +17,8 @@ import com.inventory.backend.entities.Category;
 import com.inventory.backend.entities.Manufacturer;
 import com.inventory.backend.entities.Product;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,7 +34,7 @@ public class ProductDao implements IDao<Product, Long> {
 
     @Override
     public void create(Product a) {
-        String sql = "INSERT INTO products (product_name, expiry_date, stock_quantity, selling_price, maximum_retail_price, category_id, description) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (product_name, expiry_date, stock_quantity, selling_price, maximum_retail_price, category_id, description, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement preparedStatement = jdbcTemplate.getDataSource().getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -43,6 +45,7 @@ public class ProductDao implements IDao<Product, Long> {
             preparedStatement.setDouble(5, a.getMaximumRetailPrice());
             preparedStatement.setLong(6, a.getCategory().getCategoryId());
             preparedStatement.setString(7, a.getDescription());
+            preparedStatement.setString(8, a.getImageUrl());
 
             int rowsAffected = preparedStatement.executeUpdate();
 
@@ -67,7 +70,7 @@ public class ProductDao implements IDao<Product, Long> {
     }
 
     public void create(Product a, TreeMap<Long, Double> manufacturersCostPricesMap) {
-        String sql = "INSERT INTO products (product_name, expiry_date, stock_quantity, selling_price, maximum_retail_price, category_id, description) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (product_name, expiry_date, stock_quantity, selling_price, maximum_retail_price, category_id, description, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement preparedStatement = jdbcTemplate.getDataSource().getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -78,6 +81,7 @@ public class ProductDao implements IDao<Product, Long> {
             preparedStatement.setDouble(5, a.getMaximumRetailPrice());
             preparedStatement.setLong(6, a.getCategory().getCategoryId());
             preparedStatement.setString(7, a.getDescription());
+            preparedStatement.setString(8, a.getImageUrl());
 
             int rowsAffected = preparedStatement.executeUpdate();
 
@@ -123,6 +127,7 @@ public class ProductDao implements IDao<Product, Long> {
                     .description(rs.getString("description"))
                     .stockQuantity(rs.getInt("stock_quantity"))
                     .sellingPrice(rs.getDouble("selling_price"))
+                    .imageUrl(rs.getString("image_url"))
                     .maximumRetailPrice(rs.getDouble("maximum_retail_price"))
                     .category(Category.builder()
                             .categoryId(rs.getLong("category_id"))
@@ -137,14 +142,36 @@ public class ProductDao implements IDao<Product, Long> {
 
     @Override
     public void update(Product a, Long id) {
-        String sql = "UPDATE products SET product_name = ?, expiry_date = ?, stock_quantity = ?, selling_price = ?, maximum_retail_price = ?, category_id = ?, description = ? WHERE product_id = ?";
+        String sql = "UPDATE products SET product_name = ?, expiry_date = ?, stock_quantity = ?, selling_price = ?, maximum_retail_price = ?, category_id = ?, description = ?, image_url = ? WHERE product_id = ?";
         String sql2 = "DELETE FROM product_manufacturers WHERE product_id = ?";
         String sql3 = "INSERT INTO product_manufacturers (product_id, manufacturer_id, cost_price) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql2, id);
-        jdbcTemplate.update(sql, a.getProductName(), a.getExpiryDate(), a.getStockQuantity(), a.getSellingPrice(), a.getMaximumRetailPrice(), a.getCategory().getCategoryId(), a.getDescription(), id);
+        if (a.getImageUrl() != null)
+        {
+            deletePreviousImages(id);
+            jdbcTemplate.update(sql, a.getProductName(), a.getExpiryDate(), a.getStockQuantity(), a.getSellingPrice(), a.getMaximumRetailPrice(), a.getCategory().getCategoryId(), a.getDescription(), a.getImageUrl(), id);
+        }
+        else{
+            sql = "UPDATE products SET product_name = ?, expiry_date = ?, stock_quantity = ?, selling_price = ?, maximum_retail_price = ?, category_id = ?, description = ? WHERE product_id = ?";
+            jdbcTemplate.update(sql, a.getProductName(), a.getExpiryDate(), a.getStockQuantity(), a.getSellingPrice(), a.getMaximumRetailPrice(), a.getCategory().getCategoryId(), a.getDescription(), id);
+        }
         for (Product.Pair<Manufacturer, Double> pair : a.getManufacturers()) {
             jdbcTemplate.update(sql3, id, pair.getFirst().getManufacturerId(), pair.getSecond());
         }
+    }
+
+    public void deletePreviousImages(Long id) {
+        String sql = "SELECT image_url FROM products WHERE product_id = ?";
+        
+        try{
+            String imageUrl = jdbcTemplate.queryForObject(sql, String.class, id);
+            Path path = Path.of("src/main/resources/static/images/" + imageUrl);
+            Files.delete(path);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -209,6 +236,7 @@ public class ProductDao implements IDao<Product, Long> {
                                     .categoryDescription(rs.getString("category_description"))
                                     .build())
                             .manufacturers(new HashSet<>())
+                            .imageUrl(rs.getString("image_url"))
                             .build();
                     productMap.put(productId, product);
                 }

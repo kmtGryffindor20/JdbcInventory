@@ -31,6 +31,9 @@ public class Product {
 
     private Category category;
 
+    private String imageUrl;
+
+    @Builder.Default
     private Set<Pair<Manufacturer, Double>> manufacturers = new HashSet<>();
 
     public static class Pair<T, U> {

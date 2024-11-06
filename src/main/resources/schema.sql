@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS products (
     selling_price DECIMAL(10, 2) NOT NULL,
     maximum_retail_price DECIMAL(10, 2) NOT NULL,
     category_id BIGINT,
+    image_url VARCHAR(255),
     FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL,
     FULLTEXT(product_name, description)
 );
