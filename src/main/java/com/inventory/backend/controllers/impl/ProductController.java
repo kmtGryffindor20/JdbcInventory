@@ -75,4 +75,10 @@ public class ProductController {
         model.addAttribute("products", productService.getByCategory(productOptional.get().getCategory().getCategoryId(), 4));
         return "product-details";
     }
+
+    @GetMapping("/search")
+    public String search(@RequestParam("query") String query, Model model) {
+        model.addAttribute("products", productService.searchProducts(query));
+        return "search";
+    }
 }

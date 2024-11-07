@@ -7,15 +7,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.inventory.backend.dao.IDao;
 import com.inventory.backend.entities.Category;
 import com.inventory.backend.entities.Manufacturer;
 import com.inventory.backend.entities.Product;
+
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -198,9 +201,17 @@ public class ProductDao implements IDao<Product, Long> {
 
     public List<Product> searchProducts(String keyword)
     {
-        String sql = "SELECT p.*, c.*, m.*, pm.cost_price FROM products p LEFT JOIN categories c ON p.category_id = c.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id LEFT JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE MATCH(p.product_name, p.description) AGAINST(? IN NATURAL LANGUAGE MODE)";
-        Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductRowMapper(), keyword);
-        return List.copyOf(productMap.values());
+        String sql = "SELECT p.*, pm.cost_price," +
+                        "MATCH (product_name, description) AGAINST (? WITH QUERY EXPANSION) AS relevance "+
+                    "FROM products p "+
+                    "LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id "+
+                    "WHERE (MATCH (product_name, description) AGAINST (? WITH QUERY EXPANSION) > 0.5"+
+                        "OR p.product_name LIKE ? "+ 
+                        "OR p.description LIKE ? )";
+        List<Pair<Double,Product>> products = jdbcTemplate.query(sql, new RelevanceProductRowMapper(), keyword, keyword, "%" + keyword + "%", "%" + keyword + "%");
+        // Sort on relevance
+        products.sort((a, b) -> Double.compare(b.first, a.first));
+        return products.stream().map(Pair::getSecond).toList();
     }
 
     public Map<String, Integer> stockQuantityByCategory() {
@@ -252,4 +263,42 @@ public class ProductDao implements IDao<Product, Long> {
         
     }
     
+    public static class RelevanceProductRowMapper implements RowMapper<Pair<Double, Product>> {
+        @Override
+        public Pair<Double, Product> mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Product product = Product.builder()
+                    .productId(rs.getLong("product_id"))
+                    .productName(rs.getString("product_name"))
+                    .expiryDate(rs.getDate("expiry_date"))
+                    .description(rs.getString("description"))
+                    .stockQuantity(rs.getInt("stock_quantity"))
+                    .sellingPrice(rs.getDouble("selling_price"))
+                    .imageUrl(rs.getString("image_url"))
+                    .maximumRetailPrice(rs.getDouble("maximum_retail_price"))
+                    .category(Category.builder()
+                            .categoryId(rs.getLong("category_id"))
+                            .build())
+                    .manufacturers(new HashSet<>())
+                    .build();
+            return new Pair<>(rs.getDouble("relevance"), product);
+        }
+    }
+
+    public static class Pair<T, U> {
+        public final T first;
+        public final U second;
+
+        public Pair(T first, U second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        public T getFirst() {
+            return first;
+        }
+
+        public U getSecond() {
+            return second;
+        }
+    }
 }

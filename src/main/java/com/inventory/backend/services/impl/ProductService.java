@@ -71,5 +71,9 @@ public class ProductService implements IModelService<Product, Long> {
     public Map<String, Integer> stockQuantityByCategory() {
         return productDao.stockQuantityByCategory();
     }
+
+    public List<Product> searchProducts(String query) {
+        return productDao.searchProducts(query);
+    }
     
 }
