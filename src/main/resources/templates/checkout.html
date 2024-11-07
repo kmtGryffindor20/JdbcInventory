@@ -11,7 +11,7 @@
                         <h4 class="card-title">Checkout</h4>
                     </div>
                     <div class="card-body">
-                        <h5>Total Amount: $<span th:text="${totalAmount}"></span></h5>
+                        <h5>Total Amount: ₹<span th:text="${totalAmount}"></span></h5>
                         <form action="/razorpay/payment" method="POST">
                             <input type="hidden" name="totalAmount" th:value="${totalAmount}">
                             <!-- hidden inputs of cart products and there quantities -->

@@ -129,7 +129,8 @@ public class PaymentController {
             customerOrder.setDateOfOrder(new java.sql.Date(System.currentTimeMillis()));
             customerOrder.setPaymentMethod(CustomerOrder.PaymentMethod.CARD); // Set payment method (UPI in this case)
             customerOrder.setProducts(convertCartProductsToOrderProducts(cart.getProducts())); // Convert cart products to order products
-            customerOrder.setProcessorEmployee(null); // Optionally set an employee who processed the order
+            Employee processorEmployee = employeeService.findById(1L).orElse(null);
+            customerOrder.setProcessorEmployee(processorEmployee);
 
             // Save the order in the database
             customerOrderService.save(customerOrder);

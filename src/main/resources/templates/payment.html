@@ -11,7 +11,7 @@
                         <h4 class="card-title">Complete Payment</h4>
                     </div>
                     <div class="card-body">
-                        <h5>Total Amount: $<span th:text="${totalAmount}"></span></h5>
+                        <h5>Total Amount: ₹<span th:text="${totalAmount}"></span></h5>
                         <form id="razorpay-form" action="/razorpay/payment" method="POST">
                             <input type="hidden" name="razorpay_order_id" th:value="${razorpayOrderId}">
                             <input type="hidden" name="totalAmount" th:value="${totalAmount}">
@@ -54,7 +54,7 @@
                         if (data.success) {
                             alert("Order created successfully!");
                             // Redirect to a success page or order summary
-                            window.location.href = "/order/success";
+                            window.location.href = "/orders";
                         } else {
                             alert("Failed to create order. Please try again.");
                         }

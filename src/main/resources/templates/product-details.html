@@ -18,7 +18,7 @@
             <div class="card-body d-flex flex-column justify-content-evenly gap-2">
               <h5 th:text="${product.productName}" class="card-title text-body-emphasis">Card title</h5>
               <a th:href="@{/category/{id}/products(id=${product.category.categoryId})}" class="card_text text-decoration-none text-body" ><strong>Category:</strong> <span th:text="${product.category.categoryName}">Category</span></a>
-              <p class="card-text"><strong>Maximum Retail Price:</strong> $<span class="text-decoration-line-through" th:text="${product.maximumRetailPrice}">0.00</span> <span class="text-primary" th:text="${product.sellingPrice}" ></span> </p>
+              <p class="card-text"><strong>Maximum Retail Price:</strong> ₹<span class="text-decoration-line-through" th:text="${product.maximumRetailPrice}">0.00</span> <span class="text-primary" th:text="${product.sellingPrice}" ></span> </p>
               <p class="card-text text-body-emphasis"><strong>Description:</strong> <span th:text="${product.description}">Description</span></p>
             <!-- Add to Cart button -->
                 <form id="addToCartForm" th:action="@{/cart/add}" method="post">
