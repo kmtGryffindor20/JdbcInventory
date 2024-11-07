@@ -1,27 +1,64 @@
 INSERT INTO manufacturers (manufacturer_name, manufacturer_address) VALUES
+-- Electronics
 ('Apple Inc.', '1 Apple Park Way, Cupertino, CA 95014'),
 ('Samsung Electronics Co., Ltd.', '129 Samsung-ro, Maetan-dong, Yeongtong-gu, Suwon-si, Gyeonggi-do, South Korea'),
 ('Sony Corporation', '1-7-1 Konan, Minato-ku, Tokyo 108-0075, Japan'),
 ('Dell Technologies Inc.', '1 Dell Way, Round Rock, TX 78682'),
 ('Bose Corporation', '1 Boston Place, Boston, MA 02108'),
+
+-- Furniture
 ('IKEA', 'Dåvakvegen 14, 3560 Hemsedal, Norway'),
 ('Ashley Furniture', '1 Ashley Way, Arcadia, WI 54612'),
 ('Herman Miller', '855 East Main Avenue, Zeeland, MI 49464'),
 ('Sealy', '4200 International Parkway, Carrollton, TX 75007'),
 ('Sauder', '1000 Sauder Village Blvd, Archbold, OH 43502'),
+
+-- Clothing
 ('Levi Strauss & Co.', '1155 Battery St, San Francisco, CA 94111'),
 ('Nike Inc.', '1 Bowerman Drive, Beaverton, OR 97005'),
 ('Adidas AG', 'Adidas-Straße 1, 91074 Herzogenaurach, Germany'),
 ('H&M', 'Mäster Samuelsgatan 46A, 106 38 Stockholm, Sweden'),
 ('Inditex', 'Av. de la Diputación, 15, 15142 Arteijo, A Coruña, Spain'),
+
+-- Books
 ('Penguin Random House', '1745 Broadway, New York, NY 10019'),
 ('HarperCollins', '195 Broadway, New York, NY 10007'),
 ('Little, Brown and Company', '1290 Avenue of the Americas, New York, NY 10104'),
+
+-- Groceries
 ('Organic Valley', '1 Organic Way, La Farge, WI 54639'),
 ("Nature's Own", '1370 Williams Dr, Thomasville, GA 31757'),
 ('Happy Egg Co.', '1 Happy Egg Way, Newtown, Bucks, PA 18940'),
 ('Earthbound Farm', '1400 W 7th St #100, San Pedro, CA 90732'),
-('Chiquita', '250 E Fifth St, Suite 2200, Cincinnati, OH 45202');
+('Chiquita', '250 E Fifth St, Suite 2200, Cincinnati, OH 45202'),
+
+-- Toys
+('Lego Group', 'Aastvej 1, 7190 Billund, Denmark'),
+('Mattel Inc.', '333 Continental Blvd, El Segundo, CA 90245, USA'),
+('Hasbro Inc.', '1027 Newport Avenue, Pawtucket, RI 02861, USA'),
+
+-- Sports Equipment
+('Wilson Sporting Goods', '8750 W Bryn Mawr Ave, Chicago, IL 60631, USA'),
+('Adidas AG', 'Adidas-Straße 1, 91074 Herzogenaurach, Germany'),
+('Gaiam', '3333 S Wadsworth Blvd, Suite 300, Lakewood, CO 80227, USA'),
+('Bowflex', '1130 13th St N, Suite A, Fargo, ND 58102, USA'),
+
+-- Personal Care
+('LOreal', '14 Rue Royale, 75008 Paris, France'),
+('Johnson & Johnson', 'One Johnson & Johnson Plaza, New Brunswick, NJ 08933, USA'),
+('Beiersdorf', 'Unnastrasse 48, 20253 Hamburg, Germany'),
+
+-- Office Supplies
+('Swingline', '3 School Street, Stamford, CT 06901, USA'),
+('Hammermill', '1705 N Front St, Harrisburg, PA 17102, USA'),
+('BIC', 'BIC Headquarters, 1 BIC Way, Shelton, CT 06484, USA'),
+('Rolodex', '1270 N Hancock St, Philadelphia, PA 19123, USA'),
+
+-- Automotive
+('Little Trees', '3001 Plover Rd, Plover, WI 54467, USA'),
+('Slime', '2450 S. 3rd Street, Louisville, KY 40208, USA'),
+('Meguiars', '17991 Mitchell South, Irvine, CA 92614, USA'),
+('EcoNour', '2327 N Lincoln Ave, Chicago, IL 60614, USA');
 
 
 -- Insert manufacturer email addresses
@@ -97,42 +134,72 @@ VALUES
 ('Home Decor', 'Add a Touch of Elegance to Your Home.');
 
 
-INSERT INTO products (product_name, expiry_date, stock_quantity, selling_price, maximum_retail_price, category_id, description) VALUES
+
+INSERT INTO products (product_name, expiry_date, stock_quantity, selling_price, maximum_retail_price, category_id, description, image_url) VALUES
 -- Electronics (Category ID: 1)
-('Apple iPhone 14', '2026-12-31', 50, 799.99, 999.99, 1, 'Latest model of Apple iPhone with advanced camera and display features.'),
-('Samsung Galaxy S22', '2026-11-30', 40, 699.99, 899.99, 1, 'High-performance Samsung smartphone with stunning display and powerful battery.'),
-('Sony Bravia 4K TV', '2027-06-30', 20, 999.99, 1199.99, 1, 'Ultra HD 4K Sony TV for a cinematic viewing experience at home.'),
-('Dell Inspiron Laptop', '2027-08-15', 15, 649.99, 799.99, 1, 'Reliable Dell laptop suitable for work, study, and everyday tasks.'),
-('Bose QuietComfort Headphones', '2027-07-20', 25, 249.99, 299.99, 1, 'Noise-cancelling Bose headphones for immersive audio quality.'),
+('Apple iPhone 14', '2026-12-31', 50, 799.99, 999.99, 1, 'Latest model of Apple iPhone with advanced camera and display features.', 'uploads/iPhone_14_Blue_PDP_Image_Position-1A__WWEN-removebg-preview.png_null'),
+('Samsung Galaxy S22', '2026-11-30', 40, 699.99, 899.99, 1, 'High-performance Samsung smartphone with stunning display and powerful battery.', 'uploads/sams.avif_null'),
+('Sony Bravia 4K TV', '2027-06-30', 20, 999.99, 1199.99, 1, 'Ultra HD 4K Sony TV for a cinematic viewing experience at home.', 'uploads/TVFY23_UP_Primary_image.webp_null'),
+('Dell Inspiron Laptop', '2027-08-15', 15, 649.99, 799.99, 1, 'Reliable Dell laptop suitable for work, study, and everyday tasks.', 'uploads/dell-xps-laptop-intel-dell-inspiron-laptop-removebg-preview.png_null'),
+('Bose QuietComfort Headphones', '2027-07-20', 25, 249.99, 299.99, 1, 'Noise-cancelling Bose headphones for immersive audio quality.', 'uploads/cq5dam.web.320.320.png_null'),
 
 -- Furniture (Category ID: 2)
-('Wooden Dining Table', '2028-01-10', 10, 499.99, 599.99, 2, 'Classic wooden dining table, perfect for family gatherings.'),
-('Leather Sofa Set', '2028-02-20', 8, 899.99, 1099.99, 2, 'Elegant leather sofa set for a comfortable and stylish living space.'),
-('Office Chair', '2028-03-15', 30, 149.99, 199.99, 2, 'Ergonomic office chair with adjustable height and back support.'),
-('Queen Size Bed', '2028-04-25', 12, 799.99, 999.99, 2, 'Comfortable queen-size bed for a restful sleep experience.'),
-('Bookshelf', '2028-05-05', 18, 129.99, 169.99, 2, 'Spacious bookshelf to organize your books and decor.'),
+('Wooden Dining Table', '2028-01-10', 10, 499.99, 599.99, 2, 'Classic wooden dining table, perfect for family gatherings.', 'uploads/61t5tmVYhDL-removebg-preview.png_null'),
+('Leather Sofa Set', '2028-02-20', 8, 899.99, 1099.99, 2, 'Elegant leather sofa set for a comfortable and stylish living space.', 'uploads/sofa-isolated-transparent-background_191095-10351-removebg-preview.png_null'),
+('Office Chair', '2028-03-15', 30, 149.99, 199.99, 2, 'Ergonomic office chair with adjustable height and back support.', 'uploads/stylish-modern-office-chair-isolated-transparent-background-png-psd_888962-1719-removebg-preview.png_null'),
+('Queen Size Bed', '2028-04-25', 12, 799.99, 999.99, 2, 'Comfortable queen-size bed for a restful sleep experience.', 'uploads/47214c07605602b17e9e7208d45965ae-removebg-preview.png_null'),
+('Bookshelf', '2028-05-05', 18, 129.99, 169.99, 2, 'Spacious bookshelf to organize your books and decor.', 'uploads/40-rosewood-sheesham-90-30-solid-sheesham-wood-book-shelf-wooden-original-imaghzy9zgu2gzrh-removebg-preview.png_null'),
 
 -- Clothing (Category ID: 3)
-("Levi's Jeans", '2026-11-01', 60, 39.99, 59.99, 3, "Classic Levi\'s jeans with a comfortable fit and durable fabric."),
-('Nike Running Shoes', '2026-10-20', 45, 59.99, 79.99, 3, 'Lightweight Nike running shoes with excellent grip and support.'),
-('Adidas T-Shirt', '2026-12-10', 100, 19.99, 29.99, 3, 'Comfortable Adidas t-shirt for casual wear and sports activities.'),
-('H&M Jacket', '2026-09-15', 25, 49.99, 69.99, 3, 'Stylish H&M jacket for cool weather and everyday wear.'),
-('Zara Dress', '2026-08-05', 40, 39.99, 59.99, 3, 'Elegant Zara dress suitable for various occasions.'),
+("Levi's Jeans", '2026-11-01', 60, 39.99, 59.99, 3, "Classic Levi's jeans with a comfortable fit and durable fabric.", 'uploads/-473Wx593H-469537893-darkindigo-MODEL-removebg-preview.png_null'),
+('Nike Running Shoes', '2026-10-20', 45, 59.99, 79.99, 3, 'Lightweight Nike running shoes with excellent grip and support.', 'uploads/NIKE+ZOOMX+INVINCIBLE+RN+3+OLY-removebg-preview.png_null'),
+('Adidas T-Shirt', '2026-12-10', 100, 19.99, 29.99, 3, 'Comfortable Adidas t-shirt for casual wear and sports activities.', 'uploads/14_3f746e2b-e2b6-4607-b32f-902d405a6f60-removebg-preview.png_null'),
+('H&M Jacket', '2026-09-15', 25, 49.99, 69.99, 3, 'Stylish H&M jacket for cool weather and everyday wear.', 'uploads/hmgoepprod-removebg-preview.png_null'),
+('Zara Dress', '2026-08-05', 40, 39.99, 59.99, 3, 'Elegant Zara dress suitable for various occasions.', 'uploads/02492152505-e1-removebg-preview.png_null'),
 
 -- Books (Category ID: 4)
-('The Great Gatsby', '2030-12-01', 100, 9.99, 14.99, 4, 'Classic novel by F. Scott Fitzgerald set in the Jazz Age.'),
-('1984 by George Orwell', '2030-11-10', 120, 8.99, 12.99, 4, 'Dystopian novel by George Orwell about a totalitarian regime.'),
-('To Kill a Mockingbird', '2030-10-05', 85, 7.99, 10.99, 4, "Harper Lee's novel exploring racial injustice in the Deep South."),
-('The Catcher in the Rye', '2030-09-20', 90, 6.99, 9.99, 4, 'Coming-of-age story by J.D. Salinger about teenage rebellion.'),
-('Pride and Prejudice', '2030-08-15', 75, 5.99, 8.99, 4, 'Romantic novel by Jane Austen exploring manners and marriage.'),
+('The Great Gatsby', '2030-12-01', 100, 9.99, 14.99, 4, 'Classic novel by F. Scott Fitzgerald set in the Jazz Age.', 'uploads/81Q6WkLhX4L._UF1000,1000_QL80_.jpg_null'),
+('1984 by George Orwell', '2030-11-10', 120, 8.99, 12.99, 4, 'Dystopian novel by George Orwell about a totalitarian regime.', 'uploads/71rpa1-kyvL._AC_UF1000,1000_QL80_.jpg_null'),
+('To Kill a Mockingbird', '2030-10-05', 85, 7.99, 10.99, 4, "Harper Lee's novel exploring racial injustice in the Deep South.", 'uploads/81gepf1eMqL._AC_UF1000,1000_QL80_.jpg_null'),
+('The Catcher in the Rye', '2030-09-20', 90, 6.99, 9.99, 4, 'Coming-of-age story by J.D. Salinger about teenage rebellion.', 'uploads/Carolines-bullshit.jpg_null'),
+('Pride and Prejudice', '2030-08-15', 75, 5.99, 8.99, 4, 'Romantic novel by Jane Austen exploring manners and marriage.', 'uploads/pride-prejudice-original-imafzra6pfewjjwb.webp_null'),
 
 -- Groceries (Category ID: 5)
-('Organic Milk', '2024-12-31', 200, 1.99, 2.99, 5, 'Fresh organic milk sourced from local farms.'),
-('Whole Wheat Bread', '2024-11-30', 150, 0.99, 1.49, 5, 'Healthy whole wheat bread baked fresh daily.'),
-('Free-range Eggs', '2024-10-25', 180, 2.99, 3.99, 5, 'Farm-fresh free-range eggs with rich flavor and nutrition.'),
-('Fresh Spinach', '2024-09-20', 220, 1.49, 2.49, 5, 'Organic spinach leaves picked fresh for maximum nutrients.'),
-('Bananas (1 Dozen)', '2024-08-15', 300, 0.99, 1.29, 5, 'A dozen ripe bananas, perfect for snacking and smoothies.');
+('Organic Milk', '2024-12-31', 200, 1.99, 2.99, 5, 'Fresh organic milk sourced from local farms.', 'uploads/Organic-Milk.webp_null'),
+('Whole Wheat Bread', '2024-11-30', 150, 0.99, 1.49, 5, 'Healthy whole wheat bread baked fresh daily.', 'uploads/britannia-whole-wheat-bread-400-g-product-images-o490056559-p590127226-0-202203262322-removebg-preview.png_null'),
+('Free-range Eggs', '2024-10-25', 180, 2.99, 3.99, 5, 'Farm-fresh free-range eggs with rich flavor and nutrition.', 'uploads/31vKWEGCKzL-removebg-preview.png_null'),
+('Fresh Spinach', '2024-09-20', 220, 1.49, 2.49, 5, 'Organic spinach leaves picked fresh for maximum nutrients.', 'uploads/71tdN2taTCL-removebg-preview (1).png_null'),
+('Bananas (1 Dozen)', '2024-08-15', 300, 0.99, 1.29, 5, 'A dozen ripe bananas, perfect for snacking and smoothies.', 'uploads/Banana--removebg-preview.png_null'),
 
+('Lego Classic Set', '2026-12-31', 100, 29.99, 39.99, 6, 'A box of classic Lego bricks for creative building and fun.', 'uploads/LEGO-Classic-90-Years-of-Play-11021-2-removebg-preview (1).png_null'),
+('Hot Wheels Car Pack', '2026-11-15', 150, 9.99, 14.99, 6, 'Set of die-cast Hot Wheels cars for racing and collecting.', 'uploads/kuala-lumpur-malaysia-august-20-260nw-2349891107-removebg-preview.png_null'),
+('Barbie Dreamhouse', '2027-06-30', 50, 199.99, 249.99, 6, 'Barbie Dreamhouse with multiple rooms and interactive features.', 'uploads/1990-900w-removebg-preview.png_null'),
+('Nerf Blaster', '2027-03-10', 80, 24.99, 34.99, 6, 'Nerf blaster gun for action-packed play and friendly battles.', 'uploads/61kriY4CfML-removebg-preview.png_null'),
+
+-- Sports Equipment (Category ID: 7)
+('Wilson Tennis Racket', '2028-01-01', 70, 49.99, 69.99, 7, 'High-quality Wilson tennis racket for all levels of play.', 'uploads/64c082e013c3ce2e2d213c54-wilson-burn-pink-25-in-junior-tennis.png_null'),
+('Adidas Soccer Ball', '2027-12-20', 120, 19.99, 29.99, 7, 'Durable Adidas soccer ball for training and games.', 'uploads/61sx2R2t1wL._AC_UF894_1000_QL80_-removebg-preview.png_null'),
+('Yoga Mat', '2027-10-10', 200, 15.99, 19.99, 7, 'Non-slip yoga mat for comfort and stability during exercise.', 'uploads/41fQHCuWAsL-removebg-preview.png_null'),
+('Dumbbell Set', '2027-08-15', 60, 39.99, 49.99, 7, 'Adjustable dumbbell set for weight training and fitness.', 'uploads/41meym6y32L._AC_UF894_1000_QL80_-removebg-preview.png_null'),
+
+-- Personal Care (Category ID: 8)
+('LOreal Shampoo', '2026-12-10', 150, 5.99, 8.99, 8, 'LOreal shampoo for clean and nourished hair.', 'uploads/64eb3d7680a7757157667153-l-oreal-paris-elvive-color-vibrancy.png_null'),
+('Neutrogena Face Wash', '2027-01-01', 100, 6.99, 9.99, 8, 'Gentle face wash from Neutrogena for a clear complexion.', 'uploads/NEU101image1.avif_null'),
+('Maybelline Mascara', '2026-11-05', 80, 9.99, 12.99, 8, 'Long-lasting mascara for fuller lashes.', 'uploads/71MQo8pHmBL-removebg-preview.png_null'),
+('Nivea Body Lotion', '2026-10-20', 130, 4.99, 6.99, 8, 'Moisturizing body lotion from Nivea for all skin types.', 'uploads/nivea-cocoa-nourish-body-lotion-with-cocoa-butter-for-very-dry-skin-200-ml-product-images-o491208767-p590032379-0-202309151651-removebg-preview (1).png_null'),
+
+
+-- Office Supplies (Category ID: 9)
+('Stapler', '2030-12-31', 200, 3.99, 5.99, 9, 'Durable stapler for office and home use.', 'uploads/stepaler-icon-copy-removebg-preview.png_null'),
+('A4 Printer Paper (500 Sheets)', '2029-11-20', 300, 7.99, 9.99, 9, 'High-quality A4 printer paper, pack of 500 sheets.', 'uploads/copier-unruled-a4-copy-paper-set-of-1-white-a4-paper-jk-original-imaf3uhfackygbzt-removebg-preview (1).png_null'),
+('Ballpoint Pens (10-Pack)', '2030-06-15', 500, 1.99, 2.99, 9, 'Set of 10 smooth-writing ballpoint pens.', 'uploads/64c58e7f4067c42ee020a014-1-x-10-cello-technotip-pen-top-ball-removebg-preview (1).png_null'),
+('Desk Organizer', '2030-08-10', 80, 9.99, 12.99, 9, 'Multi-compartment desk organizer for workspace efficiency.', 'uploads/81MB7BHw60L-removebg-preview (1).png_null'),
+
+-- Automotive (Category ID: 10)
+('Car Air Freshener', '2026-12-31', 400, 2.99, 4.99, 10, 'Car air freshener for a pleasant driving experience.', 'uploads/61m-vYkLoYL._AC_UF1000_1000_QL80_-removebg-preview.png_null'),
+('Tire Inflator', '2027-03-15', 50, 29.99, 39.99, 10, 'Portable tire inflator for easy roadside assistance.', 'uploads/81icg54oMsL-removebg-preview.png_null'),
+('Car Wax', '2026-11-10', 120, 14.99, 19.99, 10, 'Premium car wax for a shiny finish.', 'uploads/61To0uyAxzL-removebg-preview.png_null'),
+('Windshield Sun Shade', '2027-08-20', 100, 9.99, 14.99, 10, 'Foldable sun shade for windshield protection.', 'uploads/tata-nexon-dotnet-half-car-magnetic-window-sun-shade-curtains-7-1500x1500-removebg-preview.png_null');
 
 INSERT INTO product_manufacturers (product_id, manufacturer_id, cost_price) VALUES
 -- Electronics
@@ -168,7 +235,37 @@ INSERT INTO product_manufacturers (product_id, manufacturer_id, cost_price) VALU
 (22, 20, 1.99),  -- Whole Wheat Bread by Nature's Own
 (23, 21, 3.49),  -- Free-range Eggs by Happy Egg Co.
 (24, 22, 1.49),  -- Fresh Spinach by Earthbound Farm
-(25, 23, 0.99);  -- Bananas by Chiquita
+(25, 23, 0.99), -- Bananas by Chiquita
+
+-- Toys
+(26, 24, 29.99), -- Lego Classic Set by Lego
+(27, 25, 9.99),  -- Hot Wheels Car Pack by Mattel
+(28, 26, 199.99), -- Barbie Dreamhouse by Mattel
+(29, 27, 24.99), -- Nerf Blaster by Hasbro
+
+-- Sports Equipment
+(30, 28, 49.99), -- Wilson Tennis Racket by Wilson Sporting Goods
+(31, 13, 19.99), -- Adidas Soccer Ball by Adidas
+(32, 29, 15.99), -- Yoga Mat by Gaiam
+(33, 30, 39.99), -- Dumbbell Set by Bowflex
+
+-- Personal Care
+(34, 31, 5.99),  -- LOreal Shampoo by L'Oreal
+(35, 32, 6.99),  -- Neutrogena Face Wash by Johnson & Johnson
+(36, 33, 9.99),  -- Maybelline Mascara by L'Oreal
+(37, 34, 4.99),  -- Nivea Body Lotion by Beiersdorf
+
+-- Office Supplies
+(38, 35, 3.99),  -- Stapler by Swingline
+(39, 36, 7.99),  -- A4 Printer Paper by Hammermill
+(40, 37, 1.99),  -- Ballpoint Pens (10-Pack) by BIC
+(41, 38, 9.99),  -- Desk Organizer by Rolodex
+
+-- Automotive
+(42, 39, 2.99),  -- Car Air Freshener by Little Trees
+(43, 40, 29.99), -- Tire Inflator by Slime
+(44, 41, 14.99), -- Car Wax by Meguiar's
+(45, 41, 9.99);  
 
 
 
