@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,13 +22,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.inventory.backend.entities.Cart;
 import com.inventory.backend.entities.Customer;
 import com.inventory.backend.entities.CustomerOrder;
+import com.inventory.backend.services.impl.CustomerService;
+import com.inventory.backend.services.impl.EmployeeService;
+import org.apache.commons.lang3.tuple.Triple;
+import com.inventory.backend.entities.Employee;
 import com.inventory.backend.entities.Product;
 import com.inventory.backend.services.impl.CartService;
 import com.inventory.backend.services.impl.CustomerOrderService;
-import com.inventory.backend.services.impl.CustomerService;
-import com.inventory.backend.services.impl.EmployeeService;
 import com.inventory.backend.services.impl.PaymentService;
-import org.apache.commons.lang3.tuple.Triple;
+import com.inventory.backend.services.impl.ProductService;
 
 import java.util.Date;
 
@@ -40,24 +45,57 @@ public class PaymentController {
     
     @Autowired
     private CustomerService customerService;
-    
-    @Autowired
-    private CartService cartService;
+
     @Autowired
     private CustomerOrderService customerOrderService;
     
     @Autowired
     private EmployeeService employeeService;
 
-    // Handling Razorpay payment initiation
+    @Autowired
+    private CartService cartService;
+
+    @Autowired
+    private ProductService productService;
+
     @PostMapping("/razorpay/payment")
-    public String handlePayment(@RequestParam("totalAmount") double totalAmount, Model model) {
+    public String handlePayment(@RequestParam("totalAmount") double totalAmount, Model model,
+                                @RequestParam("products") List<Long> productIds,
+                                @RequestParam("quantities") List<Integer> quantities,
+                                @RequestParam("cartId") Long cartId,
+                                @RequestParam("paymentMethod") String paymentMethod) {
+
+        Cart cart = cartService.findById(cartId).orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+        Customer customer = cart.getCustomer();
+
+        if (paymentMethod.equals("CASH"))
+        {
+            CustomerOrder customerOrder = CustomerOrder.builder()
+                                                        .customer(customer)
+                                                        .dateOfOrder(Date.valueOf(LocalDate.now()))
+                                                        .processorEmployee(Employee.builder().employeeId(1L).build())
+                                                        .paymentMethod(CustomerOrder.PaymentMethod.CASH)
+                                                        .build();
+            for (int i = 0; i < productIds.size(); i++) {
+                Product product = productService.findById(productIds.get(i)).get();
+                customerOrder.getProducts().add(new CustomerOrder.Pair<>(product, quantities.get(i)));
+            }
+
+            customerOrderService.save(customerOrder);
+
+            cartService.delete(cartId);
+
+            return "redirect:/orders";
+        }
+
+        // Process the payment and create the Razorpay order
         try {
             // Create Razorpay order and return Razorpay order ID
             String razorpayOrderId = paymentService.createOrder(totalAmount);
             model.addAttribute("razorpayOrderId", razorpayOrderId);
             model.addAttribute("totalAmount", totalAmount);
             model.addAttribute("razorpayKeyId", razorpayKeyId); // Pass Razorpay key to frontend
+
 
             // Redirect to payment page for Razorpay checkout
             return "payment"; // Return the payment page to handle Razorpay payment flow

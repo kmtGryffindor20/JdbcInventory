@@ -80,8 +80,19 @@
 
             // Get the checkout button and update its href with the calculated total amount
             const checkoutButton = document.getElementById('checkoutButton');
-            checkoutButton.href = "/checkout?totalAmount=" + sum.toFixed(2);  // Append totalAmount as query param
+            checkoutButton.href = "/checkout?totalAmount=" + sum.toFixed(2) + "&cartId=" + document.querySelector('input[name="cartId"]').value;
         }
+
+        document.querySelectorAll('input[name="quantity"]').forEach(input => {
+                                input.addEventListener('change', function() {
+                                    const id = input.id.replace('quantity', '');
+                                    console.log(id);
+                                    if (input.value == '') {
+                                        return;
+                                    }
+                                    document.forms['update' + id].submit();
+                                });
+                            });
 
         // Call the calculateTotal function when the page loads
         calculateTotal();

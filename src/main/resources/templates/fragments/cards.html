@@ -6,16 +6,15 @@
     <title>Document</title>
 </head>
 <body>
-    <div th:fragment="product_card" class="card bg-body-tertiary" style="width: 18rem; height: 25rem; position: relative;">
+    <div th:fragment="product_card" class="card bg-body-tertiary" style="width: 18rem; height: 32rem; position: relative;">
         <!-- Yellow Banner for Discount -->
         <div th:if="${sellingPrice != null and maximumRetailPrice != null}" 
              th:text="${#numbers.formatDecimal(((maximumRetailPrice - sellingPrice) / maximumRetailPrice) * 100, 0, 0)} + '% Off'"
              class="discount-banner" 
-             style="position: absolute; top: 0; left: 0; right: 0; background-color: rgb(255, 238, 0); text-align: center; font-weight: bold; padding: 5px 0; color: black;"></div>
+             style="top: 0; left: 0; right: 0; background-color: rgb(255, 238, 0); text-align: center; font-weight: bold; padding: 5px 0; color: black;"></div>
 
         <!-- Product Image -->
-        <img th:if="${imageUrl == null}" src="/assets/prod.png" class="card-img-top" alt="..." style="height: 15rem;">
-        <img th:if="${imageUrl != null}" th:src="@{|/${imageUrl}|}" class="card-img-top" alt="..." style="height: 15rem;">
+        <img th:if="${imageUrl != null}" th:src="@{|/${imageUrl}|}" class="card-img-top" alt="..." style="height: 20rem;">
         
         <!-- Product Details -->
         <div class="card-body justify-content-between">

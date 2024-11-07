@@ -14,6 +14,16 @@
                         <h5>Total Amount: $<span th:text="${totalAmount}"></span></h5>
                         <form action="/razorpay/payment" method="POST">
                             <input type="hidden" name="totalAmount" th:value="${totalAmount}">
+                            <!-- hidden inputs of cart products and there quantities -->
+                            <input th:each="cartItem : ${cart.products}" type="hidden" name="products" th:value="${cartItem.getLeft().productId}">
+                            <input th:each="cartItem : ${cart.products}" type="hidden" name="quantities" th:value="${cartItem.getMiddle()}">
+                            <select name="paymentMethod" class="form-select mb-3" required>
+                                <option value="">Select Payment Method</option>
+                                <option value="CARD">Credit/Debit Card</option>
+                                <option value="CASH">CASH</option>
+                                <option value="NETBANKING">Net Banking</option>
+                            </select>
+                            <input type="hidden" name="cartId" th:value="${cart.cartId}">
                             <button type="submit" class="btn btn-success">Pay Now</button>
                         </form>
                     </div>

@@ -33,7 +33,7 @@ public class SalesReportDao implements IDao<SalesReport, SalesReportCompositeKey
     }
 
     private Product findTopSellingProduct(SalesReportCompositeKey key) {
-        String sql = "SELECT p.*, c.*, m.* FROM products p LEFT JOIN categories c ON c.category_id = p.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE p.product_id = (SELECT product_id FROM customer_orders_products WHERE order_id IN (SELECT order_id FROM customer_orders WHERE date_of_order = DATE_FORMAT(?, '%Y-%m-%d')) GROUP BY product_id ORDER BY SUM(quantity) DESC LIMIT 1)";
+        String sql = "SELECT p.*, c.*, m.*, pm.cost_price FROM products p LEFT JOIN categories c ON c.category_id = p.category_id LEFT JOIN product_manufacturers pm ON p.product_id = pm.product_id JOIN manufacturers m ON pm.manufacturer_id = m.manufacturer_id WHERE p.product_id = (SELECT product_id FROM customer_orders_products WHERE order_id IN (SELECT order_id FROM customer_orders WHERE date_of_order = DATE_FORMAT(?, '%Y-%m-%d')) GROUP BY product_id ORDER BY SUM(quantity) DESC LIMIT 1)";
         Map<Long, Product> productMap = jdbcTemplate.query(sql, new ProductDao.ProductRowMapper(), Date.valueOf(key.getYear() + "-" + key.getMonth() + "-" + key.getDay()));
         if (productMap.isEmpty()) {
             return Product.builder().productId(0L).build();
