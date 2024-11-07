@@ -28,10 +28,6 @@
                     <label for="quantity" class="form-label">Quantity</label>
                     <input type="number" id="quantity" class="form-control mb-2" min="1" th:max="${product.stockQuantity}" name="quantity" th:value="${quantity}" required />
 
-                    <a th:href="@{/order?id={id}(id=${product.productId})}" class="btn btn-primary text-decoration-none" >
-                      Order Now
-                      <i class="bi bi-bag-check"></i>
-                    </a>
                     <button type="submit" class="btn btn-primary">
                       Add to Cart
                       <i class="bi bi-cart"></i>

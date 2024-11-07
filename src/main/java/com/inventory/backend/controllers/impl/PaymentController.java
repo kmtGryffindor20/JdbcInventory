@@ -93,6 +93,7 @@ public class PaymentController {
             model.addAttribute("razorpayOrderId", razorpayOrderId);
             model.addAttribute("totalAmount", totalAmount);
             model.addAttribute("razorpayKeyId", razorpayKeyId); // Pass Razorpay key to frontend
+            model.addAttribute("paymentMethod", paymentMethod);
 
 
             // Redirect to payment page for Razorpay checkout
@@ -115,6 +116,7 @@ public class PaymentController {
             String paymentId = (String) orderData.get("razorpayPaymentId");
             String orderId = (String) orderData.get("razorpayOrderId");
             double totalAmount = Double.parseDouble(orderData.get("totalAmount").toString());
+            String paymentMethod = (String) orderData.get("paymentMethod");
 
             // Retrieve customer based on the logged-in user (principal)
             Customer customer = customerService.findByUsername(principal.getName())
@@ -127,11 +129,18 @@ public class PaymentController {
             CustomerOrder customerOrder = new CustomerOrder();
             customerOrder.setCustomer(customer);
             customerOrder.setDateOfOrder(new java.sql.Date(System.currentTimeMillis()));
-            customerOrder.setPaymentMethod(CustomerOrder.PaymentMethod.CARD); // Set payment method (UPI in this case)
+            if (paymentMethod.equals("CARD")) {
+                customerOrder.setPaymentMethod(CustomerOrder.PaymentMethod.CARD);
+            } 
+            else if (paymentMethod.equals("NET BANKING")) {
+                customerOrder.setPaymentMethod(CustomerOrder.PaymentMethod.NET_BANKING);
+            }
+            else {
+                customerOrder.setPaymentMethod(CustomerOrder.PaymentMethod.CASH);
+            }
             customerOrder.setProducts(convertCartProductsToOrderProducts(cart.getProducts())); // Convert cart products to order products
             Employee processorEmployee = employeeService.findById(1L).orElse(null);
-            customerOrder.setProcessorEmployee(processorEmployee);
-
+            customerOrder.setProcessorEmployee(processorEmployee); // Set the processor employee
             // Save the order in the database
             customerOrderService.save(customerOrder);
 
