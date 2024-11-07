@@ -31,7 +31,7 @@
                                 <tr th:each="cartItem : ${cart.products}">
                                     <td th:text="${cartItem.getLeft().productName}"></td>
                                     <td>
-                                        $ 
+                                        ₹
                                         <span th:text="${cartItem.getLeft().sellingPrice}" class="me-2"></span>
                                         <span class="text-decoration-line-through" th:text="${cartItem.getLeft().maximumRetailPrice}"></span>
                                     </td>
@@ -43,7 +43,7 @@
                                         </form>
                                     </td>
                                     <td th:text="${cartItem.getRight()}"></td>
-                                    <td th:text="'$' + ${cartItem.getLeft().sellingPrice * cartItem.getMiddle()}"></td>
+                                    <td th:text="'₹' + ${cartItem.getLeft().sellingPrice * cartItem.getMiddle()}"></td>
                                     <td>
                                         <form th:action="@{/cart/remove}" method="post">
                                             <input type="number" th:value="${cart.cartId}" name="cartId" class="form-control" hidden>
@@ -72,11 +72,11 @@
             
             // Sum up all the values in the "Total" column
             totalCells.forEach(t => {
-                sum += parseFloat(t.innerText.replace('$', '')); // Remove dollar sign and parse as number
+                sum += parseFloat(t.innerText.replace('₹', '')); // Remove dollar sign and parse as number
             });
 
             // Display the total in the "Total" span
-            document.getElementById('total').innerText = "Total: $" + sum;
+            document.getElementById('total').innerText = "Total: ₹" + sum;
 
             // Get the checkout button and update its href with the calculated total amount
             const checkoutButton = document.getElementById('checkoutButton');

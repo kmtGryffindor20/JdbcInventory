@@ -131,7 +131,7 @@
                         const selectedProduct = products.find(prod => prod.productId == product.value);
                         amount += selectedProduct.maximumRetailPrice * allQuantities[index].value;
                     });
-                    document.getElementById('amount').innerText = 'Amount: $' + amount.toFixed(2);
+                    document.getElementById('amount').innerText = 'Amount: ₹' + amount.toFixed(2);
                 });
             });
         }

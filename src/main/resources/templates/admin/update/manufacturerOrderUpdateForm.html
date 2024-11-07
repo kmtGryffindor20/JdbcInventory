@@ -128,7 +128,7 @@
                     amount += selectedProduct.costPrice * (allQuantities[index].value || 0);
                 }
             });
-            document.getElementById('amount').innerText = 'Amount: $' + amount.toFixed(2);
+            document.getElementById('amount').innerText = 'Amount: ₹' + amount.toFixed(2);
         }
     
         document.getElementById('addProduct').addEventListener('click', function() {
@@ -142,7 +142,7 @@
     
         document.getElementById('manufacturerId').addEventListener('change', function() {
             document.getElementById('productList').innerHTML = ""; // Clear previous product fields
-            document.getElementById('amount').innerText = "Amount: $0.00"; // Reset amount display
+            document.getElementById('amount').innerText = "Amount: ₹0.00"; // Reset amount display
             amount = 0;
         });
 
