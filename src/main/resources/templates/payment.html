@@ -15,6 +15,7 @@
                         <form id="razorpay-form" action="/razorpay/payment" method="POST">
                             <input type="hidden" name="razorpay_order_id" th:value="${razorpayOrderId}">
                             <input type="hidden" name="totalAmount" th:value="${totalAmount}">
+                            <input type="hidden" name="paymentMethod" th:value="${paymentMethod}">
                             
                             <!-- CSRF Token -->
                             <input type="hidden" name="_csrf" th:value="${_csrf.token}">
@@ -47,7 +48,8 @@
                         body: JSON.stringify({
                             razorpayPaymentId: response.razorpay_payment_id,
                             razorpayOrderId: response.razorpay_order_id,
-                            totalAmount: document.querySelector('[name="totalAmount"]').value
+                            totalAmount: document.querySelector('[name="totalAmount"]').value,
+                            paymentMethod: document.querySelector('[name="paymentMethod"]').value
                         })
                     }).then(res => res.json())
                     .then(data => {
