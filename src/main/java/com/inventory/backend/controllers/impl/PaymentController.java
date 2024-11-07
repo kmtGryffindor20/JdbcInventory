@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -32,7 +31,6 @@ import com.inventory.backend.services.impl.CustomerOrderService;
 import com.inventory.backend.services.impl.PaymentService;
 import com.inventory.backend.services.impl.ProductService;
 
-import java.util.Date;
 
 @Controller
 public class PaymentController {
@@ -129,7 +127,7 @@ public class PaymentController {
             CustomerOrder customerOrder = new CustomerOrder();
             customerOrder.setCustomer(customer);
             customerOrder.setDateOfOrder(new java.sql.Date(System.currentTimeMillis()));
-            customerOrder.setPaymentMethod(CustomerOrder.PaymentMethod.UPI); // Set payment method (UPI in this case)
+            customerOrder.setPaymentMethod(CustomerOrder.PaymentMethod.CARD); // Set payment method (UPI in this case)
             customerOrder.setProducts(convertCartProductsToOrderProducts(cart.getProducts())); // Convert cart products to order products
             customerOrder.setProcessorEmployee(null); // Optionally set an employee who processed the order
 
