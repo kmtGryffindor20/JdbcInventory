@@ -3,7 +3,6 @@ package com.inventory.backend.config;
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -25,7 +24,8 @@ public class SecurityConfig {
                         .requestMatchers("/orders/**").authenticated()
                         .requestMatchers("/order/**").authenticated()
                         .requestMatchers("/cart/**").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/razorpay/payment").permitAll()  // Allow anyone to access /razorpay/payment
+                        .anyRequest().permitAll()  // Allow all other requests
                     )
                     .formLogin(formLogin -> formLogin
                         .loginPage("/login")
@@ -39,7 +39,9 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout=true")
                         .permitAll()
                     )
-                    .csrf(Customizer.withDefaults()) // or customize csrf as needed 
+                    .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/razorpay/payment")  // Exclude CSRF for /razorpay/payment
+                    )
                     .build();
     }
 
