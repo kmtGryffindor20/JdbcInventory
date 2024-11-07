@@ -43,7 +43,7 @@
                                         </form>
                                     </td>
                                     <td th:text="${cartItem.getRight()}"></td>
-                                    <td th:text="'₹' + ${cartItem.getLeft().sellingPrice * cartItem.getMiddle()}"></td>
+                                    <td th:text="'₹' + ${(cartItem.getLeft().sellingPrice * cartItem.getMiddle())}"></td>
                                     <td>
                                         <form th:action="@{/cart/remove}" method="post">
                                             <input type="number" th:value="${cart.cartId}" name="cartId" class="form-control" hidden>
@@ -76,7 +76,7 @@
             });
 
             // Display the total in the "Total" span
-            document.getElementById('total').innerText = "Total: ₹" + sum;
+            document.getElementById('total').innerText = "Total: ₹" + sum.toFixed(2);
 
             // Get the checkout button and update its href with the calculated total amount
             const checkoutButton = document.getElementById('checkoutButton');

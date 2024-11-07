@@ -39,6 +39,12 @@
                                 <div class="d-flex justify-content-center" th:if="${customerOrderStatusMap[order.orderId] == 'CANCELLED'}">
                                     <span class="badge bg-danger">Cancelled</span>
                                 </div>
+                                <div class="d-flex justify-content-center my-2" th:if="${customerOrderStatusMap[order.orderId] == 'DELIVERED'}">
+                                    <span class="badge bg-success">Delivered</span>
+                                </div>
+                                <div class="d-flex justify-content-center my-2" th:if="${customerOrderStatusMap[order.orderId] == 'SHIPPED'}">
+                                    <span class="badge bg-info">SHIPPED</span>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
