@@ -21,7 +21,6 @@ import com.inventory.backend.entities.Product;
 @Repository
 public class CartDao implements IDao<Cart, Long> {
 
-
     private final JdbcTemplate jdbcTemplate;
     
     public CartDao(JdbcTemplate jdbcTemplate) {
@@ -42,7 +41,6 @@ public class CartDao implements IDao<Cart, Long> {
             return Optional.empty();
         }
         return Optional.of(cartMap.values().iterator().next());
-
     }
 
     @Override
@@ -137,5 +135,4 @@ public class CartDao implements IDao<Cart, Long> {
         }
 
     }
-    
 }

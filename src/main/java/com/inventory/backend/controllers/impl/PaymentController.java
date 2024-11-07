@@ -1,5 +1,11 @@
 package com.inventory.backend.controllers.impl;
 
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -9,11 +15,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.inventory.backend.entities.Cart;
 import com.inventory.backend.entities.Customer;
 import com.inventory.backend.entities.CustomerOrder;
+import com.inventory.backend.services.impl.CustomerService;
+import com.inventory.backend.services.impl.EmployeeService;
+import org.apache.commons.lang3.tuple.Triple;
 import com.inventory.backend.entities.Employee;
 import com.inventory.backend.entities.Product;
 import com.inventory.backend.services.impl.CartService;
@@ -21,20 +32,28 @@ import com.inventory.backend.services.impl.CustomerOrderService;
 import com.inventory.backend.services.impl.PaymentService;
 import com.inventory.backend.services.impl.ProductService;
 
+import java.util.Date;
 
 @Controller
 public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
+    
     @Value("${razorpay.key_id}")
     private String razorpayKeyId;
-
+    
     @Autowired
-    private CartService cartService;
+    private CustomerService customerService;
 
     @Autowired
     private CustomerOrderService customerOrderService;
+    
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private CartService cartService;
 
     @Autowired
     private ProductService productService;
@@ -71,17 +90,76 @@ public class PaymentController {
 
         // Process the payment and create the Razorpay order
         try {
-            String razorpayOrderId = paymentService.createOrder(totalAmount); // Assuming this method creates the order
+            // Create Razorpay order and return Razorpay order ID
+            String razorpayOrderId = paymentService.createOrder(totalAmount);
             model.addAttribute("razorpayOrderId", razorpayOrderId);
             model.addAttribute("totalAmount", totalAmount);
-            model.addAttribute("razorpayKeyId", razorpayKeyId); // Add Razorpay key to the model
-            model.addAttribute("paymentMethod", paymentMethod);
+            model.addAttribute("razorpayKeyId", razorpayKeyId); // Pass Razorpay key to frontend
 
-            // Return to a page where you can call Razorpay's checkout API
-            return "payment"; // Redirect to the payment page to handle Razorpay checkout
+
+            // Redirect to payment page for Razorpay checkout
+            return "payment"; // Return the payment page to handle Razorpay payment flow
         } catch (Exception e) {
             model.addAttribute("error", "Payment processing failed: " + e.getMessage());
-            return "error"; // Show an error page if payment processing fails
+            return "error"; // Show error page if payment processing fails
         }
     }
+
+    // Saving the order after successful payment
+    @PostMapping("/razorpay/saveOrder")
+    @ResponseBody
+    public Map<String, Object> saveOrder(
+            @RequestBody Map<String, Object> orderData,
+            Principal principal) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Extract necessary details from the orderData
+            String paymentId = (String) orderData.get("razorpayPaymentId");
+            String orderId = (String) orderData.get("razorpayOrderId");
+            double totalAmount = Double.parseDouble(orderData.get("totalAmount").toString());
+
+            // Retrieve customer based on the logged-in user (principal)
+            Customer customer = customerService.findByUsername(principal.getName())
+                    .orElseThrow(() -> new Exception("Customer not found"));
+
+            // Retrieve the customer's cart
+            Cart cart = cartService.getCartByCustomerEmail(customer); // Assuming getCartByCustomerEmail method
+
+            // Create a CustomerOrder instance and populate it with the necessary details
+            CustomerOrder customerOrder = new CustomerOrder();
+            customerOrder.setCustomer(customer);
+            customerOrder.setDateOfOrder(new java.sql.Date(System.currentTimeMillis()));
+            customerOrder.setPaymentMethod(CustomerOrder.PaymentMethod.UPI); // Set payment method (UPI in this case)
+            customerOrder.setProducts(convertCartProductsToOrderProducts(cart.getProducts())); // Convert cart products to order products
+            customerOrder.setProcessorEmployee(null); // Optionally set an employee who processed the order
+
+            // Save the order in the database
+            customerOrderService.save(customerOrder);
+
+            response.put("success", true);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
+
+// Helper function to convert cart products to order products
+private Set<CustomerOrder.Pair<Product, Integer>> convertCartProductsToOrderProducts(Set<Triple<Product, Integer, java.sql.Date>> cartProducts) {
+    Set<CustomerOrder.Pair<Product, Integer>> orderProducts = new HashSet<>();
+
+    // Loop through each item in the cart products
+    for (Triple<Product, Integer, java.sql.Date> cartProduct : cartProducts) {
+        // Extract the product, quantity and added date (you can discard the date if not needed)
+        Product product = cartProduct.getLeft();
+        Integer quantity = cartProduct.getMiddle();
+
+        // Create a Pair and add it to the order products set
+        CustomerOrder.Pair<Product, Integer> orderProduct = new CustomerOrder.Pair<>(product, quantity);
+        orderProducts.add(orderProduct);
+    }
+
+    return orderProducts;
+}
+
 }
