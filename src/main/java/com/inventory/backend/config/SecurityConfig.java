@@ -24,6 +24,7 @@ public class SecurityConfig {
                         .requestMatchers("/orders/**").authenticated()
                         .requestMatchers("/order/**").authenticated()
                         .requestMatchers("/cart/**").authenticated()
+                        .requestMatchers("/return-order/**").authenticated()
                         .requestMatchers("/razorpay/payment").authenticated()  // Allow anyone to access /razorpay/payment
                         .anyRequest().permitAll()  // Allow all other requests
                     )
