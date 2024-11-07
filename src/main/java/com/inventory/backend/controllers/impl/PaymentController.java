@@ -139,8 +139,8 @@ public class PaymentController {
                 customerOrder.setPaymentMethod(CustomerOrder.PaymentMethod.CASH);
             }
             customerOrder.setProducts(convertCartProductsToOrderProducts(cart.getProducts())); // Convert cart products to order products
-            customerOrder.setProcessorEmployee(null); // Optionally set an employee who processed the order
-
+            Employee processorEmployee = employeeService.findById(1L).orElse(null);
+            customerOrder.setProcessorEmployee(processorEmployee); // Set the processor employee
             // Save the order in the database
             customerOrderService.save(customerOrder);
 
